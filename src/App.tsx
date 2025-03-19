@@ -165,7 +165,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       }
 
       const transformedData = data.map(pkg => {
-        const primaryImage = pkg.package_images?.find(img => img.is_primary)?.image_url;
+        const primaryImage = pkg.package_images?.find((img: { is_primary: boolean; image_url: string }) => img.is_primary)?.image_url;
         return {
           ...pkg,
           image: primaryImage || pkg.image,
@@ -393,7 +393,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
               <button
                 key={tag}
                 onClick={() => handleTagToggle(tag)}
-                className={`px-4 py-2 rounded-md text-md font-medium transition-colors ${
+                className={`px-4 py-2 rounded-md text-md font-normal transition-colors ${
                   filters.tags.includes(tag)
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
