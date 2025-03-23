@@ -22,7 +22,7 @@ export default {
         julee: ['Julee', 'cursive'], 
       },
       letterSpacing: {
-        extra: '0.07em',  // Custom letter spacing
+        extra: '0.06em',  // Custom letter spacing
         wider: '0.15em',
       },
     },
