@@ -22,7 +22,7 @@ export default {
         sedgwick: ['"Sedgwick Ave"', 'cursive'], 
       },
       letterSpacing: {
-        extra: '0.1em',  // Custom letter spacing
+        extra: '0.07em',  // Custom letter spacing
         wider: '0.15em',
       },
     },
