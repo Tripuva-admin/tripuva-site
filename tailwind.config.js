@@ -25,6 +25,9 @@ export default {
         extra: '0.08em',  // Custom letter spacing
         wider: '0.15em',
       },
+      fontSize: {
+        '3.5xl': '1.875rem', // 30px (between 3xl and 4xl)
+      },
     },
   },
   plugins: [],
