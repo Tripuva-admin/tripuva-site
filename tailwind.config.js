@@ -21,6 +21,10 @@ export default {
       fontFamily: {
         berkshire: ['Berkshire Swash', 'cursive'], 
       },
+      letterSpacing: {
+        extra: '0.1em',  // Custom letter spacing
+        wider: '0.15em',
+      },
     },
   },
   plugins: [],
