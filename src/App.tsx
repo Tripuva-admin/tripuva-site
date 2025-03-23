@@ -36,7 +36,7 @@ function Header({ user }: HeaderProps) {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <MapPin className="h-6 w-6 text-white" />
-            <h1 className="text-3xl sm:text-4xl font-bold font-berkshire text-white">Tripuva</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold font-berkshire text-white tracking-wide">Tripuva</h1>
           </Link>
 
           <nav className="hidden sm:flex items-center space-x-6">
