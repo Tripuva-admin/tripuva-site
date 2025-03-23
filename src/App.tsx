@@ -71,7 +71,7 @@ function Header({ user }: HeaderProps) {
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="sm:hidden text-white p-4 hover:bg-white/10 rounded-lg transition-colors"
+            className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors"
           >
             {isMobileMenuOpen ? (
               <X className="h-8 w-8" />
