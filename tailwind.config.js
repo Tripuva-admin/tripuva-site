@@ -19,7 +19,7 @@ export default {
         },
       },
       fontFamily: {
-        sedgwick: ['"Sedgwick Ave"', 'cursive'], 
+        julee: ['Julee', 'cursive'], 
       },
       letterSpacing: {
         extra: '0.07em',  // Custom letter spacing
