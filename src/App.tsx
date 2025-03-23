@@ -92,6 +92,17 @@ function Header({ user }: HeaderProps) {
                 <Star className="h-4 w-4 mr-2" />
                 Top Places
               </Link>
+
+              <a
+        href="https://google.com"  // Change to your actual link
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+      >
+        <ArrowRight className="h-4 w-4 mr-2" />
+        Visit Now
+      </a>
+
               {user && (
                 <button
                   onClick={handleSignOut}
