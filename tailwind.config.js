@@ -19,7 +19,7 @@ export default {
         },
       },
       fontFamily: {
-        berkshire: ['Sedgwick'], 
+        sedgwick: ['"Sedgwick Ave"', 'cursive'], 
       },
       letterSpacing: {
         extra: '0.1em',  // Custom letter spacing
