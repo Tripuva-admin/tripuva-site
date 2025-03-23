@@ -18,6 +18,9 @@ export default {
           900: '#020816',
         },
       },
+      fontFamily: {
+        berkshire: ['Berkshire Swash', 'cursive'], 
+      },
     },
   },
   plugins: [],
