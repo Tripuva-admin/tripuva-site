@@ -19,7 +19,7 @@ export default {
         },
       },
       fontFamily: {
-        reggae: ['"Reggae One"', 'cursive'],  
+        yusei: ['"Yusei Magic"', 'Arial'],  
       },
       letterSpacing: {
         extra: '0.08em',  // Custom letter spacing
