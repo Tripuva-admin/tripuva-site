@@ -19,7 +19,7 @@ export default {
         },
       },
       fontFamily: {
-        sedgwick: ['"Sedgwick Ave"', 'cursive'],  
+        aclonica: ['Aclonica', 'sans-serif'],  
       },
       letterSpacing: {
         extra: '0.08em',  // Custom letter spacing
