@@ -19,7 +19,7 @@ export default {
         },
       },
       fontFamily: {
-        aclonica: ['Aclonica', 'sans-serif'],  
+        reggae: ['"Reggae One"', 'cursive'],  
       },
       letterSpacing: {
         extra: '0.08em',  // Custom letter spacing
