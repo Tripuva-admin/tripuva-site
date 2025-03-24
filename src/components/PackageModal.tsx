@@ -99,7 +99,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
 
             <div className="space-y-4">
               <div className="bg-blue-50 p-4 rounded-md">
-                <p className="text-blue-800 text-sm md:text-base">
+                <p className="text-blue-800 text-sm md:text-base font-bold">
                   Booking Advance: ₹{pkg.advance.toLocaleString()}
                 </p>
                 <p className="text-blue-800 text-sm md:text-base mt-2">
