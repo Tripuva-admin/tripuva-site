@@ -30,7 +30,7 @@ function Header({ user }: HeaderProps) {
         ? 'bg-primary-900' 
         : isHomePage 
           ? 'absolute top-0 left-0 right-0 bg-transparent' 
-          : 'bg-primary'
+          : 'bg-gray-900'
     }`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
