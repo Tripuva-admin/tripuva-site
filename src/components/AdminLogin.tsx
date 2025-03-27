@@ -54,7 +54,7 @@ export function AdminLogin() {
           <Lock className="h-12 w-12 text-primary" />
         </div>
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Admin Login
+          Login
         </h2>
       </div>
 
@@ -76,7 +76,7 @@ export function AdminLogin() {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                className="mt-1 block w-full rounded-md border-gray-100 shadow-sm focus:border-transparent focus:ring-primary focus:bg-gray-100 focus:outline-none"
               />
             </div>
 
@@ -89,7 +89,7 @@ export function AdminLogin() {
                 required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-transparent focus:ring-primary focus:bg-gray-100 focus:outline-none"
               />
             </div>
 

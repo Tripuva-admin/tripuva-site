@@ -20,6 +20,7 @@ export default {
       },
       fontFamily: {
         yusei: ['"Yusei Magic"', 'Arial'],  
+        comfortaa: ['"Comfortaa"', 'Arial'],
       },
       letterSpacing: {
         extra: '0.08em',  // Custom letter spacing

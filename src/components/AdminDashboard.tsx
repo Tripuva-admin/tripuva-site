@@ -16,6 +16,15 @@ const AVAILABLE_TAGS = [
   'Camping'
 ] as const;
 
+const generateAlphanumericId = (length = 7): string => {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Removed ambiguous chars (0,1,I,O)
+  let result = '';
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+};
+
 export function AdminDashboard() {
   const [packages, setPackages] = useState<Package[]>([]);
   const [agencies, setAgencies] = useState<Agency[]>([]);
@@ -118,7 +127,10 @@ export function AdminDashboard() {
       } else {
         const { data, error } = await supabase
           .from('packages')
-          .insert([formData])
+          .insert([{ 
+            ...formData,
+            package_id: generateAlphanumericId() // Generates like "A3B9XK7"
+          }])
           .select()
           .single();
 
@@ -423,7 +435,7 @@ export function AdminDashboard() {
                       required
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:ring-primary focus:outline-none focus:bg-gray-100"
                     />
                   </div>
 
@@ -433,7 +445,7 @@ export function AdminDashboard() {
                       required
                       value={formData.agency_id}
                       onChange={(e) => setFormData({ ...formData, agency_id: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     >
                       <option value="">Select an agency</option>
                       {agencies.map(agency => (
@@ -451,7 +463,7 @@ export function AdminDashboard() {
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                       rows={4}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     />
                   </div>
 
@@ -463,7 +475,7 @@ export function AdminDashboard() {
                       min="1"
                       value={formData.duration}
                       onChange={(e) => setFormData({ ...formData, duration: Number(e.target.value) })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     />
                   </div>
 
@@ -475,7 +487,7 @@ export function AdminDashboard() {
                       min="0"
                       value={formData.price}
                       onChange={(e) => setFormData({ ...formData, price: Number(e.target.value) })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     />
                   </div>
 
@@ -487,7 +499,7 @@ export function AdminDashboard() {
                       min="1"
                       value={formData.group_size}
                       onChange={(e) => setFormData({ ...formData, group_size: Number(e.target.value) })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     />
                   </div>
 
@@ -498,7 +510,7 @@ export function AdminDashboard() {
                       required
                       value={formData.start_date}
                       onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     />
                   </div>
 
@@ -508,7 +520,7 @@ export function AdminDashboard() {
                       required
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value as 'open' | 'closed' })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     >
                       <option value="open">Open</option>
                       <option value="closed">Closed</option>
@@ -524,7 +536,7 @@ export function AdminDashboard() {
                       max="10000"
                       value={formData.ranking}
                       onChange={(e) => setFormData({ ...formData, ranking: Number(e.target.value) })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     />
                   </div>
 
@@ -536,7 +548,7 @@ export function AdminDashboard() {
                       min="0"
                       value={formData.advance}
                       onChange={(e) => setFormData({ ...formData, advance: Number(e.target.value) })}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                     />
                   </div>
 
@@ -577,7 +589,7 @@ export function AdminDashboard() {
                           value={url}
                           onChange={(e) => updateImageField(index, e.target.value)}
                           placeholder="Enter image URL"
-                          className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                          className="flex-1 rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
                         />
                         {packageImages.length > 1 && (
                           <button

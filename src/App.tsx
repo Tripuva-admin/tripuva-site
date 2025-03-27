@@ -10,6 +10,7 @@ import { FAQ } from './components/pages/FAQ';
 import { Legal } from './components/pages/Legal';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
+import TopPlaces from "./components/TopPlaces";
 
 interface HeaderProps {
   user: Profile | null;
@@ -27,21 +28,21 @@ function Header({ user }: HeaderProps) {
   return (
     <header className={`w-full z-10 transition-colors duration-300 ${
       isMobileMenuOpen 
-        ? 'bg-primary-900' 
+        ? 'bg-primary-600' 
         : isHomePage 
           ? 'absolute top-0 left-0 right-0 bg-transparent' 
-          : 'bg-gray-900'
+          : 'bg-primary-600'
     }`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
-            <MapPin className="h-6 w-6 text-white" />
-            <h1 className="text-2xl sm:text-5xl md:text-4xl font-bold font-yusei text-white tracking-extra">Tripuva</h1>
+           
+            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
           </Link>
 
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
-              to="/" 
+              to="/top-places" 
               className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
             >
               <Star className="h-4 w-4 mr-2" />
@@ -52,7 +53,7 @@ function Header({ user }: HeaderProps) {
     href="https://google.com"  // Replace with your actual URL
     target="_blank" 
     rel="noopener noreferrer"
-    className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition-all duration-200 text-base font-medium flex items-center"
+    className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-green-500 hover:text-white-0 hover:border-green-500 transition-all duration-200 text-base flex items-center"
   >
     <ArrowRight className="h-4 w-4 mr-2" />
     Contact us on Whatsapp
@@ -207,7 +208,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       }
 
       const transformedData = data.map(pkg => {
-        const primaryImage = pkg.package_images?.find(img => img.is_primary)?.image_url;
+        const primaryImage = pkg.package_images?.find((img: any) => img.is_primary)?.image_url;
         return {
           ...pkg,
           image: primaryImage || pkg.image,
@@ -437,7 +438,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
                 onClick={() => handleTagToggle(tag)}
                 className={`px-4 py-2 rounded-md text-md font-medium transition-colors ${
                   filters.tags.includes(tag)
-                    ? 'bg-primary text-white'
+                    ? 'bg-blue-700 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
@@ -461,7 +462,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-0 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">All feature change 1</h2>
+          <h2 className="text-2xl font-bold text-gray-900">All Trips</h2>
           
           <div className="flex space-x-4">
             {/* Sort by Dropdown */}
@@ -717,16 +718,17 @@ function App() {
             <Route path="/contact" element={<Contact />} />
             <Route path="/faq" element={<FAQ />} />
             <Route path="/legal/:page" element={<Legal />} />
+            <Route path="/top-places" element={<TopPlaces />} />
           </Routes>
         </main>
 
-        <footer className="bg-gray-800 text-white py-12">
+        <footer className="mt-7 bg-gray-800 text-white py-12">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
                 <h3 className="text-lg font-semibold mb-4">About tripuva</h3>
                 <p className="text-gray-400">
-                  Connecting travelers across India for unforgettable group adventures and cultural experiences.
+                  Connecting travelers across Globe for unforgettable group adventures and cultural experiences.
                 </p>
               </div>
               <div>
@@ -749,13 +751,13 @@ function App() {
                   </li>
                   <li>
                     <Link to="/admin-login" className="text-gray-400 hover:text-white transition-colors">
-                      Admin Login
+                      Login
                     </Link>
                   </li>
                 </ul>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-4">Legal</h3>
+                <h3 className="text-lg font-semibold mb-4">Policies</h3>
                 <ul className="space-y-2">
                   <li>
                     <Link to="/legal/terms" className="text-gray-400 hover:text-white transition-colors">
@@ -783,24 +785,14 @@ function App() {
                 <h3 className="text-lg font-semibold mb-4">Contact Information</h3>
                 <address className="text-gray-400 not-italic space-y-2">
                   <p className="flex items-center">
-                    <span className="block">Email: info@tripuva.com</span>
+                    <span className="block">Email: tripuva@gmail.com</span>
                   </p>
                   <p className="flex items-center">
                     <span className="block">Phone: +91 93959 29602</span>
                   </p>
-                  <p className="flex items-center">
-                    <span className="block">Address: Mumbai, Maharashtra, India</span>
-                  </p>
+                  
                 </address>
-                <div className="mt-4">
-                  <h4 className="text-sm font-semibold mb-2">Business Hours</h4>
-                  <p className="text-gray-400 text-sm">
-                    Monday - Friday: 9:00 AM - 6:00 PM IST
-                  </p>
-                  <p className="text-gray-400 text-sm">
-                    Saturday: 10:00 AM - 4:00 PM IST
-                  </p>
-                </div>
+                
               </div>
             </div>
             <div className="mt-8 pt-8 border-t border-gray-700">
