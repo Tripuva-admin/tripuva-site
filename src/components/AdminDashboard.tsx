@@ -1,20 +1,57 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Package, Agency } from '../types/database.types';
-import { Plus, Edit, Trash2, X, PackageSearch, Calendar, Users, IndianRupee, Clock, Image as ImageIcon } from 'lucide-react';
+import { Plus, Edit, Trash2, X } from 'lucide-react';
 
-const AVAILABLE_TAGS = [
-  'Hill',
-  'Beaches',
-  'Wildlife',
-  'Desert',
-  'Heritage',
-  'Urban',
-  'Rural',
-  'Trekking',
-  'Road Trip',
-  'Camping'
-] as const;
+var AVAILABLE_TAGS: any[]
+var parsedConfig : any
+
+const tags_response = await supabase
+  .from('tags')
+  .select('*');
+
+if (tags_response.error) {
+  console.error("Error fetching data:", tags_response.error);
+} else if (Array.isArray(tags_response.data)) {
+  AVAILABLE_TAGS = tags_response.data.map(item => item.tag_name);
+} else {
+  console.warn("Unexpected response format:", tags_response);
+}
+
+const config_response = await supabase
+  .from('config')
+  .select('*')
+
+  if (config_response.error) {
+    console.error("Error fetching data:", config_response.error);
+  } else {
+    var parsedConfig = Object.fromEntries(
+      config_response.data.map(item => {
+        try {
+          const formattedValue = item.config_value
+            .replace(/(\w+):/g, '"$1":') // Fix unquoted keys
+            .replace(/'([^']*)'/g, '"$1"'); // Convert single quotes to double quotes
+    
+          return [item.config_key, JSON.parse(formattedValue)];
+        } catch (err) {
+          console.error("Error parsing JSON for:", item.config_key, err);
+          return [item.config_key, null]; // Return null if parsing fails
+        }}));
+  }
+
+
+const tableHeaders = parsedConfig['admin_package_header_list']
+
+// const tableHeaders = [
+//   { label: "Package", align: "left" },
+//   { label: "Agency", align: "left" },
+//   { label: "Duration", align: "left" },
+//   { label: "Price", align: "left" },
+//   { label: "Group Size", align: "left" },
+//   { label: "Start Date", align: "left" },
+//   { label: "Status", align: "left" },
+//   { label: "Actions", align: "right" }
+// ]
 
 export function AdminDashboard() {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -308,15 +345,15 @@ export function AdminDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Package</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Agency</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Duration</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Group Size</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Start Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
+                  {tableHeaders.map((header, index) => (
+                  <th
+                    key={index}
+                    className={`px-6 py-3 text-${header.align} text-xs font-medium text-gray-500 uppercase tracking-wider`}
+                  >
+                    {header.label}
+                  </th>
+                ))}
+              </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {packages.map((pkg) => (

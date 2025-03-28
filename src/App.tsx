@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Users, Building2, Calendar, ArrowRight, Search, Filter, Star, LogOut, Clock, IndianRupee, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { PackageModal } from './components/PackageModal';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -133,7 +133,7 @@ const AVAILABLE_TAGS = [
   'Camping'
 ] as const;
 
-function MainContent({ selectedPackage, setSelectedPackage }: {
+function MainContent({ setSelectedPackage }: {
   selectedPackage: Package | null;
   setSelectedPackage: (pkg: Package | null) => void;
 }) {
@@ -207,7 +207,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       }
 
       const transformedData = data.map(pkg => {
-        const primaryImage = pkg.package_images?.find(img => img.is_primary)?.image_url;
+        const primaryImage = pkg.package_images?.find((img: { is_primary: any; })=> img.is_primary)?.image_url;
         return {
           ...pkg,
           image: primaryImage || pkg.image,
@@ -461,7 +461,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-0 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">All feature change 1</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Trips</h2>
           
           <div className="flex space-x-4">
             {/* Sort by Dropdown */}
