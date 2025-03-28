@@ -41,7 +41,7 @@ const config_response = await supabase
 
 
 const tableHeaders = parsedConfig['admin_package_header_list']
-
+console.log(tableHeaders)
 // const tableHeaders = [
 //   { label: "Package", align: "left" },
 //   { label: "Agency", align: "left" },
@@ -345,7 +345,7 @@ export function AdminDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  {tableHeaders.map((header, index) => (
+                  {tableHeaders.map((header: { align: any; label: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | Iterable<React.ReactNode> | React.ReactPortal | null | undefined; }, index: React.Key | null | undefined) => (
                   <th
                     key={index}
                     className={`px-6 py-3 text-${header.align} text-xs font-medium text-gray-500 uppercase tracking-wider`}
