@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Booking, Profile } from '../types/database.types';
-import { User, Calendar, Users, IndianRupee, Clock, Edit, X, Mail } from 'lucide-react';
+import { User, Calendar, Users, IndianRupee, Clock, Edit, Mail } from 'lucide-react';
 
 interface ExtendedBooking extends Booking {
   package: {

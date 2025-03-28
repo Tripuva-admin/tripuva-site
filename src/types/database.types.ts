@@ -34,3 +34,11 @@ export interface Profile {
   created_at?: string;
   updated_at?: string;
 }
+
+export interface Booking {
+  id: number;
+  status: string;
+  booking_date: Date;
+  number_of_people: number;
+  total_price: number;
+}
