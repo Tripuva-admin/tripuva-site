@@ -9,3 +9,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+
+    .card {
+        @apply bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02];
+      }
+    .btn-primary {
+        @apply bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all text-base font-medium flex items-center duration-200;
+      }  
+    .btn-outline {
+        @apply bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-green-500 hover:border-green-500 transition-all duration-200 text-base flex items-center;
+      }
+    .filter-container {
+      @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6;
+    }
+    .filter-card {
+      @apply bg-white rounded-lg shadow-sm p-6;
+    }
+    .filter-title {
+      @apply text-lg font-semibold text-gray-900 mb-4;
+    }
+    .filter-tags-grid {
+      @apply flex flex-wrap gap-2;
+    }
+    .filter-tag {
+      @apply px-4 py-2 rounded-md text-base font-medium transition-colors;
+    }
+    .filter-tag-active {
+      @apply bg-blue-700 text-white;
+    }
+    .filter-tag-inactive {
+      @apply bg-gray-100 text-gray-700 hover:bg-gray-200;
+    }
+    .filter-clear-btn {
+      @apply text-sm text-primary hover:text-primary-700;
+    }
+  }

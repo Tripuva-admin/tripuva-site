@@ -11,6 +11,7 @@ import { Legal } from './components/pages/Legal';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
 import TopPlaces from "./components/TopPlaces";
+import './index.css' 
 
 interface HeaderProps {
   user: Profile | null;
@@ -43,7 +44,7 @@ function Header({ user }: HeaderProps) {
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
               to="/top-places" 
-              className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+              className="btn-primary"
             >
               <Star className="h-4 w-4 mr-2" />
               Top Places
@@ -53,7 +54,7 @@ function Header({ user }: HeaderProps) {
     href="https://google.com"  // Replace with your actual URL
     target="_blank" 
     rel="noopener noreferrer"
-    className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-green-500 hover:text-white-0 hover:border-green-500 transition-all duration-200 text-base flex items-center"
+    className="btn-outline"
   >
     <ArrowRight className="h-4 w-4 mr-2" />
     Contact us on Whatsapp
@@ -428,36 +429,36 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       </div>
 
       {/* Tags Filter */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter by Experience</h3>
-          <div className="flex flex-wrap gap-2">
-            {AVAILABLE_TAGS.map(tag => (
-              <button
-                key={tag}
-                onClick={() => handleTagToggle(tag)}
-                className={`px-4 py-2 rounded-md text-md font-medium transition-colors ${
-                  filters.tags.includes(tag)
-                    ? 'bg-blue-700 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-          {filters.tags.length > 0 && (
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
-                className="text-sm text-primary hover:text-primary-700"
-              >
-                Clear Tags
-              </button>
-            </div>
-          )}
-        </div>
+<div className="filter-container">
+  <div className="filter-card">
+    <h3 className="filter-title">Filter by Experience</h3>
+    <div className="filter-tags-grid">
+      {AVAILABLE_TAGS.map(tag => (
+        <button
+          key={tag}
+          onClick={() => handleTagToggle(tag)}
+          className={`filter-tag ${
+            filters.tags.includes(tag)
+              ? 'filter-tag-active'
+              : 'filter-tag-inactive'
+          }`}
+        >
+          {tag}
+        </button>
+      ))}
+    </div>
+    {filters.tags.length > 0 && (
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
+          className="filter-clear-btn"
+        >
+          Clear Tags
+        </button>
       </div>
+    )}
+  </div>
+</div>
 
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-0 sm:px-6 lg:px-8">
@@ -516,7 +517,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
           <>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {currentPackages.map((pkg) => (
-                <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]">
+                <div key={pkg.id} className="card">
                   <div className="relative h-48">
                     <img
                       src={pkg.image}
