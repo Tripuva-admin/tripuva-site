@@ -11,7 +11,33 @@ import { Legal } from './components/pages/Legal';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
 
-var AVAILABLE_TAGS: any[] 
+var AVAILABLE_TAGS: any[]
+var parsedConfig: any 
+
+  const config_response = await supabase
+    .from('config')
+    .select('*')
+
+  if (config_response.error) {
+    console.error("Error fetching data:", config_response.error);
+  } else {
+    var parsedConfig = Object.fromEntries(
+      config_response.data.map(item => {
+        try {
+          const formattedValue = item.config_value
+            // .replace(/(\w+):/g, '"$1":') // Fix unquoted keys
+            // .replace(/'([^']*)'/g, '"$1"'); // Convert single quotes to double quotes
+            .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":') // Fix unquoted keys, avoid URLs
+            .replace(/'([^']*)'/g, '"$1"'); // Convert single quotes to double quotes
+    
+          return [item.config_key, JSON.parse(formattedValue)];
+        } catch (err) {
+          console.error(`Error parsing JSON for ${item.config_key}:`);
+          return [item.config_key, null]; // Return null if parsing fails
+        }}));
+  }
+
+  console.log(parsedConfig)
 
 interface HeaderProps {
   user: Profile | null;
@@ -299,117 +325,118 @@ function MainContent({ setSelectedPackage }: {
   return (
     <div>
       {/* Hero Section */}
-      <div className="relative min-h-[600px] flex items-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url("https://organizedadventurer.com/wp-content/uploads/2023/10/Antelope-Canyon-min-scaled.webp")'
-          }}
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
-        <div className="relative w-full z-10 pt-24 sm:pt-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
-              Travel Together, Create Memories
-            </h2>
-            <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-              Join group trips across India's most beautiful cities. Meet new people and explore together.
-            </p>
+        <div className="relative min-h-[600px] flex items-center">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'url("https://organizedadventurer.com/wp-content/uploads/2023/10/Antelope-Canyon-min-scaled.webp")'
+            }}
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-50" />
+          <div className="relative w-full z-10 pt-24 sm:pt-32">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
+                Travel Together, Create Memories
+              </h2>
+              <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
+                Join group trips across India's most beautiful cities. Meet new people and explore together.
+              </p>
 
-            {/* Search and Filters */}
-            <div className="mt-8">
-              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Destination
-                    </label>
-                    <div className="relative">
+              {/* Search and Filters */}
+              <div className="mt-8">
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Destination
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Enter destination"
+                          className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
+                          value={filters.destination}
+                          onChange={(e) => handleFilterChange({ destination: e.target.value })}
+                        />
+                        {filters.destination && (
+                          <button
+                            onClick={clearDestination}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          >
+                            <X className="h-5 w-5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Max Price (₹)
+                      </label>
                       <input
-                        type="text"
-                        placeholder="Enter destination"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
-                        value={filters.destination}
-                        onChange={(e) => handleFilterChange({ destination: e.target.value })}
+                        type="number"
+                        placeholder="100000"
+                        min="0"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                        value={filters.maxPrice}
+                        onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
                       />
-                      {filters.destination && (
-                        <button
-                          onClick={clearDestination}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                        value={filters.startDate}
+                        onChange={(e) => handleFilterChange({ startDate: e.target.value })}
+                      />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Max Price (₹)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="100000"
-                      min="0"
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                      value={filters.maxPrice}
-                      onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
-                    />
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={resetFilters}
+                      className="text-sm text-primary hover:text-primary-700"
+                    >
+                      Reset All
+                    </button>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                      value={filters.startDate}
-                      onChange={(e) => handleFilterChange({ startDate: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={resetFilters}
-                    className="text-sm text-primary hover:text-primary-700"
-                  >
-                    Reset All
-                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
+
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">Popular Destinations</h2>
+        {filters.destination && (
+          <button
+            onClick={clearDestination}
+            className="flex items-center text-primary hover:text-primary-700 transition-colors"
+          >
+            <X className="h-5 w-5 mr-1" />
+            Clear Selection
+          </button>
+        )}
       </div>
 
-      {/* Popular Destinations */}
-      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Popular Destinations</h2>
-          {filters.destination && (
+      {/* Dynamic grid of destinations */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {[
+          { name: "Goa", image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80", hasPackage: true },
+          { name: "Manali", image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80", hasPackage: false },
+          { name: "Jaipur", image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80", hasPackage: false },
+          { name: "Varanasi", image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&q=80", hasPackage: false },
+          { name: "Kerala", image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80", hasPackage: false },
+          { name: "Ladakh", image: "https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?auto=format&fit=crop&q=80", hasPackage: false }
+        ].map((city: { name: any; hasPackage: boolean; image: string; }) => (
+          <div key={city.name} className="relative group">
             <button
-              onClick={clearDestination}
-              className="flex items-center text-primary hover:text-primary-700 transition-colors"
-            >
-              <X className="h-5 w-5 mr-1" />
-              Clear Selection
-            </button>
-          )}
-        </div>
-        {/* Need to make this dynamic based on most popular destination package*/}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { name: 'Goa', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80' },
-            { name: 'Manali', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80' },
-            { name: 'Jaipur', image: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80' },
-            { name: 'Varanasi', image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&q=80' },
-            { name: 'Kerala', image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80' },
-            { name: 'Ladakh', image: 'https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?auto=format&fit=crop&q=80' }
-          ].map((city) => (
-            <button
-              key={city.name}
-              onClick={() => handleFilterChange({ destination: city.name })}
-              className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ${
-                filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
+              onClick={() => city.hasPackage && handleFilterChange({ destination: city.name })}
+              disabled={!city.hasPackage}
+              className={`relative overflow-hidden rounded-lg shadow-md transition-all duration-300 w-full ${
+                city.hasPackage ? 'hover:shadow-xl' : 'opacity-50 cursor-not-allowed'
               }`}
             >
               <div className="w-full pb-[100%] relative">
@@ -424,9 +451,17 @@ function MainContent({ setSelectedPackage }: {
                 </div>
               </div>
             </button>
-          ))}
-        </div>
+
+            {/* Coming Soon Overlay for unavailable destinations */}
+            {!city.hasPackage && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="absolute text-white text-lg font-bold bg-red px-3 py-1 rounded-md pointer-events-auto">Coming Soon</span>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
+    </div>
 
       {/* Tags Filter */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
