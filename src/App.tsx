@@ -11,6 +11,8 @@ import { Legal } from './components/pages/Legal';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
 
+var AVAILABLE_TAGS: any[] 
+
 interface HeaderProps {
   user: Profile | null;
 }
@@ -120,18 +122,17 @@ function Header({ user }: HeaderProps) {
   );
 }
 
-const AVAILABLE_TAGS = [
-  'Hill',
-  'Beaches', 
-  'Wildlife',
-  'Desert',
-  'Heritage',
-  'Urban',
-  'Rural',
-  'Trekking',
-  'Road Trip',
-  'Camping'
-] as const;
+const tags_response = await supabase
+  .from('tags')
+  .select('*');
+
+if (tags_response.error) {
+  console.error("Error fetching data:", tags_response.error);
+} else if (Array.isArray(tags_response.data)) {
+  AVAILABLE_TAGS = tags_response.data.map(item => item.tag_name);
+} else {
+  console.warn("Unexpected response format:", tags_response);
+}
 
 function MainContent({ setSelectedPackage }: {
   selectedPackage: Package | null;
@@ -394,6 +395,7 @@ function MainContent({ setSelectedPackage }: {
             </button>
           )}
         </div>
+        {/* Need to make this dynamic based on most popular destination package*/}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
             { name: 'Goa', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80' },

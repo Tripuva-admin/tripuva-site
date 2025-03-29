@@ -39,19 +39,7 @@ const config_response = await supabase
         }}));
   }
 
-
 const tableHeaders = parsedConfig['admin_package_header_list']
-console.log(tableHeaders)
-// const tableHeaders = [
-//   { label: "Package", align: "left" },
-//   { label: "Agency", align: "left" },
-//   { label: "Duration", align: "left" },
-//   { label: "Price", align: "left" },
-//   { label: "Group Size", align: "left" },
-//   { label: "Start Date", align: "left" },
-//   { label: "Status", align: "left" },
-//   { label: "Actions", align: "right" }
-// ]
 
 export function AdminDashboard() {
   const [packages, setPackages] = useState<Package[]>([]);
@@ -60,22 +48,7 @@ export function AdminDashboard() {
   const [showAgencyForm, setShowAgencyForm] = useState(false);
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState<Omit<Package, 'id' | 'created_at' | 'updated_at'>>({
-    title: '',
-    description: '',
-    duration: 1,
-    price: 0,
-    group_size: 1,
-    image: '',
-    start_date: '',
-    agency_id: '',
-    status: 'open',
-    package_id: '',
-    booking_link: '',
-    tags: [],
-    ranking: 1000,
-    advance: 0
-  });
+  const [formData, setFormData] = useState<Omit<Package, 'id' | 'created_at' | 'updated_at'>>(parsedConfig['init_create_package_form_data']);
   const [packageImages, setPackageImages] = useState<string[]>(['']);
   const [newAgency, setNewAgency] = useState({ name: '', rating: 5 });
 
@@ -130,7 +103,7 @@ export function AdminDashboard() {
 
       if (error) throw error;
 
-      setNewAgency({ name: '', rating: 5 });
+      setNewAgency(parsedConfig['init_create_agency_form_data']);
       setShowAgencyForm(false);
       await fetchAgencies();
     } catch (error) {
@@ -191,22 +164,7 @@ export function AdminDashboard() {
         }
       }
 
-      setFormData({
-        title: '',
-        description: '',
-        duration: 1,
-        price: 0,
-        group_size: 1,
-        image: '',
-        start_date: '',
-        agency_id: '',
-        status: 'open',
-        package_id: '',
-        booking_link: '',
-        tags: [],
-        ranking: 1000,
-        advance: 0
-      });
+      setFormData(parsedConfig['init_create_package_form_data']);
       setPackageImages(['']);
       setShowPackageForm(false);
       setEditingPackage(null);
@@ -345,7 +303,7 @@ export function AdminDashboard() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  {tableHeaders.map((header, index) => (
+                  {tableHeaders.map((header: { align: any; label: string; }, index: React.Key | null | undefined) => (
                   <th
                     key={index}
                     className={`px-6 py-3 text-${header.align} text-xs font-medium text-gray-500 uppercase tracking-wider`}
