@@ -1,25 +1,38 @@
 /** @type {import('tailwindcss').Config} */
-export default {
-  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#0A2472',
-          50: '#E6EAF4',
-          100: '#CCD4E9',
-          200: '#99A9D3',
-          300: '#667EBD',
-          400: '#3353A7',
-          500: '#0A2472',
-          600: '#081D5B',
-          700: '#061644',
-          800: '#040F2D',
-          900: '#020816',
+          DEFAULT: '#059669', // Vibrant Forest Green
+          light: '#10B981',
+          dark: '#047857',
         },
+        secondary: {
+          DEFAULT: '#7C3AED', // Rich Purple
+          light: '#8B5CF6',
+          dark: '#6D28D9',
+        },
+        accent: {
+          DEFAULT: '#F59E0B', // Warm Amber
+          light: '#FBBF24',
+          dark: '#D97706',
+        },
+        background: {
+          light: '#ECFDF5', // Soft Mint
+          dark: '#1E293B',
+        },
+        text: {
+          light: '#F0FDF4',
+          dark: '#1F2937',
+          muted: '#6B7280',
+        }
       },
       fontFamily: {
-        yusei: ['"Yusei Magic"', 'Arial'],  
+        'yusei': ['Yusei Magic', 'sans-serif'],
       },
       letterSpacing: {
         extra: '0.08em',  // Custom letter spacing
@@ -28,4 +41,4 @@ export default {
     },
   },
   plugins: [],
-};
+}

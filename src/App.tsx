@@ -11,6 +11,44 @@ import { Legal } from './components/pages/Legal';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
 
+var AVAILABLE_TAGS: any[]
+var parsedConfig: any 
+
+const config_response = await supabase
+  .from('config')
+  .select('*')
+
+if (config_response.error) {
+  console.error("Error fetching data:", config_response.error);
+} else {
+  var parsedConfig = Object.fromEntries(
+    config_response.data.map(item => {
+      try {
+        const formattedValue = item.config_value
+          .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":') // Fix unquoted keys, avoid URLs
+          .replace(/'([^']*)'/g, '"$1"'); // Convert single quotes to double quotes
+  
+        return [item.config_key, JSON.parse(formattedValue)];
+      } catch (err) {
+        console.error(`Error parsing JSON for ${item.config_key}:`);
+        return [item.config_key, null]; // Return null if parsing fails
+      }}));
+}
+
+console.log(parsedConfig)
+
+const tags_response = await supabase
+  .from('tags')
+  .select('*');
+
+if (tags_response.error) {
+  console.error("Error fetching data:", tags_response.error);
+} else if (Array.isArray(tags_response.data)) {
+  AVAILABLE_TAGS = tags_response.data.map(item => item.tag_name);
+} else {
+  console.warn("Unexpected response format:", tags_response);
+}
+
 interface HeaderProps {
   user: Profile | null;
 }
@@ -49,13 +87,13 @@ function Header({ user }: HeaderProps) {
             </Link>
 
             <a 
-    href="https://google.com"  // Replace with your actual URL
-    target="_blank" 
-    rel="noopener noreferrer"
-    className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition-all duration-200 text-base font-medium flex items-center"
-  >
-    <ArrowRight className="h-4 w-4 mr-2" />
-    Contact us on Whatsapp
+              href="https://google.com"
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-green-500 hover:text-black transition-all duration-200 text-base font-medium flex items-center"
+            >
+              <ArrowRight className="h-4 w-4 mr-2" />
+              Contact us on Whatsapp
             </a>
             
             {user && (
@@ -94,14 +132,14 @@ function Header({ user }: HeaderProps) {
               </Link>
 
               <a
-        href="https://google.com"  // Change to your actual link
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
-      >
-        <ArrowRight className="h-4 w-4 mr-2" />
-        Contact us on Whatsapp
-      </a>
+                href="https://google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+              >
+                <ArrowRight className="h-4 w-4 mr-2" />
+                Contact us on Whatsapp
+              </a>
 
               {user && (
                 <button
@@ -119,19 +157,6 @@ function Header({ user }: HeaderProps) {
     </header>
   );
 }
-
-const AVAILABLE_TAGS = [
-  'Hill',
-  'Beaches', 
-  'Wildlife',
-  'Desert',
-  'Heritage',
-  'Urban',
-  'Rural',
-  'Trekking',
-  'Road Trip',
-  'Camping'
-] as const;
 
 function MainContent({ setSelectedPackage }: {
   selectedPackage: Package | null;
@@ -155,23 +180,6 @@ function MainContent({ setSelectedPackage }: {
 
   // Sorting state
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
-
-  const handleSort = (type: string) => {
-    const sortedPackages = [...packages];
-    switch (type) {
-      case 'price':
-        sortedPackages.sort((a, b) => a.price - b.price);
-        break;
-      case '-price':
-        sortedPackages.sort((a, b) => b.price - a.price);
-        break;
-      case 'date':
-        sortedPackages.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
-        break;
-    }
-    setPackages(sortedPackages);
-    setSortMenuOpen(false);
-  };
 
   useEffect(() => {
     fetchPackages();
@@ -222,6 +230,23 @@ function MainContent({ setSelectedPackage }: {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSort = (type: string) => {
+    const sortedPackages = [...packages];
+    switch (type) {
+      case 'price':
+        sortedPackages.sort((a, b) => a.price - b.price);
+        break;
+      case '-price':
+        sortedPackages.sort((a, b) => b.price - a.price);
+        break;
+      case 'date':
+        sortedPackages.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+        break;
+    }
+    setPackages(sortedPackages);
+    setSortMenuOpen(false);
   };
 
   const resetFilters = () => {
@@ -394,34 +419,41 @@ function MainContent({ setSelectedPackage }: {
             </button>
           )}
         </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
-            { name: 'Goa', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80' },
-            { name: 'Manali', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80' },
-            { name: 'Jaipur', image: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80' },
-            { name: 'Varanasi', image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&q=80' },
-            { name: 'Kerala', image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80' },
-            { name: 'Ladakh', image: 'https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?auto=format&fit=crop&q=80' }
+            { name: "Goa", image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80", hasPackage: true },
+            { name: "Manali", image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Jaipur", image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Varanasi", image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Kerala", image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Ladakh", image: "https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?auto=format&fit=crop&q=80", hasPackage: false }
           ].map((city) => (
-            <button
-              key={city.name}
-              onClick={() => handleFilterChange({ destination: city.name })}
-              className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ${
-                filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
-              }`}
-            >
-              <div className="w-full pb-[100%] relative">
-                <img
-                  src={city.image}
-                  alt={city.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white font-semibold text-lg">{city.name}</p>
+            <div key={city.name} className="relative group">
+              <button
+                onClick={() => handleFilterChange({ destination: city.name })}
+                className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full ${
+                  filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
+                }`}
+              >
+                <div className="w-full pb-[100%] relative">
+                  <img
+                    src={city.image}
+                    alt={city.name}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-white font-semibold text-lg">{city.name}</p>
+                  </div>
+                  {!city.hasPackage && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="text-white font-semibold text-lg">Coming Soon</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </button>
+              </button>
+            </div>
           ))}
         </div>
       </div>
