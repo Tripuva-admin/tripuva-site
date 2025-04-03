@@ -1,82 +1,73 @@
 import { Link } from 'react-router-dom';
+import { Search, Calendar, DollarSign, RefreshCw, ArrowRight } from 'lucide-react';
 
 const Home = () => {
   return (
-    <div>
-      <div className="relative">
+    <div className="min-h-screen">
+      {/* Hero Section */}
+      <section className="relative h-[60vh]">
         <div className="absolute inset-0">
           <img
             src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80"
             alt="Travel background"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-primary/80 to-secondary/80" />
         </div>
-        <div className="relative max-w-7xl mx-auto py-24 px-4 sm:py-32 sm:px-6 lg:px-8">
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-5xl lg:text-6xl font-comfortaa">
-            Travel Together, Create Memories
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex flex-col justify-center">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-white mb-6 font-comfortaa">
+            Explore India's Hidden Gems
           </h1>
-          <p className="mt-6 text-xl text-white max-w-3xl">
-            Join our group trips and explore India's hidden gems with fellow travelers. From the majestic Himalayas to the serene backwaters of Kerala, we've got your next adventure covered.
+          <p className="text-xl text-white/90 mb-8 max-w-2xl">
+            Join group trips to discover the most beautiful and unique destinations across India.
           </p>
-          <div className="mt-10">
-            <Link
-              to="#packages"
-              className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-primary bg-white hover:bg-gray-100"
-            >
-              Explore Packages
-            </Link>
-          </div>
+          <Link
+            to="/packages"
+            className="bg-accent hover:bg-accent-dark text-white px-6 py-3 rounded-md transition-all duration-200 text-lg font-medium inline-flex items-center"
+          >
+            Explore Travel Packages
+            <ArrowRight className="h-5 w-5 ml-2" />
+          </Link>
         </div>
-      </div>
+      </section>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-2xl font-bold text-text-dark mb-6 font-comfortaa">Find Your Perfect Trip</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label htmlFor="destination" className="block text-sm font-medium text-text-muted mb-2">
-                Destination
-              </label>
-              <input
-                type="text"
-                id="destination"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                placeholder="Where do you want to go?"
-              />
+      {/* Search Section */}
+      <section className="py-16 bg-background-light">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h2 className="text-2xl font-bold text-text-dark mb-6 font-comfortaa">Find Your Perfect Trip</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted h-5 w-5" />
+                <input
+                  type="text"
+                  placeholder="Destination"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+              <div className="relative">
+                <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted h-5 w-5" />
+                <input
+                  type="number"
+                  placeholder="Max Price"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+              <div className="relative">
+                <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-text-muted h-5 w-5" />
+                <input
+                  type="date"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                />
+              </div>
+              <button className="bg-primary hover:bg-primary-dark text-white px-4 py-2 rounded-md transition-all duration-200 flex items-center justify-center">
+                <RefreshCw className="h-5 w-5 mr-2" />
+                Reset Filters
+              </button>
             </div>
-            <div>
-              <label htmlFor="maxPrice" className="block text-sm font-medium text-text-muted mb-2">
-                Max Price
-              </label>
-              <input
-                type="number"
-                id="maxPrice"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                placeholder="₹"
-              />
-            </div>
-            <div>
-              <label htmlFor="startDate" className="block text-sm font-medium text-text-muted mb-2">
-                Start Date
-              </label>
-              <input
-                type="date"
-                id="startDate"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-              />
-            </div>
-          </div>
-          <div className="mt-6 flex justify-end">
-            <button
-              type="button"
-              className="px-4 py-2 border border-gray-300 rounded-md text-text-muted hover:bg-gray-50"
-            >
-              Reset Filters
-            </button>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
