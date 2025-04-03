@@ -81,7 +81,7 @@ function Header({ user }: HeaderProps) {
 
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
-              to="/" 
+              to="/top-places" 
               className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
             >
               <Star className="h-4 w-4 mr-2" />
@@ -92,7 +92,7 @@ function Header({ user }: HeaderProps) {
               href="https://google.com"
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-white text-[#0a2472] px-4 py-2 rounded-md hover:bg-green-500 hover:text-white transition-all duration-200 text-base font-medium flex items-center"
+              className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -125,7 +125,7 @@ function Header({ user }: HeaderProps) {
           <nav className="sm:hidden mt-4 pb-4">
             <div className="flex flex-col space-y-4">
               <Link
-                to="/"
+                to="/top-places"
                 className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -137,7 +137,7 @@ function Header({ user }: HeaderProps) {
                 href="https://google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white text-[#0a2472] px-4 py-2 rounded-md hover:bg-green-500 hover:text-white transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+                className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
               >
                 <ArrowRight className="h-4 w-4 mr-2" />
                 Contact us on Whatsapp
@@ -548,7 +548,7 @@ function MainContent({ setSelectedPackage }: {
           <>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
               {currentPackages.map((pkg) => (
-                <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02]">
+                <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02] flex flex-col h-full">
                   <div className="relative h-48">
                     <img
                       src={pkg.image}
@@ -565,10 +565,10 @@ function MainContent({ setSelectedPackage }: {
                       </span>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-xl font-semibold text-gray-900">{pkg.title}</h3>
+                  <div className="p-6 flex flex-col flex-grow">
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex-grow">
+                        <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
                         <div className="mt-1">
                           {pkg.agency && (
                             <>
@@ -583,12 +583,11 @@ function MainContent({ setSelectedPackage }: {
                           )}
                         </div>
                       </div>
-                      <span className="text-lg font-bold text-primary">₹{pkg.price.toLocaleString()}</span>
+                      <span className="text-lg font-bold text-primary ml-4 flex-shrink-0">₹{pkg.price.toLocaleString()}</span>
                     </div>
                     
-                    {/* Add tags display */}
                     {pkg.tags && pkg.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mt-2">
+                      <div className="flex flex-wrap gap-1 mb-4">
                         {pkg.tags.map(tag => (
                           <span
                             key={tag}
@@ -600,29 +599,31 @@ function MainContent({ setSelectedPackage }: {
                       </div>
                     )}
 
-                    <div className="mt-4 space-y-3">
+                    <div className="space-y-3 mb-6">
                       <div className="flex items-center text-gray-600">
-                        <Calendar className="h-5 w-5 mr-2" />
-                        <span>{new Date(pkg.start_date).toLocaleDateString()}</span>
+                        <Calendar className="h-5 w-5 mr-2 flex-shrink-0" />
+                        <span className="truncate">{new Date(pkg.start_date).toLocaleDateString()}</span>
                       </div>
                       <div className="flex items-center text-gray-600">
-                        <Clock className="h-5 w-5 mr-2" />
-                        <span>{pkg.duration} days</span>
+                        <Clock className="h-5 w-5 mr-2 flex-shrink-0" />
+                        <span className="truncate">{pkg.duration} days</span>
                       </div>
                       <div className="flex items-center text-gray-600">
-                        <Users className="h-5 w-5 mr-2" />
-                        <span>{pkg.group_size} spots</span>
+                        <Users className="h-5 w-5 mr-2 flex-shrink-0" />
+                        <span className="truncate">{pkg.group_size} spots</span>
                       </div>
-                      <p className="text-gray-600 mt-2 line-clamp-2">{pkg.description}</p>
+                      <p className="text-gray-600 line-clamp-2">{pkg.description}</p>
                     </div>
-                    <button
-                      onClick={() => setSelectedPackage(pkg)}
-                      className="mt-6 w-full bg-[#0a2472] text-white py-2 px-4 rounded-md hover:bg-[#0a2472]/90 flex items-center justify-center"
-                      disabled={pkg.status === 'closed'}
-                    >
-                      {pkg.status === 'closed' ? 'Booking Closed' : 'View Details'}
-                      {pkg.status === 'open' && <ArrowRight className="ml-2 h-4 w-4" />}
-                    </button>
+                    <div className="mt-auto">
+                      <button
+                        onClick={() => setSelectedPackage(pkg)}
+                        className="w-full bg-[#0a2472] text-white py-2 px-4 rounded-md hover:bg-[#0a2472]/90 flex items-center justify-center"
+                        disabled={pkg.status === 'closed'}
+                      >
+                        {pkg.status === 'closed' ? 'Booking Closed' : 'View Details'}
+                        {pkg.status === 'open' && <ArrowRight className="ml-2 h-4 w-4" />}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -716,8 +717,8 @@ function App() {
 
               <div className="hidden sm:flex items-center space-x-6">
                 <Link 
-                  to="/" 
-                  className="text-white hover:text-blue-200 transition-all duration-200 text-base font-medium flex items-center"
+                  to="/top-places" 
+                  className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
                 >
                   <Star className="h-4 w-4 mr-2" />
                   Top Places
@@ -727,7 +728,7 @@ function App() {
                   href="https://google.com"
                   target="_blank" 
                   rel="noopener noreferrer"
-                  className="bg-white text-[#0a2472] px-4 py-2 rounded-md hover:bg-green-500 hover:text-white transition-all duration-200 text-base font-medium flex items-center"
+                  className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
                 >
                   <ArrowRight className="h-4 w-4 mr-2" />
                   Contact us on Whatsapp
@@ -759,17 +760,62 @@ function App() {
             <Route 
               path="/" 
               element={
-                <MainContent 
-                  selectedPackage={selectedPackage}
-                  setSelectedPackage={setSelectedPackage}
-                />
+                <>
+                  <MainContent 
+                    selectedPackage={selectedPackage}
+                    setSelectedPackage={setSelectedPackage}
+                  />
+                  {selectedPackage && (
+                    <PackageModal
+                      package={selectedPackage}
+                      onClose={() => setSelectedPackage(null)}
+                    />
+                  )}
+                </>
               } 
+            />
+            <Route 
+              path="/top-places" 
+              element={<TopPlaces />} 
             />
             <Route 
               path="/admin" 
               element={
                 user?.is_admin ? (
-                  <AdminDashboard />
+                  <div className="min-h-screen bg-background-light">
+                    <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
+                      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between h-16">
+                          <div className="flex">
+                            <Link to="/" className="flex items-center">
+                              <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+                            </Link>
+                          </div>
+                          <div className="hidden sm:flex items-center space-x-6">
+                            <Link 
+                              to="/top-places" 
+                              className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+                            >
+                              <Star className="h-4 w-4 mr-2" />
+                              Top Places
+                            </Link>
+                            <a 
+                              href="https://google.com"
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+                            >
+                              <ArrowRight className="h-4 w-4 mr-2" />
+                              Contact us on Whatsapp
+                            </a>
+                          </div>
+                        </div>
+                      </nav>
+                    </header>
+                    <main className="flex-grow pt-24">
+                      <AdminDashboard />
+                    </main>
+                  </div>
                 ) : (
                   <Navigate to="/admin-login" replace />
                 )
@@ -778,17 +824,198 @@ function App() {
             <Route
               path="/admin-login"
               element={
-                user?.is_admin ? (
-                  <Navigate to="/admin" replace />
-                ) : (
-                  <AdminLogin />
-                )
+                <div className="min-h-screen bg-background-light">
+                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
+                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                      <div className="flex justify-between h-16">
+                        <div className="flex">
+                          <Link to="/" className="flex items-center">
+                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+                          </Link>
+                        </div>
+                        <div className="hidden sm:flex items-center space-x-6">
+                          <Link 
+                            to="/top-places" 
+                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <Star className="h-4 w-4 mr-2" />
+                            Top Places
+                          </Link>
+                          <a 
+                            href="https://google.com"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            Contact us on Whatsapp
+                          </a>
+                        </div>
+                      </div>
+                    </nav>
+                  </header>
+                  <main className="flex-grow pt-24">
+                    <AdminLogin />
+                  </main>
+                </div>
               }
             />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/legal/:page" element={<Legal />} />
+            <Route 
+              path="/about" 
+              element={
+                <div className="min-h-screen bg-background-light">
+                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
+                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                      <div className="flex justify-between h-16">
+                        <div className="flex">
+                          <Link to="/" className="flex items-center">
+                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+                          </Link>
+                        </div>
+                        <div className="hidden sm:flex items-center space-x-6">
+                          <Link 
+                            to="/top-places" 
+                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <Star className="h-4 w-4 mr-2" />
+                            Top Places
+                          </Link>
+                          <a 
+                            href="https://google.com"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            Contact us on Whatsapp
+                          </a>
+                        </div>
+                      </div>
+                    </nav>
+                  </header>
+                  <main className="flex-grow pt-24">
+                    <About />
+                  </main>
+                </div>
+              } 
+            />
+            <Route 
+              path="/contact" 
+              element={
+                <div className="min-h-screen bg-background-light">
+                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
+                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                      <div className="flex justify-between h-16">
+                        <div className="flex">
+                          <Link to="/" className="flex items-center">
+                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+                          </Link>
+                        </div>
+                        <div className="hidden sm:flex items-center space-x-6">
+                          <Link 
+                            to="/top-places" 
+                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <Star className="h-4 w-4 mr-2" />
+                            Top Places
+                          </Link>
+                          <a 
+                            href="https://google.com"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            Contact us on Whatsapp
+                          </a>
+                        </div>
+                      </div>
+                    </nav>
+                  </header>
+                  <main className="flex-grow pt-24">
+                    <Contact />
+                  </main>
+                </div>
+              } 
+            />
+            <Route 
+              path="/faq" 
+              element={
+                <div className="min-h-screen bg-background-light">
+                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
+                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                      <div className="flex justify-between h-16">
+                        <div className="flex">
+                          <Link to="/" className="flex items-center">
+                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+                          </Link>
+                        </div>
+                        <div className="hidden sm:flex items-center space-x-6">
+                          <Link 
+                            to="/top-places" 
+                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <Star className="h-4 w-4 mr-2" />
+                            Top Places
+                          </Link>
+                          <a 
+                            href="https://google.com"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            Contact us on Whatsapp
+                          </a>
+                        </div>
+                      </div>
+                    </nav>
+                  </header>
+                  <main className="flex-grow pt-24">
+                    <FAQ />
+                  </main>
+                </div>
+              } 
+            />
+            <Route 
+              path="/legal/*" 
+              element={
+                <div className="min-h-screen bg-background-light">
+                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
+                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                      <div className="flex justify-between h-16">
+                        <div className="flex">
+                          <Link to="/" className="flex items-center">
+                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+                          </Link>
+                        </div>
+                        <div className="hidden sm:flex items-center space-x-6">
+                          <Link 
+                            to="/top-places" 
+                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <Star className="h-4 w-4 mr-2" />
+                            Top Places
+                          </Link>
+                          <a 
+                            href="https://google.com"
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+                          >
+                            <ArrowRight className="h-4 w-4 mr-2" />
+                            Contact us on Whatsapp
+                          </a>
+                        </div>
+                      </div>
+                    </nav>
+                  </header>
+                  <main className="flex-grow pt-24">
+                    <Legal />
+                  </main>
+                </div>
+              } 
+            />
           </Routes>
         </main>
 
@@ -796,59 +1023,59 @@ function App() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
-                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
-                <p className="text-gray-300 text-lg">
+                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
+                <p className="text-gray-300 text-base">
                   Connecting travelers across India for unforgettable group adventures and cultural experiences.
                 </p>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
+                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-lg">
+                    <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
                       About Us
                     </Link>
                   </li>
                   <li>
-                    <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-lg">
+                    <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-base">
                       Contact Us
                     </Link>
                   </li>
                   <li>
-                    <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-lg">
+                    <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-base">
                       FAQ
                     </Link>
                   </li>
                 </ul>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">Legal</h3>
+                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-lg">
+                    <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
                       Terms & Conditions
                     </Link>
                   </li>
                   <li>
-                    <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-lg">
+                    <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-base">
                       Privacy Policy
                     </Link>
                   </li>
                   <li>
-                    <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-lg">
+                    <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-base">
                       Refund Policy
                     </Link>
                   </li>
                   <li>
-                    <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-lg">
+                    <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-base">
                       Disclaimer
                     </Link>
                   </li>
                 </ul>
               </div>
               <div>
-                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
-                <address className="text-gray-300 not-italic space-y-2 text-lg">
+                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
+                <address className="text-gray-300 not-italic space-y-2 text-base">
                   <p className="flex items-center">
                     <span className="block">Email: info@tripuva.com</span>
                   </p>
@@ -860,18 +1087,18 @@ function App() {
                   </p>
                 </address>
                 <div className="mt-4">
-                  <h4 className="text-lg font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
-                  <p className="text-gray-300 text-lg">
+                  <h4 className="text-base font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
+                  <p className="text-gray-300 text-base">
                     Monday - Friday: 9:00 AM - 6:00 PM IST
                   </p>
-                  <p className="text-gray-300 text-lg">
+                  <p className="text-gray-300 text-base">
                     Saturday: 10:00 AM - 4:00 PM IST
                   </p>
                 </div>
               </div>
             </div>
             <div className="mt-8 pt-8 border-t border-gray-700">
-              <p className="text-gray-300 text-center font-comfortaa text-lg">
+              <p className="text-gray-300 text-center font-comfortaa text-base">
                 &copy; {new Date().getFullYear()} tripuva. All rights reserved.
               </p>
             </div>
