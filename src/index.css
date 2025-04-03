@@ -1,10 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Sedgwick+Ave&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Sedgwick+Ave&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Julee&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Aclonica&family=Julee&display=swap');
-@import url('https://fonts.googleapis.com/css2?family=Reggae+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Reggae+One&display=swap'); */
 @import url('https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap');
 
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* @font-face{
+    font-family: "Timeburner";
+    src:local("Timeburner-Regular"),
+    url('./assets/timeburner-font/Timeburner-xJB8.ttf') 
+  } */
+@font-face {
+    font-family: "Timeburner";
+    src:local("Timeburner-Bold")
+    url('./assets/timeburner-font/TimeburnerBold-peGR.ttf');
+}
+
+/* * {
+  font-family: 'Timeburner';
+} */

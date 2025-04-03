@@ -42,3 +42,16 @@ export interface Booking {
   number_of_people: number;
   total_price: number;
 }
+
+export interface Config {
+  id: string;
+  config_key: string;
+  config_value: string;
+  created_at?: string;
+}
+
+export interface tags {
+  id: string;
+  tag_name: string;
+  created_at?: string;
+}

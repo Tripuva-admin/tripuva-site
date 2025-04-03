@@ -166,6 +166,43 @@ export interface Database {
           updated_at?: string
         }
       }
+      config: {
+        Row: {
+          id: string;
+          config_key: string;
+          config_value: string;
+          created_at: string;
+        }
+        Insert: {
+          id?: string;
+          config_key: string;
+          config_value: string;
+          created_at?: string;
+        }
+        Update: {
+          id?: string;
+          config_key?: string;
+          config_value?: string;
+          created_at?: string;
+        }
+      }
+      tags: {
+        Row: {
+          id: string;
+          tag_name: string;
+          created_at: string;
+        }
+        Insert: {
+          id?: string;
+          tag_name: string;
+          created_at?: string;
+        }
+        Update: {
+          id?: string;
+          tag_name?: string;
+          created_at?: string;
+        }
+      }
     }
     Views: {
       [_ in never]: never
