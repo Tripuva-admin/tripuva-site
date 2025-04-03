@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { MapPin, Users, Building2, Calendar, ArrowRight, Search, Filter, Star, LogOut, Clock, IndianRupee, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { MapPin, Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
 import { PackageModal } from './components/PackageModal';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -12,6 +12,44 @@ import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
 import TopPlaces from "./components/TopPlaces";
 import './index.css' 
+
+var AVAILABLE_TAGS: any[]
+var parsedConfig: any 
+
+const config_response = await supabase
+  .from('config')
+  .select('*')
+
+if (config_response.error) {
+  console.error("Error fetching data:", config_response.error);
+} else {
+  var parsedConfig = Object.fromEntries(
+    config_response.data.map(item => {
+      try {
+        const formattedValue = item.config_value
+          .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":') // Fix unquoted keys, avoid URLs
+          .replace(/'([^']*)'/g, '"$1"'); // Convert single quotes to double quotes
+  
+        return [item.config_key, JSON.parse(formattedValue)];
+      } catch (err) {
+        console.error(`Error parsing JSON for ${item.config_key}:`);
+        return [item.config_key, null]; // Return null if parsing fails
+      }}));
+}
+
+console.log(parsedConfig)
+
+const tags_response = await supabase
+  .from('tags')
+  .select('*');
+
+if (tags_response.error) {
+  console.error("Error fetching data:", tags_response.error);
+} else if (Array.isArray(tags_response.data)) {
+  AVAILABLE_TAGS = tags_response.data.map(item => item.tag_name);
+} else {
+  console.warn("Unexpected response format:", tags_response);
+}
 
 interface HeaderProps {
   user: Profile | null;
@@ -54,7 +92,7 @@ function Header({ user }: HeaderProps) {
     href="https://google.com"  // Replace with your actual URL
     target="_blank" 
     rel="noopener noreferrer"
-    className="btn-outline"
+    className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition-all duration-200 text-base font-medium flex items-center"
   >
     <ArrowRight className="h-4 w-4 mr-2" />
     Contact us on Whatsapp
@@ -96,14 +134,14 @@ function Header({ user }: HeaderProps) {
               </Link>
 
               <a
-        href="https://google.com"  // Change to your actual link
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
-      >
-        <ArrowRight className="h-4 w-4 mr-2" />
-        Contact us on Whatsapp
-      </a>
+                href="https://google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-transparent border border-white text-white px-4 py-2 rounded-md hover:bg-white hover:text-blue-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+              >
+                <ArrowRight className="h-4 w-4 mr-2" />
+                Contact us on Whatsapp
+              </a>
 
               {user && (
                 <button
@@ -122,20 +160,7 @@ function Header({ user }: HeaderProps) {
   );
 }
 
-const AVAILABLE_TAGS = [
-  'Hill',
-  'Beaches', 
-  'Wildlife',
-  'Desert',
-  'Heritage',
-  'Urban',
-  'Rural',
-  'Trekking',
-  'Road Trip',
-  'Camping'
-] as const;
-
-function MainContent({ selectedPackage, setSelectedPackage }: {
+function MainContent({ setSelectedPackage }: {
   selectedPackage: Package | null;
   setSelectedPackage: (pkg: Package | null) => void;
 }) {
@@ -157,23 +182,6 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
 
   // Sorting state
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
-
-  const handleSort = (type: string) => {
-    const sortedPackages = [...packages];
-    switch (type) {
-      case 'price':
-        sortedPackages.sort((a, b) => a.price - b.price);
-        break;
-      case '-price':
-        sortedPackages.sort((a, b) => b.price - a.price);
-        break;
-      case 'date':
-        sortedPackages.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
-        break;
-    }
-    setPackages(sortedPackages);
-    setSortMenuOpen(false);
-  };
 
   useEffect(() => {
     fetchPackages();
@@ -209,7 +217,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       }
 
       const transformedData = data.map(pkg => {
-        const primaryImage = pkg.package_images?.find((img: any) => img.is_primary)?.image_url;
+        const primaryImage = pkg.package_images?.find(img => img.is_primary)?.image_url;
         return {
           ...pkg,
           image: primaryImage || pkg.image,
@@ -224,6 +232,23 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSort = (type: string) => {
+    const sortedPackages = [...packages];
+    switch (type) {
+      case 'price':
+        sortedPackages.sort((a, b) => a.price - b.price);
+        break;
+      case '-price':
+        sortedPackages.sort((a, b) => b.price - a.price);
+        break;
+      case 'date':
+        sortedPackages.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+        break;
+    }
+    setPackages(sortedPackages);
+    setSortMenuOpen(false);
   };
 
   const resetFilters = () => {
@@ -300,90 +325,89 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
   return (
     <div>
       {/* Hero Section */}
-      <div className="relative min-h-[600px] flex items-center">
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url("https://organizedadventurer.com/wp-content/uploads/2023/10/Antelope-Canyon-min-scaled.webp")'
-          }}
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
-        <div className="relative w-full z-10 pt-24 sm:pt-32">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
-              Travel Together, Create Memories
-            </h2>
-            <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-              Join group trips across India's most beautiful cities. Meet new people and explore together.
-            </p>
+        <div className="relative min-h-[600px] flex items-center">
+          <div 
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+            style={{
+              backgroundImage: 'url("https://organizedadventurer.com/wp-content/uploads/2023/10/Antelope-Canyon-min-scaled.webp")'
+            }}
+          />
+          <div className="absolute inset-0 bg-black bg-opacity-50" />
+          <div className="relative w-full z-10 pt-24 sm:pt-32">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
+                Travel Together, Create Memories
+              </h2>
+              <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
+                Join group trips across India's most beautiful cities. Meet new people and explore together.
+              </p>
 
-            {/* Search and Filters */}
-            <div className="mt-8">
-              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Destination
-                    </label>
-                    <div className="relative">
+              {/* Search and Filters */}
+              <div className="mt-8">
+                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Destination
+                      </label>
+                      <div className="relative">
+                        <input
+                          type="text"
+                          placeholder="Enter destination"
+                          className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
+                          value={filters.destination}
+                          onChange={(e) => handleFilterChange({ destination: e.target.value })}
+                        />
+                        {filters.destination && (
+                          <button
+                            onClick={clearDestination}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          >
+                            <X className="h-5 w-5" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Max Price (₹)
+                      </label>
                       <input
-                        type="text"
-                        placeholder="Enter destination"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
-                        value={filters.destination}
-                        onChange={(e) => handleFilterChange({ destination: e.target.value })}
+                        type="number"
+                        placeholder="100000"
+                        min="0"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                        value={filters.maxPrice}
+                        onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
                       />
-                      {filters.destination && (
-                        <button
-                          onClick={clearDestination}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                        >
-                          <X className="h-5 w-5" />
-                        </button>
-                      )}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Start Date
+                      </label>
+                      <input
+                        type="date"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                        value={filters.startDate}
+                        onChange={(e) => handleFilterChange({ startDate: e.target.value })}
+                      />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Max Price (₹)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="100000"
-                      min="0"
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                      value={filters.maxPrice}
-                      onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
-                    />
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      onClick={resetFilters}
+                      className="text-sm text-primary hover:text-primary-700"
+                    >
+                      Reset All
+                    </button>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Start Date
-                    </label>
-                    <input
-                      type="date"
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                      value={filters.startDate}
-                      onChange={(e) => handleFilterChange({ startDate: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={resetFilters}
-                    className="text-sm text-primary hover:text-primary-700"
-                  >
-                    Reset All
-                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Popular Destinations */}
-      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Popular Destinations</h2>
           {filters.destination && (
@@ -396,34 +420,41 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
             </button>
           )}
         </div>
+
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
-            { name: 'Goa', image: 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80' },
-            { name: 'Manali', image: 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80' },
-            { name: 'Jaipur', image: 'https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80' },
-            { name: 'Varanasi', image: 'https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&q=80' },
-            { name: 'Kerala', image: 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80' },
-            { name: 'Ladakh', image: 'https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?auto=format&fit=crop&q=80' }
+            { name: "Goa", image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80", hasPackage: true },
+            { name: "Manali", image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Jaipur", image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Varanasi", image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Kerala", image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80", hasPackage: false },
+            { name: "Ladakh", image: "https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?auto=format&fit=crop&q=80", hasPackage: false }
           ].map((city) => (
-            <button
-              key={city.name}
-              onClick={() => handleFilterChange({ destination: city.name })}
-              className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 ${
-                filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
-              }`}
-            >
-              <div className="w-full pb-[100%] relative">
-                <img
-                  src={city.image}
-                  alt={city.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-4">
-                  <p className="text-white font-semibold text-lg">{city.name}</p>
+            <div key={city.name} className="relative group">
+              <button
+                onClick={() => handleFilterChange({ destination: city.name })}
+                className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full ${
+                  filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
+                }`}
+              >
+                <div className="w-full pb-[100%] relative">
+                  <img
+                    src={city.image}
+                    alt={city.name}
+                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="text-white font-semibold text-lg">{city.name}</p>
+                  </div>
+                  {!city.hasPackage && (
+                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                      <span className="text-white font-semibold text-lg">Coming Soon</span>
+                    </div>
+                  )}
                 </div>
-              </div>
-            </button>
+              </button>
+            </div>
           ))}
         </div>
       </div>
@@ -463,7 +494,7 @@ function MainContent({ selectedPackage, setSelectedPackage }: {
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-0 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">All Trips</h2>
+          <h2 className="text-2xl font-bold text-gray-900">All feature change 1</h2>
           
           <div className="flex space-x-4">
             {/* Sort by Dropdown */}
