@@ -76,7 +76,7 @@ function Header({ user }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center">
-            <h1 className="text-2xl sm:text-5xl md:text-4xl font-bold font-timeburner text-primary tracking-extra">Tripuva</h1>
+            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
           </Link>
 
           <nav className="hidden sm:flex items-center space-x-6">
@@ -617,7 +617,7 @@ function MainContent({ setSelectedPackage }: {
                     </div>
                     <button
                       onClick={() => setSelectedPackage(pkg)}
-                      className="mt-6 w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-600 flex items-center justify-center"
+                      className="mt-6 w-full bg-[#0a2472] text-white py-2 px-4 rounded-md hover:bg-[#0a2472]/90 flex items-center justify-center"
                       disabled={pkg.status === 'closed'}
                     >
                       {pkg.status === 'closed' ? 'Booking Closed' : 'View Details'}
@@ -705,19 +705,19 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-background-light">
-        <header className="bg-[#0a2472] shadow-md">
+        <header className="absolute top-0 left-0 right-0 z-50 pt-4">
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex">
                 <Link to="/" className="flex items-center">
-                  <h1 className="text-2xl sm:text-5xl md:text-4xl font-bold font-timeburner text-white tracking-extra">Tripuva</h1>
+                  <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
                 </Link>
               </div>
 
               <div className="hidden sm:flex items-center space-x-6">
                 <Link 
                   to="/" 
-                  className="bg-white text-[#0a2472] px-4 py-2 rounded-md hover:bg-blue-50 transition-all duration-200 text-base font-medium flex items-center"
+                  className="text-white hover:text-blue-200 transition-all duration-200 text-base font-medium flex items-center"
                 >
                   <Star className="h-4 w-4 mr-2" />
                   Top Places
@@ -736,9 +736,9 @@ function App() {
                 {user && (
                   <button
                     onClick={() => supabase.auth.signOut()}
-                    className="text-white hover:text-blue-200 flex items-center"
+                    className="text-white hover:text-blue-200 flex items-center text-base font-medium"
                   >
-                    <LogOut className="h-5 w-5 mr-2" />
+                    <LogOut className="h-4 w-4 mr-2" />
                     Sign Out
                   </button>
                 )}
@@ -746,7 +746,7 @@ function App() {
 
               <button
                 onClick={() => console.log('Mobile menu button clicked')}
-                className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-[#0a2472]/80 rounded-lg transition-colors"
+                className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors"
               >
                 <Menu className="h-8 w-8" />
               </button>
@@ -792,63 +792,63 @@ function App() {
           </Routes>
         </main>
 
-        <footer className="bg-[#0a2472] text-white py-12 border-t border-[#0a2472]/80">
+        <footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
               <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
-                <p className="text-blue-100">
+                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
+                <p className="text-gray-300 text-lg">
                   Connecting travelers across India for unforgettable group adventures and cultural experiences.
                 </p>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
+                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link to="/about" className="text-blue-100 hover:text-white transition-colors">
+                    <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-lg">
                       About Us
                     </Link>
                   </li>
                   <li>
-                    <Link to="/contact" className="text-blue-100 hover:text-white transition-colors">
+                    <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-lg">
                       Contact Us
                     </Link>
                   </li>
                   <li>
-                    <Link to="/faq" className="text-blue-100 hover:text-white transition-colors">
+                    <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-lg">
                       FAQ
                     </Link>
                   </li>
                 </ul>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
+                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">Legal</h3>
                 <ul className="space-y-2">
                   <li>
-                    <Link to="/legal/terms" className="text-blue-100 hover:text-white transition-colors">
+                    <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-lg">
                       Terms & Conditions
                     </Link>
                   </li>
                   <li>
-                    <Link to="/legal/privacy" className="text-blue-100 hover:text-white transition-colors">
+                    <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-lg">
                       Privacy Policy
                     </Link>
                   </li>
                   <li>
-                    <Link to="/legal/refund" className="text-blue-100 hover:text-white transition-colors">
+                    <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-lg">
                       Refund Policy
                     </Link>
                   </li>
                   <li>
-                    <Link to="/legal/disclaimer" className="text-blue-100 hover:text-white transition-colors">
+                    <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-lg">
                       Disclaimer
                     </Link>
                   </li>
                 </ul>
               </div>
               <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
-                <address className="text-blue-100 not-italic space-y-2">
+                <h3 className="text-xl font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
+                <address className="text-gray-300 not-italic space-y-2 text-lg">
                   <p className="flex items-center">
                     <span className="block">Email: info@tripuva.com</span>
                   </p>
@@ -860,18 +860,18 @@ function App() {
                   </p>
                 </address>
                 <div className="mt-4">
-                  <h4 className="text-sm font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
-                  <p className="text-blue-100 text-sm">
+                  <h4 className="text-lg font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
+                  <p className="text-gray-300 text-lg">
                     Monday - Friday: 9:00 AM - 6:00 PM IST
                   </p>
-                  <p className="text-blue-100 text-sm">
+                  <p className="text-gray-300 text-lg">
                     Saturday: 10:00 AM - 4:00 PM IST
                   </p>
                 </div>
               </div>
             </div>
-            <div className="mt-8 pt-8 border-t border-[#0a2472]/80">
-              <p className="text-blue-100 text-center font-comfortaa">
+            <div className="mt-8 pt-8 border-t border-gray-700">
+              <p className="text-gray-300 text-center font-comfortaa text-lg">
                 &copy; {new Date().getFullYear()} tripuva. All rights reserved.
               </p>
             </div>
