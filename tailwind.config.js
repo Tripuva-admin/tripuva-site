@@ -7,14 +7,14 @@ module.exports = {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#059669', // Vibrant Forest Green
+          DEFAULT: '#059669', // Forest Green
           light: '#10B981',
           dark: '#047857',
         },
         secondary: {
-          DEFAULT: '#7C3AED', // Rich Purple
-          light: '#8B5CF6',
-          dark: '#6D28D9',
+          DEFAULT: '#6B7280', // Muted Gray
+          light: '#9CA3AF',
+          dark: '#4B5563',
         },
         accent: {
           DEFAULT: '#F59E0B', // Warm Amber
@@ -22,11 +22,11 @@ module.exports = {
           dark: '#D97706',
         },
         background: {
-          light: '#ECFDF5', // Soft Mint
-          dark: '#1E293B',
+          light: '#FFFFFF', // Pure White
+          dark: '#F3F4F6', // Light Gray
         },
         text: {
-          light: '#F0FDF4',
+          light: '#F9FAFB',
           dark: '#1F2937',
           muted: '#6B7280',
         }
