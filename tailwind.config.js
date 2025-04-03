@@ -34,6 +34,7 @@ module.exports = {
       fontFamily: {
         yusei: ['"Yusei Magic"', 'Arial'],  
         comfortaa: ['"Comfortaa"', 'Arial'],
+        timeburner: ['"Timeburner"', 'Arial'],
       },
       letterSpacing: {
         extra: '0.08em',  // Custom letter spacing

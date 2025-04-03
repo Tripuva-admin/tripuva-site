@@ -77,7 +77,7 @@ function Header({ user }: HeaderProps) {
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center space-x-2">
             <MapPin className="h-6 w-6 text-white" />
-            <h1 className="text-2xl sm:text-5xl md:text-4xl font-bold font-yusei text-white tracking-extra">Tripuva</h1>
+            <h1 className="text-2xl sm:text-5xl md:text-4xl font-bold font-timeburner text-white tracking-extra">Tripuva</h1>
           </Link>
 
           <nav className="hidden sm:flex items-center space-x-6">
@@ -779,11 +779,6 @@ function App() {
                   <li>
                     <Link to="/faq" className="text-gray-400 hover:text-white transition-colors">
                       FAQ
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/admin-login" className="text-gray-400 hover:text-white transition-colors">
-                      Admin Login
                     </Link>
                   </li>
                 </ul>

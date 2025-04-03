@@ -12,8 +12,14 @@
 
 @font-face {
     font-family: "Timeburner";
-    src:local("Timeburner-Bold")
-    url('./assets/timeburner-font/TimeburnerBold-peGR.ttf');
+    src: url('./assets/timeburner-font/Timeburner-xJB8.ttf') format('truetype');
+    font-weight: normal;
+}
+
+@font-face {
+    font-family: "Timeburner";
+    src: url('./assets/timeburner-font/TimeburnerBold-peGR.ttf') format('truetype');
+    font-weight: bold;
 }
 
 @layer components {
