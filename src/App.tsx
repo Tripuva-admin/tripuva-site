@@ -1,18 +1,28 @@
 import { useState, useEffect } from 'react';
 import { MapPin, Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { PackageModal } from './components/PackageModal';
 import { AdminDashboard } from './components/AdminDashboard';
 import { AdminLogin } from './components/AdminLogin';
 import { About } from './components/pages/About';
 import { Contact } from './components/pages/Contact';
 import { FAQ } from './components/pages/FAQ';
-import { Legal } from './components/pages/Legal';
+import { Terms } from './components/pages/Terms';
+import { Privacy } from './components/pages/Privacy';
+import { Refund } from './components/pages/Refund';
+import { Disclaimer } from './components/pages/Disclaimer';
+import { NotFound } from './components/ErrorPages';
+import { ServerError } from './components/ErrorPages';
+import { Unauthorized } from './components/ErrorPages';
+import { Forbidden } from './components/ErrorPages';
+import { BadRequest } from './components/ErrorPages';
+import { AuthProvider } from './contexts/AuthContext';
+import { ScrollToTop } from './components/ScrollToTop';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
-
 import TopPlaces from "./components/TopPlaces";
 import './index.css' 
+import { ProtectedRoute } from './components/ProtectedRoute';
 
 var AVAILABLE_TAGS: any[]
 var parsedConfig: any 
@@ -22,23 +32,45 @@ const config_response = await supabase
   .select('*')
 
 if (config_response.error) {
-  console.error("Error fetching data:", config_response.error);
+  console.error("Error fetching config data:", config_response.error);
 } else {
   var parsedConfig = Object.fromEntries(
     config_response.data.map(item => {
       try {
-        const formattedValue = item.config_value
-          .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":') // Fix unquoted keys, avoid URLs
-          .replace(/'([^']*)'/g, '"$1"'); // Convert single quotes to double quotes
-  
-        return [item.config_key, JSON.parse(formattedValue)];
+        // First, check if the value is already a valid JSON string
+        if (typeof item.config_value === 'string') {
+          try {
+            // Try parsing as is first
+            return [item.config_key, JSON.parse(item.config_value)];
+          } catch (e) {
+            // If that fails, try fixing common JSON formatting issues
+            const formattedValue = item.config_value
+              .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":') // Fix unquoted keys, avoid URLs
+              .replace(/'([^']*)'/g, '"$1"') // Convert single quotes to double quotes
+              .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3'); // Add quotes around unquoted keys
+            
+            try {
+              return [item.config_key, JSON.parse(formattedValue)];
+            } catch (parseError) {
+              console.error(`Error parsing JSON for ${item.config_key}:`, parseError);
+              console.error('Original value:', item.config_value);
+              console.error('Formatted value:', formattedValue);
+              return [item.config_key, null];
+            }
+          }
+        } else {
+          // If it's not a string, return as is
+          return [item.config_key, item.config_value];
+        }
       } catch (err) {
-        console.error(`Error parsing JSON for ${item.config_key}:`);
-        return [item.config_key, null]; // Return null if parsing fails
-      }}));
+        console.error(`Error processing config for ${item.config_key}:`, err);
+        return [item.config_key, null];
+      }
+    })
+  );
 }
 
-console.log(parsedConfig)
+console.log('Parsed config:', parsedConfig);
 
 const tags_response = await supabase
   .from('tags')
@@ -58,21 +90,24 @@ interface HeaderProps {
 
 function Header({ user }: HeaderProps) {
   const location = useLocation();
+  const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
+  const isTopPlaces = location.pathname === '/top-places';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
+    navigate('/');
   };
 
   return (
     <header className={`w-full z-10 transition-colors duration-300 ${
       isMobileMenuOpen 
-        ? 'bg-primary-900' 
+        ? 'bg-[#0a2472]' 
         : isHomePage 
           ? 'absolute top-0 left-0 right-0 bg-transparent' 
-          : 'bg-gray-900'
-    }`}>
+          : 'bg-[#0a2472]'
+    } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center">
@@ -335,9 +370,11 @@ function MainContent({ setSelectedPackage }: {
           <div className="absolute inset-0 bg-black bg-opacity-50" />
           <div className="relative w-full z-10 pt-24 sm:pt-32">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
-                Travel Together, Create Memories
-              </h2>
+              <Link to="/" className="inline-block">
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
+                  Travel Together, Create Memories
+                </h2>
+              </Link>
               <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
                 Join group trips across India's most beautiful cities. Meet new people and explore together.
               </p>
@@ -663,15 +700,7 @@ function App() {
   const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         fetchProfile(session.user.id);
       } else {
@@ -683,429 +712,148 @@ function App() {
   }, []);
 
   const fetchProfile = async (userId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select()
-        .eq('id', userId)
-        .single();
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', userId)
+      .single();
 
-      if (error) throw error;
-
-      if (data) {
-        setUser(data);
-      } else {
-        setUser(null);
-      }
-    } catch (error) {
+    if (error) {
       console.error('Error fetching profile:', error);
-      setUser(null);
+      return;
     }
+
+    setUser(data);
   };
 
   return (
-    <Router>
-      <div className="min-h-screen bg-background-light">
-        <header className="absolute top-0 left-0 right-0 z-50 pt-4">
-          <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <Link to="/" className="flex items-center">
-                  <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
-                </Link>
-              </div>
-
-              <div className="hidden sm:flex items-center space-x-6">
-                <Link 
-                  to="/top-places" 
-                  className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
-                >
-                  <Star className="h-4 w-4 mr-2" />
-                  Top Places
-                </Link>
-
-                <a 
-                  href="https://google.com"
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
-                >
-                  <ArrowRight className="h-4 w-4 mr-2" />
-                  Contact us on Whatsapp
-                </a>
-                
-                {user && (
-                  <button
-                    onClick={() => supabase.auth.signOut()}
-                    className="text-white hover:text-blue-200 flex items-center text-base font-medium"
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Sign Out
-                  </button>
-                )}
-              </div>
-
-              <button
-                onClick={() => console.log('Mobile menu button clicked')}
-                className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors"
-              >
-                <Menu className="h-8 w-8" />
-              </button>
-            </div>
-          </nav>
-        </header>
-
-        <main className="flex-grow">
-          <Routes>
-            <Route 
-              path="/" 
-              element={
-                <>
-                  <MainContent 
-                    selectedPackage={selectedPackage}
-                    setSelectedPackage={setSelectedPackage}
-                  />
-                  {selectedPackage && (
-                    <PackageModal
-                      package={selectedPackage}
-                      onClose={() => setSelectedPackage(null)}
-                    />
-                  )}
-                </>
-              } 
-            />
-            <Route 
-              path="/top-places" 
-              element={<TopPlaces />} 
-            />
-            <Route 
-              path="/admin" 
-              element={
-                user?.is_admin ? (
-                  <div className="min-h-screen bg-background-light">
-                    <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
-                      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div className="flex justify-between h-16">
-                          <div className="flex">
-                            <Link to="/" className="flex items-center">
-                              <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
-                            </Link>
-                          </div>
-                          <div className="hidden sm:flex items-center space-x-6">
-                            <Link 
-                              to="/top-places" 
-                              className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
-                            >
-                              <Star className="h-4 w-4 mr-2" />
-                              Top Places
-                            </Link>
-                            <a 
-                              href="https://google.com"
-                              target="_blank" 
-                              rel="noopener noreferrer"
-                              className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
-                            >
-                              <ArrowRight className="h-4 w-4 mr-2" />
-                              Contact us on Whatsapp
-                            </a>
-                          </div>
-                        </div>
-                      </nav>
-                    </header>
-                    <main className="flex-grow pt-24">
-                      <AdminDashboard />
-                    </main>
+    <AuthProvider>
+      <Router>
+        <ScrollToTop />
+        <div className="min-h-screen bg-background-light">
+          <Header user={user} />
+          <main className="flex-1">
+            <Routes>
+              <Route path="/" element={<MainContent selectedPackage={selectedPackage} setSelectedPackage={setSelectedPackage} />} />
+              <Route path="/top-places" element={<TopPlaces />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/legal/terms" element={<Terms />} />
+              <Route path="/legal/privacy" element={<Privacy />} />
+              <Route path="/legal/refund" element={<Refund />} />
+              <Route path="/legal/disclaimer" element={<Disclaimer />} />
+              <Route path="/admin">
+                <Route index element={<Navigate to="/admin/login" replace />} />
+                <Route path="login" element={<AdminLogin />} />
+                <Route path="dashboard" element={
+                  <ProtectedRoute>
+                    <AdminDashboard />
+                  </ProtectedRoute>
+                } />
+              </Route>
+              <Route path="/404" element={<NotFound />} />
+              <Route path="/500" element={<ServerError />} />
+              <Route path="/401" element={<Unauthorized />} />
+              <Route path="/403" element={<Forbidden />} />
+              <Route path="/400" element={<BadRequest />} />
+              <Route path="*" element={<Navigate to="/404" replace />} />
+            </Routes>
+          </main>
+          <footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
+                  <p className="text-gray-300 text-base">
+                    Connecting travelers across India for unforgettable group adventures and cultural experiences.
+                  </p>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
+                        About Us
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-base">
+                        Contact Us
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-base">
+                        FAQ
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
+                  <ul className="space-y-2">
+                    <li>
+                      <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
+                        Terms & Conditions
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-base">
+                        Privacy Policy
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-base">
+                        Refund Policy
+                      </Link>
+                    </li>
+                    <li>
+                      <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-base">
+                        Disclaimer
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
+                  <address className="text-gray-300 not-italic space-y-2 text-base">
+                    <p className="flex items-center">
+                      <span className="block">Email: info@tripuva.com</span>
+                    </p>
+                    <p className="flex items-center">
+                      <span className="block">Phone: +91 93959 29602</span>
+                    </p>
+                    <p className="flex items-center">
+                      <span className="block">Address: Mumbai, Maharashtra, India</span>
+                    </p>
+                  </address>
+                  <div className="mt-4">
+                    <h4 className="text-base font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
+                    <p className="text-gray-300 text-base">
+                      Monday - Friday: 9:00 AM - 6:00 PM IST
+                    </p>
+                    <p className="text-gray-300 text-base">
+                      Saturday: 10:00 AM - 4:00 PM IST
+                    </p>
                   </div>
-                ) : (
-                  <Navigate to="/admin-login" replace />
-                )
-              } 
-            />
-            <Route
-              path="/admin-login"
-              element={
-                <div className="min-h-screen bg-background-light">
-                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
-                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      <div className="flex justify-between h-16">
-                        <div className="flex">
-                          <Link to="/" className="flex items-center">
-                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
-                          </Link>
-                        </div>
-                        <div className="hidden sm:flex items-center space-x-6">
-                          <Link 
-                            to="/top-places" 
-                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <Star className="h-4 w-4 mr-2" />
-                            Top Places
-                          </Link>
-                          <a 
-                            href="https://google.com"
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <ArrowRight className="h-4 w-4 mr-2" />
-                            Contact us on Whatsapp
-                          </a>
-                        </div>
-                      </div>
-                    </nav>
-                  </header>
-                  <main className="flex-grow pt-24">
-                    <AdminLogin />
-                  </main>
                 </div>
-              }
-            />
-            <Route 
-              path="/about" 
-              element={
-                <div className="min-h-screen bg-background-light">
-                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
-                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      <div className="flex justify-between h-16">
-                        <div className="flex">
-                          <Link to="/" className="flex items-center">
-                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
-                          </Link>
-                        </div>
-                        <div className="hidden sm:flex items-center space-x-6">
-                          <Link 
-                            to="/top-places" 
-                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <Star className="h-4 w-4 mr-2" />
-                            Top Places
-                          </Link>
-                          <a 
-                            href="https://google.com"
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <ArrowRight className="h-4 w-4 mr-2" />
-                            Contact us on Whatsapp
-                          </a>
-                        </div>
-                      </div>
-                    </nav>
-                  </header>
-                  <main className="flex-grow pt-24">
-                    <About />
-                  </main>
-                </div>
-              } 
-            />
-            <Route 
-              path="/contact" 
-              element={
-                <div className="min-h-screen bg-background-light">
-                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
-                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      <div className="flex justify-between h-16">
-                        <div className="flex">
-                          <Link to="/" className="flex items-center">
-                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
-                          </Link>
-                        </div>
-                        <div className="hidden sm:flex items-center space-x-6">
-                          <Link 
-                            to="/top-places" 
-                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <Star className="h-4 w-4 mr-2" />
-                            Top Places
-                          </Link>
-                          <a 
-                            href="https://google.com"
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <ArrowRight className="h-4 w-4 mr-2" />
-                            Contact us on Whatsapp
-                          </a>
-                        </div>
-                      </div>
-                    </nav>
-                  </header>
-                  <main className="flex-grow pt-24">
-                    <Contact />
-                  </main>
-                </div>
-              } 
-            />
-            <Route 
-              path="/faq" 
-              element={
-                <div className="min-h-screen bg-background-light">
-                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
-                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      <div className="flex justify-between h-16">
-                        <div className="flex">
-                          <Link to="/" className="flex items-center">
-                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
-                          </Link>
-                        </div>
-                        <div className="hidden sm:flex items-center space-x-6">
-                          <Link 
-                            to="/top-places" 
-                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <Star className="h-4 w-4 mr-2" />
-                            Top Places
-                          </Link>
-                          <a 
-                            href="https://google.com"
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <ArrowRight className="h-4 w-4 mr-2" />
-                            Contact us on Whatsapp
-                          </a>
-                        </div>
-                      </div>
-                    </nav>
-                  </header>
-                  <main className="flex-grow pt-24">
-                    <FAQ />
-                  </main>
-                </div>
-              } 
-            />
-            <Route 
-              path="/legal/*" 
-              element={
-                <div className="min-h-screen bg-background-light">
-                  <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
-                    <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                      <div className="flex justify-between h-16">
-                        <div className="flex">
-                          <Link to="/" className="flex items-center">
-                            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
-                          </Link>
-                        </div>
-                        <div className="hidden sm:flex items-center space-x-6">
-                          <Link 
-                            to="/top-places" 
-                            className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <Star className="h-4 w-4 mr-2" />
-                            Top Places
-                          </Link>
-                          <a 
-                            href="https://google.com"
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
-                          >
-                            <ArrowRight className="h-4 w-4 mr-2" />
-                            Contact us on Whatsapp
-                          </a>
-                        </div>
-                      </div>
-                    </nav>
-                  </header>
-                  <main className="flex-grow pt-24">
-                    <Legal />
-                  </main>
-                </div>
-              } 
-            />
-          </Routes>
-        </main>
-
-        <footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-              <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
-                <p className="text-gray-300 text-base">
-                  Connecting travelers across India for unforgettable group adventures and cultural experiences.
+              </div>
+              <div className="mt-8 pt-8 border-t border-gray-700">
+                <p className="text-gray-300 text-center font-comfortaa text-base">
+                  &copy; {new Date().getFullYear()} tripuva. All rights reserved.
                 </p>
               </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
-                      About Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-base">
-                      Contact Us
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-base">
-                      FAQ
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
-                <ul className="space-y-2">
-                  <li>
-                    <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
-                      Terms & Conditions
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-base">
-                      Privacy Policy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-base">
-                      Refund Policy
-                    </Link>
-                  </li>
-                  <li>
-                    <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-base">
-                      Disclaimer
-                    </Link>
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
-                <address className="text-gray-300 not-italic space-y-2 text-base">
-                  <p className="flex items-center">
-                    <span className="block">Email: info@tripuva.com</span>
-                  </p>
-                  <p className="flex items-center">
-                    <span className="block">Phone: +91 93959 29602</span>
-                  </p>
-                  <p className="flex items-center">
-                    <span className="block">Address: Mumbai, Maharashtra, India</span>
-                  </p>
-                </address>
-                <div className="mt-4">
-                  <h4 className="text-base font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
-                  <p className="text-gray-300 text-base">
-                    Monday - Friday: 9:00 AM - 6:00 PM IST
-                  </p>
-                  <p className="text-gray-300 text-base">
-                    Saturday: 10:00 AM - 4:00 PM IST
-                  </p>
-                </div>
-              </div>
             </div>
-            <div className="mt-8 pt-8 border-t border-gray-700">
-              <p className="text-gray-300 text-center font-comfortaa text-base">
-                &copy; {new Date().getFullYear()} tripuva. All rights reserved.
-              </p>
-            </div>
-          </div>
-        </footer>
-      </div>
-    </Router>
+          </footer>
+          {selectedPackage && (
+            <PackageModal
+              package={selectedPackage}
+              onClose={() => setSelectedPackage(null)}
+            />
+          )}
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 

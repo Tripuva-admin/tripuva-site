@@ -35,7 +35,7 @@ export function AdminLogin() {
         if (profileError) throw profileError;
 
         if (profile?.is_admin) {
-          navigate('/admin');
+          navigate('/admin/dashboard');
         } else {
           throw new Error('Unauthorized access. Admin privileges required.');
         }
