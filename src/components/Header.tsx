@@ -24,7 +24,7 @@ export function Header({ user }: HeaderProps) {
               to="/top-places" 
               className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
             >
-              <Star className="h-4 w-4 mr-2" />
+              <Star className="h-4 w-4 mr-2 text-gold style={{ color: '#FFD700' }" />
               Top Places
             </Link>
 

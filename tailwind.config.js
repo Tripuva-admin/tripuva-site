@@ -6,6 +6,7 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        gold: '#FFD700',
         primary: {
           DEFAULT: '#1E40AF', // Deep Blue
           light: '#3B82F6',

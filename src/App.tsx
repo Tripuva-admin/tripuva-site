@@ -119,7 +119,7 @@ function Header({ user }: HeaderProps) {
               to="/top-places" 
               className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
             >
-              <Star className="h-4 w-4 mr-2" />
+              <Star className="h-4 w-4 mr-2 text-gold fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Places
             </Link>
 
@@ -164,7 +164,7 @@ function Header({ user }: HeaderProps) {
                 className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <Star className="h-4 w-4 mr-2" />
+                <Star className="h-4 w-4 mr-2 text-gold fill-current drop-shadow-md transition-transform hover:scale-110" />
                 Top Places
               </Link>
 
@@ -486,7 +486,7 @@ function MainContent({ setSelectedPackage }: {
                   </div>
                   {!city.hasPackage && (
                     <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <span className="text-white font-semibold text-lg">Coming Soon</span>
+                      <span className="text-white text-lg text-opacity-70 font-normal">Coming Soon</span>
                     </div>
                   )}
                 </div>
