@@ -81,41 +81,46 @@ const TopPlaces = () => {
         </nav>
       </header>
 
-      <main className="flex-grow pt-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center font-comfortaa">🌟 Top Places to visit these Summer</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {topPackages.map((pkg) => {
-              const primaryImage = pkg.image;
+      <main className="flex-grow pt-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl font-bold text-gray-900 font-comfortaa">
+          🌟 Top Places to visit these Summer
+        </h2>
+      </div>
 
-              return (
-                <div
-                  key={pkg.id}
-                  onClick={() => setSelectedPackage(pkg)}
-                  className="cursor-pointer bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
-                >
-                  <img
-                    src={pkg.image}
-                    alt={pkg.title}
-                    className="w-full h-48 object-cover"
-                  />
-                  <div className="p-4">
-                    <h3 className="text-xl font-semibold mb-2">{pkg.title}</h3>
-                    <p className="text-gray-600 mb-3 line-clamp-2">{pkg.description}</p>
-                    <div className="flex justify-between items-center">
-                      <span className="text-primary font-bold">
-                        ₹{pkg.price.toLocaleString()}
-                      </span>
-                      <span className="text-sm text-gray-500">
-                        {pkg.duration} days • {pkg.group_size} spots
-                      </span>
-                    </div>
-                  </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+        {topPackages.map((pkg) => {
+          const primaryImage = pkg.image;
+
+          return (
+            <div
+              key={pkg.id}
+              onClick={() => setSelectedPackage(pkg)}
+              className="cursor-pointer bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
+            >
+              <img
+                src={pkg.image}
+                alt={pkg.title}
+                className="w-full h-48 object-cover"
+              />
+              <div className="p-4">
+                <h3 className="text-xl font-semibold mb-2">{pkg.title}</h3>
+                <p className="text-gray-600 mb-3 line-clamp-2">{pkg.description}</p>
+                <div className="flex justify-between items-center">
+                  <span className="text-primary font-bold">
+                    ₹{pkg.price.toLocaleString()}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    {pkg.duration} days • {pkg.group_size} spots
+                  </span>
                 </div>
-              );
-            })}
-          </div>
-        </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+      </div>
       </main>
 
       {selectedPackage && (
