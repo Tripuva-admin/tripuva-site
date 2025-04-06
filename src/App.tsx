@@ -24,6 +24,8 @@ import TopPlaces from "./components/TopPlaces";
 import './index.css' 
 import { ProtectedRoute } from './components/ProtectedRoute';
 
+const backgroundImageUrl = import.meta.env.VITE_HOMEPAGE_BACKGROUND_IMAGE;
+
 var AVAILABLE_TAGS: any[]
 var parsedConfig: any 
 
@@ -364,7 +366,7 @@ function MainContent({ setSelectedPackage }: {
           <div 
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
-              backgroundImage: 'url("https://organizedadventurer.com/wp-content/uploads/2023/10/Antelope-Canyon-min-scaled.webp")'
+              backgroundImage: `url(${backgroundImageUrl})`
             }}
           />
           <div className="absolute inset-0 bg-black bg-opacity-50" />
@@ -460,12 +462,12 @@ function MainContent({ setSelectedPackage }: {
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
           {[
-            { name: "Goa", image: "https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?auto=format&fit=crop&q=80", hasPackage: true },
-            { name: "Manali", image: "https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&q=80", hasPackage: false },
-            { name: "Jaipur", image: "https://images.unsplash.com/photo-1477587458883-47145ed94245?auto=format&fit=crop&q=80", hasPackage: false },
-            { name: "Varanasi", image: "https://images.unsplash.com/photo-1561361513-2d000a50f0dc?auto=format&fit=crop&q=80", hasPackage: false },
-            { name: "Kerala", image: "https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?auto=format&fit=crop&q=80", hasPackage: false },
-            { name: "Ladakh", image: "https://images.unsplash.com/photo-1589556264800-08ae9e129a8c?auto=format&fit=crop&q=80", hasPackage: false }
+            { name: "Goa", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: true },
+            { name: "Manali", image: `${import.meta.env.VITE_POPULAR_DESTINATION_MANALI_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
+            { name: "Jaipur", image: `${import.meta.env.VITE_POPULAR_DESTINATION_JAIPUR_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
+            { name: "Varanasi", image: `${import.meta.env.VITE_POPULAR_DESTINATION_VARANASI_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
+            { name: "Kerala", image: `${import.meta.env.VITE_POPULAR_DESTINATION_KERALA_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
+            { name: "Ladakh", image: `${import.meta.env.VITE_POPULAR_DESTINATION_LADAKH_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false }
           ].map((city) => (
             <div key={city.name} className="relative group">
               <button
