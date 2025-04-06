@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapPin, Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { PackageModal } from './components/PackageModal';
 import { AdminDashboard } from './components/AdminDashboard';
