@@ -60,7 +60,8 @@ const goToNext = () => {
 
   const handleBooking = () => {
     if (pkg.booking_link) {
-      var BOOKING_LINK = `${process.env.WHATSAPP_LINK}/${process.env.WHATSAPP_NUMBER}?text=${pkg.booking_link}` 
+      var BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${pkg.booking_link}` 
+      console.log(BOOKING_LINK)
       window.open(BOOKING_LINK, '_blank');
     }
   };
