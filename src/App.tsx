@@ -121,9 +121,9 @@ function Header({ user }: HeaderProps) {
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
               to="/top-places" 
-              className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+              className="bg-gradient-to-r from-yellow-400 to-yellow-700 text-black px-4 py-2 rounded-md text-base font-medium flex items-center"
             >
-              <Star className="h-5 w-5 mr-2 text-gold fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
+              <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Places
             </Link>
 
@@ -131,7 +131,7 @@ function Header({ user }: HeaderProps) {
               href="https://google.com"
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+              className="bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -625,7 +625,7 @@ function MainContent({ setSelectedPackage }: {
                           )}
                         </div>
                       </div>
-                      <span className="text-lg font-bold text-primary ml-4 flex-shrink-0">₹{pkg.price.toLocaleString()}</span>
+                      <span className="text-lg font-bold text-[#1c5d5e] ml-4 flex-shrink-0">₹{pkg.price.toLocaleString()}</span>
                     </div>
                     
                     {pkg.tags && pkg.tags.length > 0 && (
@@ -711,7 +711,7 @@ function MainContent({ setSelectedPackage }: {
                     <div className="mt-5">
                       <button
                         onClick={() => setSelectedPackage(pkg)}
-                        className="w-full bg-blue-800 text-white py-2 px-4 rounded-md hover:bg-yellow-500 flex items-center justify-center"
+                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-yellow-500 flex items-center justify-center"
                         disabled={pkg.status === 'closed'}
                       >
                         {pkg.status === 'closed' ? 'Booking Closed' : 'View Details'}

@@ -231,7 +231,7 @@ const goToNext = () => {
           <div className="bg-gray-50 p-6 rounded-lg">
             <div className="flex items-center justify-between mb-4">
               <span className="text-lg md:text-xl font-semibold">Price per person</span>
-              <div className="flex items-center text-xl md:text-2xl font-bold text-primary">
+              <div className="flex items-center text-xl md:text-2xl font-bold text-[#1c5d5e]">
                 <IndianRupee className="h-5 w-5 md:h-6 md:w-6 mr-1" />
                 {pkg.price.toLocaleString()}
               </div>
@@ -249,7 +249,7 @@ const goToNext = () => {
 
               <button
                 onClick={handleBooking}
-                className="w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
+                className="w-full bg-[#1c5d5e] text-white py-3 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
               >
                 Book Now
               </button>
