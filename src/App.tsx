@@ -21,6 +21,8 @@ import { ScrollToTop } from './components/ScrollToTop';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
 import TopPlaces from "./components/TopPlaces";
+import CustomerRating from "./components/CustomerRating";
+import PartnerCarousel from "./components/PartnerCarousel";
 import './index.css' 
 import { ProtectedRoute } from './components/ProtectedRoute';
 
@@ -362,91 +364,92 @@ function MainContent({ setSelectedPackage }: {
   return (
     <div>
       {/* Hero Section */}
-        <div className="relative min-h-[600px] flex items-center">
-          <div 
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-            style={{
-              backgroundImage: `url(${backgroundImageUrl})`
-            }}
-          />
-          <div className="absolute inset-0 bg-black bg-opacity-50" />
-          <div className="relative w-full z-10 pt-24 sm:pt-32">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <Link to="/" className="inline-block">
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
-                  Travel Together, Create Memories
-                </h2>
-              </Link>
-              <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-                Join group trips across India's most beautiful cities. Meet new people and explore together.
-              </p>
+      <div className="relative min-h-[600px] flex items-center">
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url(${backgroundImageUrl})`
+          }}
+        />
+        <div className="absolute inset-0 bg-black bg-opacity-50" />
+        <div className="relative w-full z-10 pt-24 sm:pt-32">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <Link to="/" className="inline-block">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
+                Travel Together, Create Memories
+              </h2>
+            </Link>
+            <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
+              Join group trips across India's most beautiful cities. Meet new people and explore together.
+            </p>
 
-              {/* Search and Filters */}
-              <div className="mt-8">
-                <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Destination
-                      </label>
-                      <div className="relative">
-                        <input
-                          type="text"
-                          placeholder="Enter destination"
-                          className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
-                          value={filters.destination}
-                          onChange={(e) => handleFilterChange({ destination: e.target.value })}
-                        />
-                        {filters.destination && (
-                          <button
-                            onClick={clearDestination}
-                            className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                          >
-                            <X className="h-5 w-5" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Max Price (₹)
-                      </label>
+            {/* Search and Filters */}
+            <div className="mt-8">
+              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Destination
+                    </label>
+                    <div className="relative">
                       <input
-                        type="number"
-                        placeholder="100000"
-                        min="0"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                        value={filters.maxPrice}
-                        onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
+                        type="text"
+                        placeholder="Enter destination"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
+                        value={filters.destination}
+                        onChange={(e) => handleFilterChange({ destination: e.target.value })}
                       />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Start Date
-                      </label>
-                      <input
-                        type="date"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                        value={filters.startDate}
-                        onChange={(e) => handleFilterChange({ startDate: e.target.value })}
-                      />
+                      {filters.destination && (
+                        <button
+                          onClick={clearDestination}
+                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                        >
+                          <X className="h-5 w-5" />
+                        </button>
+                      )}
                     </div>
                   </div>
-                  <div className="mt-4 flex justify-end">
-                    <button
-                      onClick={resetFilters}
-                      className="text-sm text-primary hover:text-primary-700"
-                    >
-                      Reset All
-                    </button>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Max Price (₹)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="100000"
+                      min="0"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                      value={filters.maxPrice}
+                      onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
+                    />
                   </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Start Date
+                    </label>
+                    <input
+                      type="date"
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                      value={filters.startDate}
+                      onChange={(e) => handleFilterChange({ startDate: e.target.value })}
+                    />
+                  </div>
+                </div>
+                <div className="mt-4 flex justify-end">
+                  <button
+                    onClick={resetFilters}
+                    className="text-sm text-primary hover:text-primary-700"
+                  >
+                    Reset All
+                  </button>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      {/* Popular Destinations */}
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-900">Popular Destinations</h2>
           {filters.destination && (
@@ -499,7 +502,7 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Tags Filter */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-6">
+      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter by Experience</h3>
           <div className="flex flex-wrap gap-2">
@@ -692,6 +695,20 @@ function MainContent({ setSelectedPackage }: {
             )}
           </>
         )}
+      </div>
+
+      {/* Partner Carousel Section */}
+      <div className="bg-background-light py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <PartnerCarousel />
+        </div>
+      </div>
+
+      {/* Customer Rating Section */}
+      <div className="bg-gray-50 py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <CustomerRating />
+        </div>
       </div>
     </div>
   );
