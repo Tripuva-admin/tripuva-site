@@ -11,8 +11,8 @@ const logos = [
 
 const PartnerCarousel: React.FC = () => {
   return (
-    <div className="w-full bg-transparent py-8 overflow-hidden">
-    <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Our Travel Partners</h3>
+    <div className="w-full bg-transparent py-1 overflow-hidden">
+    <h3 className="text-2xl font-bold text-gray-800 mb-6 text-left">Our Travel Partners</h3>
   
     <div className="relative w-full">
       <div className="flex w-max animate-scroll gap-8 px-4">
