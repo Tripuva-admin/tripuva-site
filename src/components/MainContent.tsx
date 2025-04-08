@@ -35,6 +35,12 @@ export function MainContent({
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const packagesPerPage = 12;
+  const totalPages = Math.ceil(packages.length / packagesPerPage);
+
+  // Calculate current packages to display
+  const indexOfLastPackage = currentPage * packagesPerPage;
+  const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
+  const currentPackages = packages.slice(indexOfFirstPackage, indexOfLastPackage);
 
   // Sorting state
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
@@ -56,6 +62,10 @@ export function MainContent({
             id,
             image_url,
             is_primary
+          ),
+          listings!inner(
+            id,
+            start_date
           )
         `)
         .eq('status', 'open')
@@ -68,13 +78,18 @@ export function MainContent({
         return;
       }
 
+      console.log('Raw data from database:', JSON.stringify(data, null, 2));
+
       const transformedData = data.map(pkg => {
         const primaryImage = pkg.package_images?.find((img: { is_primary: boolean }) => img.is_primary)?.image_url;
-        return {
+        const transformedPkg = {
           ...pkg,
           image: primaryImage || pkg.image,
-          package_images: pkg.package_images || []
+          package_images: pkg.package_images || [],
+          listings: pkg.listings || []
         };
+        console.log('Transformed package:', JSON.stringify(transformedPkg, null, 2));
+        return transformedPkg;
       });
 
       // Count total images to load
@@ -99,6 +114,19 @@ export function MainContent({
 
   const handleImageLoad = () => {
     setImagesLoaded(prev => prev + 1);
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    // Scroll to the package grid section using ID
+    const packageGrid = document.getElementById('package-grid');
+    if (packageGrid) {
+      const offset = packageGrid.offsetTop - 100; // Adjust for any fixed headers
+      window.scrollTo({
+        top: offset,
+        behavior: 'smooth'
+      });
+    }
   };
 
   // Show loading screen until all images are loaded
@@ -131,21 +159,12 @@ export function MainContent({
     <div className="min-h-screen">
       {/* Hero Section */}
       <div className="relative min-h-[600px] flex items-center">
-        {/* ... rest of the JSX ... */}
-        {packages.map(pkg => (
-          <img
-            key={pkg.id}
-            src={pkg.image}
-            alt={pkg.title}
-            onLoad={handleImageLoad}
-            className="hidden" // Hide the preloading images
-          />
-        ))}
+        {/* ... hero section content ... */}
       </div>
 
       {/* Package Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
-        {packages.map(pkg => (
+      <div id="package-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+        {currentPackages.map(pkg => (
           <div
             key={pkg.id}
             className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
@@ -170,6 +189,34 @@ export function MainContent({
           </div>
         ))}
       </div>
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="mt-8 flex justify-center">
+          <nav className="flex items-center space-x-2">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-1 rounded-md bg-gray-100 text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Previous
+            </button>
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-1 rounded-md ${
+                  currentPage === page
+                    ? 'bg-primary text-white'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
     </div>
   );
-} 
+}

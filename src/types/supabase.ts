@@ -42,7 +42,7 @@ export interface Database {
           price: number
           group_size: number
           image: string
-          start_date: string
+          start_date: string[]
           agency_id: string | null
           status: 'open' | 'closed'
           booking_link: string
@@ -58,7 +58,7 @@ export interface Database {
           price: number
           group_size: number
           image: string
-          start_date: string
+          start_date: string[]
           agency_id?: string | null
           status?: 'open' | 'closed'
           booking_link?: string
@@ -74,7 +74,7 @@ export interface Database {
           price?: number
           group_size?: number
           image?: string
-          start_date?: string
+          start_date?: string[]
           agency_id?: string | null
           status?: 'open' | 'closed'
           booking_link?: string

@@ -7,6 +7,7 @@ interface PackageModalProps {
   package: Package & { 
     agency?: { name: string; rating: number };
     package_images?: { id: string; image_url: string; is_primary: boolean }[];
+    listings?: { id: string; start_date: string }[];
   };
   onClose: () => void;
   userId?: string;
@@ -14,13 +15,30 @@ interface PackageModalProps {
 
 export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
   const primaryImage = pkg.package_images?.find(img => img.is_primary)?.image_url || pkg.image;
-
+  const [selectedDate, setSelectedDate] = useState(
+    pkg.listings && pkg.listings.length > 0 ? pkg.listings[0].start_date : pkg.start_date
+  );
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const images = pkg.package_images?.map(img => img.image_url) || [pkg.image];
   const [transitionDirection, setTransitionDirection] = useState<'left'|'right'>('right');
 
   useEffect(() => {
+    console.log('Full package data:', JSON.stringify(pkg, null, 2));
+    console.log('Package start_date:', pkg.start_date);
+    console.log('Package listings:', pkg.listings);
+    console.log('Selected date:', selectedDate);
+    console.log('Type of start_date:', typeof pkg.start_date);
+    console.log('Type of listings:', Array.isArray(pkg.listings));
+    if (pkg.listings) {
+      pkg.listings.forEach((listing, index) => {
+        console.log(`Listing ${index}:`, {
+          id: listing.id,
+          start_date: listing.start_date,
+          type: typeof listing.start_date
+        });
+      });
+    }
     if (!isAutoPlaying || images.length <= 1) return;
     
     const interval = setInterval(() => {
@@ -29,7 +47,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
     }, 2500);
   
     return () => clearInterval(interval);
-  }, [images.length, isAutoPlaying]);
+  }, [images.length, isAutoPlaying, pkg, selectedDate]);
 
 const goToPrev = () => {
   setIsAutoPlaying(false);
@@ -79,8 +97,6 @@ const goToNext = () => {
         >
           <X className="h-6 w-6" />
         </button>
-
-        
 
         <div className="w-full md:w-1/2 h-[300px] md:h-auto flex-shrink-0 relative overflow-hidden">
     {images.map((image, index) => (
@@ -136,27 +152,25 @@ const goToNext = () => {
       ))}
     </div>
   )}
-  </div>
+</div>
 
- 
+<div className="w-full md:w-1/2 md:overflow-y-auto p-6 md:p-8">
+  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{pkg.title}</h2>
 
-        <div className="w-full md:w-1/2 md:overflow-y-auto p-6 md:p-8">
-          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{pkg.title}</h2>
-
-          {pkg.agency && (
-            <div className="mb-6 flex items-start space-x-2">
-              <Building2 className="h-5 w-5 text-gray-500 mt-0.5" />
-              <div>
-                <p className="text-gray-700 font-medium">{pkg.agency.name}</p>
-                <div className="flex items-center mt-1">
-                  {renderStars(pkg.agency.rating)}
-                  <span className="ml-2 text-sm text-gray-600">
-                    ({pkg.agency.rating.toFixed(1)})
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
+  {pkg.agency && (
+    <div className="mb-6 flex items-start space-x-2">
+      <Building2 className="h-5 w-5 text-gray-500 mt-0.5" />
+      <div>
+        <p className="text-gray-700 font-medium">{pkg.agency.name}</p>
+        <div className="flex items-center mt-1">
+          {renderStars(pkg.agency.rating)}
+          <span className="ml-2 text-sm text-gray-600">
+            ({pkg.agency.rating.toFixed(1)})
+          </span>
+        </div>
+      </div>
+    </div>
+  )}
 
 {/* New Multiple Start Date View - Begin*/}          
 
@@ -237,15 +251,15 @@ const goToNext = () => {
               </div>
             </div>
 
-            <div className="space-y-4">
-              <div className="bg-blue-50 p-4 rounded-md">
-                <p className="text-blue-800 text-sm md:text-base font-bold">
-                  Booking Advance: ₹{pkg.advance.toLocaleString()}
-                </p>
-                <p className="text-blue-800 text-sm md:text-base mt-2">
-                  Click "Book Now" to connect with us on WhatsApp and reserve your spot for this amazing trip!
-                </p>
-              </div>
+    <div className="space-y-4">
+      <div className="bg-blue-50 p-4 rounded-md">
+        <p className="text-blue-800 text-sm md:text-base font-bold">
+          Booking Advance: ₹{pkg.advance.toLocaleString()}
+        </p>
+        <p className="text-blue-800 text-sm md:text-base mt-2">
+          Click "Book Now" to connect with us on WhatsApp and reserve your spot for this amazing trip!
+        </p>
+      </div>
 
               <button
                 onClick={handleBooking}

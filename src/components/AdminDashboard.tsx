@@ -22,22 +22,36 @@ const config_response = await supabase
   .from('config')
   .select('*')
 
-  if (config_response.error) {
-    console.error("Error fetching data:", config_response.error);
-  } else {
-    var parsedConfig = Object.fromEntries(
-      config_response.data.map(item => {
+if (config_response.error) {
+  console.error("Error fetching data:", config_response.error);
+} else {
+  var parsedConfig = Object.fromEntries(
+    config_response.data.map(item => {
+      try {
+        // First, try to parse as is
         try {
+          return [item.config_key, JSON.parse(item.config_value)];
+        } catch (e) {
+          // If that fails, try to fix common JSON issues
           const formattedValue = item.config_value
             .replace(/(\w+):/g, '"$1":') // Fix unquoted keys
-            .replace(/'([^']*)'/g, '"$1"'); // Convert single quotes to double quotes
-    
-          return [item.config_key, JSON.parse(formattedValue)];
-        } catch (err) {
-          console.error("Error parsing JSON for:", item.config_key, err);
-          return [item.config_key, null]; // Return null if parsing fails
-        }}));
-  }
+            .replace(/'([^']*)'/g, '"$1"') // Convert single quotes to double quotes
+            .replace(/,\s*([}\]])/g, '$1') // Remove trailing commas
+            .replace(/([{,])\s*([a-zA-Z0-9_]+)\s*:/g, '$1"$2":'); // Ensure keys are quoted
+
+          try {
+            return [item.config_key, JSON.parse(formattedValue)];
+          } catch (e) {
+            console.error("Error parsing JSON for:", item.config_key, "Value:", item.config_value);
+            return [item.config_key, null];
+          }
+        }
+      } catch (err) {
+        console.error("Error processing config item:", item.config_key, err);
+        return [item.config_key, null];
+      }
+    }));
+}
 
 const tableHeaders = parsedConfig['admin_package_header_list']
 
