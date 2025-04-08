@@ -52,11 +52,10 @@ const TopPlaces = () => {
       
 
       <main className="flex-grow pt-0">
-        
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-  <div className="relative w-full h-72 overflow-hidden shadow-md mb-10">
+
+      <div className="relative w-full h-72 overflow-hidden shadow-md mb-10">
     <img
-      src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Top-Places-bg3.png"
+      src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Top-Places-bg4.png"
       alt="Trip Image"
       className="w-full h-full object-cover"
     />
@@ -68,6 +67,9 @@ const TopPlaces = () => {
       </h2>
     </div>
   </div>
+        
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  
 
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
