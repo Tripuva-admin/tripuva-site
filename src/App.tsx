@@ -115,15 +115,15 @@ function Header({ user }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center">
-            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">Tripuva</h1>
           </Link>
 
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
               to="/top-places" 
-              className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
+              className="bg-gradient-to-r from-yellow-400 to-yellow-700 text-black px-4 py-2 rounded-md text-base font-medium flex items-center"
             >
-              <Star className="h-4 w-4 mr-2 text-gold fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
+              <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Places
             </Link>
 
@@ -131,7 +131,7 @@ function Header({ user }: HeaderProps) {
               href="https://google.com"
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+              className="bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -375,8 +375,8 @@ function MainContent({ setSelectedPackage }: {
         <div className="relative w-full z-10 pt-24 sm:pt-32">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white sm:tracking-tight">
-                Travel Together, Create Memories
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white sm:tracking-tight">
+              <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">Travel Together,</span> <span className="font-medium">Create Memories</span>
               </h2>
             </Link>
             <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
@@ -449,8 +449,8 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Popular Destinations */}
-      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center mb-4">
           <h2 className="text-2xl font-bold text-gray-900">Popular Destinations</h2>
           {filters.destination && (
             <button
@@ -502,7 +502,7 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Tags Filter */}
-      <div className="max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter by Experience</h3>
           <div className="flex flex-wrap gap-2">
@@ -512,8 +512,8 @@ function MainContent({ setSelectedPackage }: {
                 onClick={() => handleTagToggle(tag)}
                 className={`px-4 py-2 rounded-md text-md font-medium transition-colors ${
                   filters.tags.includes(tag)
-                    ? 'bg-primary text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-yellow-400 text-black'
+                    : 'bg-blue-50 text-gray-700 hover:bg-yellow-400'
                 }`}
               >
                 {tag}
@@ -543,7 +543,7 @@ function MainContent({ setSelectedPackage }: {
             <div className="relative">
               <button
                 onClick={() => setSortMenuOpen(!sortMenuOpen)}
-                className="text-sm text-primary hover:text-primary-700 flex items-center bg-gray-100 px-4 py-2 rounded-md"
+                className="text-sm text-primary hover:text-primary-700 flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
               >
                 Sort by
                 <ChevronDown className="h-4 w-4 ml-1" />
@@ -625,7 +625,7 @@ function MainContent({ setSelectedPackage }: {
                           )}
                         </div>
                       </div>
-                      <span className="text-lg font-bold text-primary ml-4 flex-shrink-0">₹{pkg.price.toLocaleString()}</span>
+                      <span className="text-lg font-bold text-[#1c5d5e] ml-4 flex-shrink-0">₹{pkg.price.toLocaleString()}</span>
                     </div>
                     
                     {pkg.tags && pkg.tags.length > 0 && (
@@ -641,25 +641,77 @@ function MainContent({ setSelectedPackage }: {
                       </div>
                     )}
 
-                    <div className="space-y-3 mb-6">
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="h-5 w-5 mr-2 flex-shrink-0" />
-                        <span className="truncate">{new Date(pkg.start_date).toLocaleDateString()}</span>
+{/*  New Multiple Start Date View - Begin */}
+
+                    <div className="space-y-3">
+                      <div className="flex text-gray-700">
+                      <Calendar className="h-5 w-5 mr-2 mt-1" /><p>Available Dates: </p>
                       </div>
-                      <div className="flex items-center text-gray-600">
-                        <Clock className="h-5 w-5 mr-2 flex-shrink-0" />
-                        <span className="truncate">{pkg.duration} days</span>
+                      <div className="flex gap-4 text-gray-600">
+                        
+                      <div className="flex items-start text-gray-600 flex-wrap mb-1S">
+
+  <div
+    className="flex flex-wrap gap-2 flex-1 overflow-hidden"
+    style={{
+      maxHeight: '4.5rem', // Limit to ~2 rows
+    }}
+  >
+    {Array.isArray(pkg.start_date)
+      ? pkg.start_date.map((date, index) => (
+          <span
+            key={index}
+            className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded"
+          >
+            {new Date(date).toLocaleDateString('en-GB', {
+              day: '2-digit',
+              month: 'short',
+              year: '2-digit',
+            })}
+          </span>
+        ))
+      : (
+        <span className="bg-gray-100 border border-gray-300 text-gray-700 text-sm py-1 px-2 rounded">
+          {new Date(pkg.start_date).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          })}
+        </span>
+      )}
+  </div>
+</div>
+
+
+
+
                       </div>
-                      <div className="flex items-center text-gray-600">
-                        <Users className="h-5 w-5 mr-2 flex-shrink-0" />
-                        <span className="truncate">{pkg.group_size} spots</span>
+                      <div className="flex gap-6">
+                      <div className="flex items-center text-gray-700">
+                        <Users className="h-5 w-5 mr-2" />
+                        <span>{pkg.group_size} spots</span>
                       </div>
-                      <p className="text-gray-600 line-clamp-2">{pkg.description}</p>
+                      
+                      <div className="flex items-center text-gray-700">
+                        <Clock className="h-5 w-5 mr-2" />
+                        <span>{pkg.duration} days</span>
+                      </div>
+                      </div>
+                      
+
+                      
                     </div>
-                    <div className="mt-auto">
+
+
+{/*  New Multiple Start Date View - End */}
+
+
+                   
+                   
+                    <div className="mt-5">
                       <button
                         onClick={() => setSelectedPackage(pkg)}
-                        className="w-full bg-[#0a2472] text-white py-2 px-4 rounded-md hover:bg-[#0a2472]/90 flex items-center justify-center"
+                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-yellow-500 flex items-center justify-center"
                         disabled={pkg.status === 'closed'}
                       >
                         {pkg.status === 'closed' ? 'Booking Closed' : 'View Details'}
@@ -673,7 +725,7 @@ function MainContent({ setSelectedPackage }: {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="mt-8 mb-8 flex justify-center items-center space-x-4">
+              <div className="mt-8 mb-4 flex justify-center items-center space-x-4">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
@@ -698,14 +750,14 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Partner Carousel Section */}
-      <div className="bg-background-light py-12">
+      <div className="bg-background-light py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <PartnerCarousel />
         </div>
       </div>
 
       {/* Customer Rating Section */}
-      <div className="bg-gray-50 py-12">
+      <div className="bg-gray-50 py-3">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <CustomerRating />
         </div>

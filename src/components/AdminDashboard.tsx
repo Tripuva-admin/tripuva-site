@@ -201,6 +201,8 @@ export function AdminDashboard() {
     }
   };
 
+  const [tempDate, setTempDate] = useState('');
+
   const handleEdit = (pkg: Package & { package_images?: { image_url: string }[] }) => {
     setEditingPackage(pkg);
     setFormData({
@@ -300,7 +302,7 @@ export function AdminDashboard() {
                   price: 0,
                   group_size: 1,
                   image: '',
-                  start_date: '',
+                  start_date: [],
                   agency_id: '',
                   status: 'open',
                   package_id: '',
@@ -367,7 +369,7 @@ export function AdminDashboard() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
+                    <td className="px-2 py-4 text-sm text-gray-500">
                       {(pkg as any).agency?.name || 'No Agency'}
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-500">
@@ -379,9 +381,28 @@ export function AdminDashboard() {
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {pkg.group_size}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-500">
-                      {new Date(pkg.start_date).toLocaleDateString()}
-                    </td>
+{/* Added on 08-04-25*/}
+
+                    <td className="px-2 py-4 text-sm text-gray-500">
+  {Array.isArray(pkg.start_date)
+    ? pkg.start_date.map((date, index) => (
+        <span key={index} className="inline-block mr-2">
+          {new Date(date).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit'
+          })}
+        </span>
+      ))
+    : new Date(pkg.start_date).toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: '2-digit'
+      })}
+</td>
+
+{/* Added on 08-04-25* -*/}
+
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         pkg.status === 'open'
@@ -512,16 +533,63 @@ export function AdminDashboard() {
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Start Date</label>
-                    <input
-                      type="date"
-                      required
-                      value={formData.start_date}
-                      onChange={(e) => setFormData({ ...formData, start_date: e.target.value })}
-                      className="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
-                    />
-                  </div>
+{/*  New Multiple Start Date Addition - Begin */}
+
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Start Dates</label>
+
+  <div className="flex items-center gap-2 mb-2">
+    <input
+      type="date"
+      value={tempDate}
+      onChange={(e) => setTempDate(e.target.value)}
+      className="rounded-md border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-primary text-sm"
+    />
+    <button
+      type="button"
+      onClick={() => {
+        if (tempDate && !formData.start_date.includes(tempDate)) {
+          setFormData({ ...formData, start_date: [...formData.start_date, tempDate] });
+          setTempDate('');
+        }
+      }}
+      className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary-600"
+    >
+      Add
+    </button>
+  </div>
+
+  {/* Display selected dates */}
+  <div className="flex flex-wrap gap-2">
+    {formData.start_date.map((date, index) => (
+      <div
+        key={index}
+        className="flex items-center bg-gray-100 border border-gray-300 text-sm rounded px-2 py-1"
+      >
+        {new Date(date).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: '2-digit',
+        })}
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({
+              ...formData,
+              start_date: formData.start_date.filter((_, i) => i !== index),
+            });
+          }}
+          className="ml-2 text-red-500 hover:text-red-700 text-xs"
+        >
+          ×
+        </button>
+      </div>
+    ))}
+  </div>
+</div>
+
+{/* New Multiple Start Date Addition - End */}                  
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Status</label>

@@ -84,26 +84,9 @@ const goToNext = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    try {
-      // Split the date string into day, month, year
-      const [day, month, year] = dateString.split('-');
-      // Create date in YYYY-MM-DD format which JavaScript can parse correctly
-      const date = new Date(`${year}-${month}-${day}`);
-      if (isNaN(date.getTime())) {
-        console.error('Invalid date:', dateString);
-        return 'Invalid date';
-      }
-      return date.toLocaleDateString('en-IN', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric'
-      });
-    } catch (error) {
-      console.error('Error formatting date:', error);
-      return 'Invalid date';
-    }
-  };
+  const [selectedStartDate, setSelectedStartDate] = useState<string>(
+    Array.isArray(pkg.start_date) ? pkg.start_date[0] : pkg.start_date
+  );
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -189,52 +172,84 @@ const goToNext = () => {
     </div>
   )}
 
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-    <div className="flex items-center text-gray-600">
-      <Calendar className="h-5 w-5 mr-2" />
-      <div className="flex flex-col">
-        <span>Start Date:</span>
-        {Array.isArray(pkg.listings) && pkg.listings.length > 0 ? (
-          <select
-            value={selectedDate}
-            onChange={(e) => setSelectedDate(e.target.value)}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary sm:text-sm"
+{/* New Multiple Start Date View - Begin*/}          
+
+<div className="flex items-center text-gray-600 mb-3 font-semibold">
+                      <Calendar className="h-5 w-5 mr-2 mt-1" /><span>Available Dates: </span>
+                      </div>
+
+          <div className="flex sm:grid-cols-2 gap-4 mb-6 items-start">
+          
+          <div className="flex items-center text-gray-600">
+            
+
+
+
+        
+<div className="flex flex-wrap gap-2">
+  {Array.isArray(pkg.start_date)
+    ? pkg.start_date.map((date, index) => {
+        const formatted = new Date(date).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: '2-digit',
+        });
+        return (
+          <button
+            key={index}
+            type="button"
+            onClick={() => setSelectedStartDate(date)}
+            className={`text-sm py-1 px-2 rounded border transition-all ${
+              selectedStartDate === date
+                ? 'bg-yellow-400 text-black border-yellow-400'
+                : 'bg-yellow-50 text-gray-700 border-yellow-200'
+            }`}
           >
-            {pkg.listings.map((listing) => (
-              <option key={listing.id} value={listing.start_date}>
-                {formatDate(listing.start_date)}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <span className="mt-1 text-sm text-gray-500">
-            {formatDate(pkg.start_date)}
-          </span>
-        )}
-      </div>
-    </div>
-    <div className="flex items-center text-gray-600">
-      <Clock className="h-5 w-5 mr-2" />
-      <span>Duration: {pkg.duration} days</span>
-    </div>
-    <div className="flex items-center text-gray-600">
-      <Users className="h-5 w-5 mr-2" />
-      <span>Group Size: {pkg.group_size} people</span>
-    </div>
-  </div>
+            {formatted}
+          </button>
+        );
+      })
+    : (
+      <span className="text-sm py-1 px-2 rounded border bg-white text-gray-700 border-gray-300">
+        {new Date(pkg.start_date).toLocaleDateString('en-GB', {
+          day: '2-digit',
+          month: 'short',
+          year: '2-digit',
+        })}
+      </span>
+    )}
+</div>
+</div>
 
-  <div className="prose max-w-none mb-6">
-    <p className="text-gray-600">{pkg.description}</p>
-  </div>
+</div>
 
-  <div className="bg-gray-50 p-6 rounded-lg">
-    <div className="flex items-center justify-between mb-4">
-      <span className="text-lg md:text-xl font-semibold">Price per person</span>
-      <div className="flex items-center text-xl md:text-2xl font-bold text-primary">
-        <IndianRupee className="h-5 w-5 md:h-6 md:w-6 mr-1" />
-        {pkg.price.toLocaleString()}
-      </div>
-    </div>
+
+
+{/* New Multiple Start Date View - End*/}  
+        
+ <div className="flex items-center text-gray-600 font-semibold">
+              <Clock className="h-5 w-5 mr-2" />
+              <span>Duration: {pkg.duration} days</span>
+            </div>
+    
+            <div className="flex items-center text-gray-600 mt-3 font-semibold">
+              <Users className="h-5 w-5 mr-2" />
+              <span>Group Size: {pkg.group_size} people</span>
+            </div>
+          
+
+          <div className="prose max-w-none mb-6 mt-3">
+            <p className="text-gray-600">{pkg.description}</p>
+          </div>
+
+          <div className="bg-gray-50 p-6 rounded-lg">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-lg md:text-xl font-semibold">Price per person</span>
+              <div className="flex items-center text-xl md:text-2xl font-bold text-[#1c5d5e]">
+                <IndianRupee className="h-5 w-5 md:h-6 md:w-6 mr-1" />
+                {pkg.price.toLocaleString()}
+              </div>
+            </div>
 
     <div className="space-y-4">
       <div className="bg-blue-50 p-4 rounded-md">
@@ -246,16 +261,16 @@ const goToNext = () => {
         </p>
       </div>
 
-      <button
-        onClick={handleBooking}
-        className="w-full bg-primary text-white py-3 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
-      >
-        Book Now
-      </button>
+              <button
+                onClick={handleBooking}
+                className="w-full bg-[#1c5d5e] text-white py-3 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
+              >
+                Book Now
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-</div>
-</div>
-);
+  );
 }

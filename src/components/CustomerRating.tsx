@@ -55,8 +55,8 @@ const ReviewsSection: React.FC = () => {
   };
 
   return (
-    <div className="mt-12 px-4">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Traveler Reviews</h2>
+    <div className="mt-6 mb-10">
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-left">Traveler Reviews</h2>
 
       {loading ? (
         <p className="text-center text-gray-500">Loading reviews...</p>
