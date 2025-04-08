@@ -1,13 +1,21 @@
 import React from 'react';
+import { supabase } from '../lib/supabase';
 
-const logos = [
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-];
+var PARTNERS_LOGO: string[] = [];
+
+const agencies_response = await supabase
+  .from('agencies')
+  .select('*');
+
+if (agencies_response.error) {
+  console.error("Error fetching data:", agencies_response.error);
+} else if (Array.isArray(agencies_response.data)) {
+   PARTNERS_LOGO = agencies_response.data.map((item: any) => item.agency_logo);
+} else {
+  console.warn("Unexpected response format:", agencies_response);
+}
+
+console.log("PARTNERS_LOGO: ",PARTNERS_LOGO);
 
 const PartnerCarousel: React.FC = () => {
   return (
@@ -16,7 +24,7 @@ const PartnerCarousel: React.FC = () => {
   
     <div className="relative w-full">
       <div className="flex w-max animate-scroll gap-8 px-4">
-        {[...logos, ...logos].map((logo, index) => (
+        {[...PARTNERS_LOGO, ...PARTNERS_LOGO].map((logo, index) => (
           <div
             key={index}
             className="flex-shrink-0 w-60 h-32 flex items-center justify-center"
