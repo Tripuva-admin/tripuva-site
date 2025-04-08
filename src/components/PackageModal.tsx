@@ -78,7 +78,7 @@ const goToNext = () => {
 
   const handleBooking = () => {
     if (pkg.booking_link) {
-      var BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${pkg.booking_link}` 
+      var BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${pkg.booking_link}%20${selectedStartDate}` 
       console.log(BOOKING_LINK)
       window.open(BOOKING_LINK, '_blank');
     }
@@ -155,10 +155,10 @@ const goToNext = () => {
 </div>
 
 <div className="w-full md:w-1/2 md:overflow-y-auto p-6 md:p-8">
-  <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">{pkg.title}</h2>
+  <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-4">{pkg.title}</h2>
 
   {pkg.agency && (
-    <div className="mb-6 flex items-start space-x-2">
+    <div className="mb-3 flex items-start space-x-2">
       <Building2 className="h-5 w-5 text-gray-500 mt-0.5" />
       <div>
         <p className="text-gray-700 font-medium">{pkg.agency.name}</p>
@@ -226,22 +226,59 @@ const goToNext = () => {
 
 
 {/* New Multiple Start Date View - End*/}  
-        
- <div className="flex items-center text-gray-600 font-semibold">
+    <div className="flex flex-wrap items-center sm:flex-row sm:items-start gap-4">
+     
+ <div className="flex items-center text-gray-800 font-semibold">
               <Clock className="h-5 w-5 mr-2" />
-              <span>Duration: {pkg.duration} days</span>
+              Duration: <span className="ml-1 text-gray-600 font-normal">{pkg.duration} days</span>
             </div>
     
-            <div className="flex items-center text-gray-600 mt-3 font-semibold">
+            <div className="flex items-center text-gray-800 font-semibold mb-3">
               <Users className="h-5 w-5 mr-2" />
-              <span>Group Size: {pkg.group_size} people</span>
+              Group Size: <span className="ml-1 text-gray-600 font-normal">{pkg.group_size} people</span>
             </div>
-          
+</div>
 
-          <div className="prose max-w-none mb-6 mt-3">
+<div className="space-y-4">
+<div className="border rounded-md p-4 bg-white shadow-sm">
+  {/* Top Row: Booking Advance & Price */}
+  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3">
+    
+    {/* Booking Advance (Left) */}
+    <p className="text-gray-800 text-base font-semibold mb-2 sm:mb-0">
+      Booking Advance:  <span className="text-green-600">₹{pkg.advance.toLocaleString()}</span>
+    </p>
+    
+    {/* Price Per Person (Right) */}
+    <p className="text-gray-800 text-base font-semibold">
+      Price per person: <span className="text-gray-500">₹{pkg.price.toLocaleString()}</span>
+    </p>
+  </div>
+
+  {/* Book Now Button */}
+  <div className="w-full">
+    <button
+      onClick={handleBooking}
+      className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-primary-600 transition duration-200"
+    >
+      Book Now
+    </button>
+  </div>
+</div>
+
+
+      <p className="text-blue-800 text-sm mt-1">
+          Click "Book Now" to connect with us on WhatsApp and reserve your spot for this amazing trip!
+        </p>
+
+              
+            </div>
+
+    <div className="prose max-w-none mb-6 mt-3">
             <p className="text-gray-600">{pkg.description}</p>
           </div>
 
+{/*
           <div className="bg-gray-50 p-6 rounded-lg">
             <div className="flex items-center justify-between mb-4">
               <span className="text-lg md:text-xl font-semibold">Price per person</span>
@@ -267,8 +304,8 @@ const goToNext = () => {
               >
                 Book Now
               </button>
-            </div>
-          </div>
+            </div> 
+          </div>*/}
         </div>
       </div>
     </div>

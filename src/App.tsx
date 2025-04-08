@@ -395,7 +395,7 @@ function MainContent({ setSelectedPackage }: {
                       <input
                         type="text"
                         placeholder="Enter destination"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
+                        className="w-full text-center rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
                         value={filters.destination}
                         onChange={(e) => handleFilterChange({ destination: e.target.value })}
                       />
@@ -417,7 +417,7 @@ function MainContent({ setSelectedPackage }: {
                       type="number"
                       placeholder="100000"
                       min="0"
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                      className="w-full text-center rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
                       value={filters.maxPrice}
                       onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
                     />
@@ -428,7 +428,7 @@ function MainContent({ setSelectedPackage }: {
                     </label>
                     <input
                       type="date"
-                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
+                      className="w-full text-center rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
                       value={filters.startDate}
                       onChange={(e) => handleFilterChange({ startDate: e.target.value })}
                     />
