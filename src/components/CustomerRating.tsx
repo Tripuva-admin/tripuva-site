@@ -46,7 +46,7 @@ const ReviewsSection: React.FC = () => {
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
     return (
-      <div className="flex text-yellow-500 text-xl">
+      <div className="flex text-yellow-500 text-2xl">
         {[...Array(fullStars)].map((_, i) => <span key={`full-${i}`}>★</span>)}
         {halfStar && <span key="half">☆</span>}
         {[...Array(emptyStars)].map((_, i) => <span key={`empty-${i}`}>☆</span>)}
@@ -56,7 +56,7 @@ const ReviewsSection: React.FC = () => {
 
   return (
     <div className="mt-6 mb-10">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-left">Traveler Reviews</h2>
+      <h2 className="text-2xl font-bold text-gray-800 mb-6 text-center">Traveler Reviews</h2>
 
       {loading ? (
         <p className="text-center text-gray-500">Loading reviews...</p>
@@ -67,28 +67,28 @@ const ReviewsSection: React.FC = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {reviews.slice(0, 6).map((review) => (
-            <div key={review.review_id} className="bg-white rounded-xl shadow-md p-6">
+            <div key={review.review_id} className="bg-white rounded-xl shadow-md p-4">
             
-              <h4 className="text-md font-semibold text-gray-800 mb-2">
+              <h4 className="text-md font-semibold text-gray-800 mb-1">
                 {review.review_customer_name}
               </h4>
 
-              <p className="text-blue-600 font-medium text-sm mb-1">
-                Package: {review.review_package_name}
+              <p className="text-[#1c5d5e] font-medium text-md mb-1">
+                Trip: {review.review_package_name}
               </p>
 
-              <p className="text-sm text-gray-500 mb-2 italic">
-                Agency: {review.rating_package_by_agency}
+              <p className="text-sm text-gray-500 mb-1 italic">
+                By: {review.rating_package_by_agency}
               </p>
 
-              <div className="flex items-center mb-3">
+              <div className="flex items-center mb-1">
                 {renderStars(review.review_rating)}
                 <span className="ml-2 text-sm text-gray-500">
                   {review.review_rating.toFixed(1)}
                 </span>
               </div>
 
-              <p className="text-sm text-gray-700">{review.review_comment}</p>
+              <p className="text-md text-gray-700">{review.review_comment}</p>
             </div>
           ))}
         </div>

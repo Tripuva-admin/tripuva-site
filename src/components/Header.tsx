@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export function Header({ user }: HeaderProps) {
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#0a2472]">
+    <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#1c5d5e]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">

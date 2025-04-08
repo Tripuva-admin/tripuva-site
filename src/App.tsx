@@ -110,7 +110,7 @@ function Header({ user }: HeaderProps) {
         ? 'bg-[#0a2472]' 
         : isHomePage 
           ? 'absolute top-0 left-0 right-0 bg-transparent' 
-          : 'bg-[#0a2472]'
+          : 'bg-[#0f424c]'
     } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
@@ -121,7 +121,7 @@ function Header({ user }: HeaderProps) {
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
               to="/top-places" 
-              className="bg-gradient-to-r from-yellow-400 to-yellow-700 text-black px-4 py-2 rounded-md text-base font-medium flex items-center"
+              className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-md text-base font-medium flex items-center"
             >
               <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Places
@@ -450,8 +450,9 @@ function MainContent({ setSelectedPackage }: {
 
       {/* Popular Destinations */}
       <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      <h2 className="text-2xl font-bold text-gray-900 text-center">Popular Destinations</h2>
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-2xl font-bold text-gray-900">Popular Destinations</h2>
+        
           {filters.destination && (
             <button
               onClick={clearDestination}
@@ -504,7 +505,7 @@ function MainContent({ setSelectedPackage }: {
       {/* Tags Filter */}
       <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Filter by Experience</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Filter by Experience</h3>
           <div className="flex flex-wrap gap-2">
             {AVAILABLE_TAGS.map(tag => (
               <button
@@ -535,31 +536,48 @@ function MainContent({ setSelectedPackage }: {
 
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-0 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Trips</h2>
-          
-          <div className="flex space-x-4">
-            {/* Sort by Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setSortMenuOpen(!sortMenuOpen)}
-                className="text-sm text-primary hover:text-primary-700 flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
-              >
-                Sort by
-                <ChevronDown className="h-4 w-4 ml-1" />
-              </button>
-              {sortMenuOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-10">
-                  <button onClick={() => handleSort('price')} className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100">Price (Low to High)</button>
-                  <button onClick={() => handleSort('-price')} className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100">Price (High to Low)</button>
-                  <button onClick={() => handleSort('date')} className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100">Date (Newest)</button>
-                </div>
-              )}
-            </div>
-            
-            
-          </div>
+      <div className="relative mb-6 flex items-center justify-center">
+  {/* Centered Heading */}
+  <h2 className="text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
+    All Trips
+  </h2>
+
+  {/* Sort by Dropdown on Right */}
+  <div className="ml-auto">
+    <div className="relative">
+      <button
+        onClick={() => setSortMenuOpen(!sortMenuOpen)}
+        className="text-sm text-primary hover:text-primary-700 flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
+      >
+        Sort by
+        <ChevronDown className="h-4 w-4 ml-1" />
+      </button>
+      {sortMenuOpen && (
+        <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-10">
+          <button
+            onClick={() => handleSort('price')}
+            className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+          >
+            Price (Low to High)
+          </button>
+          <button
+            onClick={() => handleSort('-price')}
+            className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+          >
+            Price (High to Low)
+          </button>
+          <button
+            onClick={() => handleSort('date')}
+            className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+          >
+            Date (Newest)
+          </button>
         </div>
+      )}
+    </div>
+  </div>
+</div>
+
 
         {loading ? (
           <div className="text-center py-12">

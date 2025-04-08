@@ -4,7 +4,7 @@ export function Terms() {
   return (
     <div className="min-h-screen bg-background-light pt-24">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Terms & Conditions</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 bg-gradient-to-r from-[#0f424c] via-yellow-300 to-yellow-200 bg-clip-text text-transparent">Terms & Conditions</h1>
         
         <div className="space-y-8">
           <div className="prose max-w-none">

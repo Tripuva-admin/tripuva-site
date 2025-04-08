@@ -3,9 +3,9 @@ import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 
 export function Contact() {
   return (
-    <div className="pt-24 pb-12">
+    <div className="pt-20 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Contact Us</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-8 bg-gradient-to-r from-[#0f424c] via-yellow-300 to-yellow-200 bg-clip-text text-transparent">Contact Us</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div>
@@ -16,8 +16,8 @@ export function Contact() {
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">Address</h3>
                   <p className="mt-1 text-gray-600">
-                    123 Travel Street<br />
-                    Mumbai, Maharashtra 400001<br />
+                    Zoo Road<br />
+                    Guwahati, Assam 781005<br />
                     India
                   </p>
                 </div>
@@ -35,7 +35,7 @@ export function Contact() {
                 <Mail className="h-6 w-6 text-primary mt-1" />
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">Email</h3>
-                  <p className="mt-1 text-gray-600">info@tripuva.com</p>
+                  <p className="mt-1 text-gray-600">tripuva@gmail.com</p>
                 </div>
               </div>
 
@@ -44,9 +44,8 @@ export function Contact() {
                 <div className="ml-4">
                   <h3 className="text-lg font-medium text-gray-900">Business Hours</h3>
                   <p className="mt-1 text-gray-600">
-                    Monday - Friday: 9:00 AM - 6:00 PM IST<br />
-                    Saturday: 10:00 AM - 4:00 PM IST<br />
-                    Sunday: Closed
+                    All Days Open
+                    
                   </p>
                 </div>
               </div>
@@ -90,7 +89,7 @@ export function Contact() {
 
               <button
                 type="submit"
-                className="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
+                className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
               >
                 Send Message
               </button>

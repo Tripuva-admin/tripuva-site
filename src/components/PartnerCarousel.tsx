@@ -1,21 +1,21 @@
 import React from 'react';
 
 const logos = [
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
-  'https://static.vecteezy.com/system/resources/previews/009/930/049/non_2x/world-travel-logo-travel-agency-logo-free-vector.jpg',
+  'https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/download%20(5).png',
+  'https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/download%20(5).png',
+  'https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/download%20(5).png',
+  'https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/download%20(5).png',
+  'https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/download%20(5).png',
+  'https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/download%20(5).png',
 ];
 
 const PartnerCarousel: React.FC = () => {
   return (
     <div className="w-full bg-transparent py-1 overflow-hidden">
-    <h3 className="text-2xl font-bold text-gray-800 mb-6 text-left">Our Travel Partners</h3>
+    <h3 className="text-2xl font-bold text-gray-800 mb-6 text-center">Our Travel Partners</h3>
   
     <div className="relative w-full">
-      <div className="flex w-max animate-scroll gap-8 px-4">
+      <div className="flex w-max animate-scroll gap-4 px-4">
         {[...logos, ...logos].map((logo, index) => (
           <div
             key={index}
