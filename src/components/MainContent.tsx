@@ -209,4 +209,14 @@ export function MainContent({
                   currentPage === page
                     ? 'bg-primary text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </nav>
+        </div>
+      )}
+    </div>
+  );
+}
