@@ -15,15 +15,28 @@ export interface Package {
   price: number;
   group_size: number;
   image: string;
-  start_date: string[];
+  start_date: string | string[];
   agency_id: string;
   status: 'open' | 'closed';
-  booking_link: string;
-  tags: string[];
+  booking_link?: string;
+  tags?: string[];
   ranking: number;
   advance: number;
   created_at: string;
   updated_at: string;
+  agency?: {
+    name: string;
+    rating: number;
+  };
+  package_images?: {
+    id: string;
+    image_url: string;
+    is_primary: boolean;
+  }[];
+  listings?: {
+    id: string;
+    start_date: string;
+  }[];
 }
 
 export interface Profile {

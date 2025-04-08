@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { PackageModal } from './components/PackageModal';
@@ -128,7 +128,7 @@ function Header({ user }: HeaderProps) {
             </Link>
 
             <a 
-              href="https://google.com"
+              href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
@@ -173,7 +173,7 @@ function Header({ user }: HeaderProps) {
               </Link>
 
               <a
-                href="https://google.com"
+                href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
@@ -221,6 +221,18 @@ function MainContent({ setSelectedPackage }: {
 
   // Sorting state
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
+
+  const packagesRef = useRef<HTMLDivElement>(null);
+
+  // Add effect to handle scrolling when page changes
+  useEffect(() => {
+    if (packagesRef.current) {
+      const yOffset = -100; // Offset to account for any fixed headers
+      const element = packagesRef.current;
+      const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, [currentPage]);
 
   useEffect(() => {
     fetchPackages();
@@ -283,7 +295,16 @@ function MainContent({ setSelectedPackage }: {
         sortedPackages.sort((a, b) => b.price - a.price);
         break;
       case 'date':
-        sortedPackages.sort((a, b) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime());
+        sortedPackages.sort((a, b) => {
+          const getLatestDate = (dates: string | string[] | null): number => {
+            if (!dates) return 0;
+            if (Array.isArray(dates)) {
+              return Math.max(...dates.map(d => new Date(d).setHours(0, 0, 0, 0)));
+            }
+            return new Date(dates).setHours(0, 0, 0, 0);
+          };
+          return getLatestDate(b.start_date) - getLatestDate(a.start_date);
+        });
         break;
     }
     setPackages(sortedPackages);
@@ -332,8 +353,23 @@ function MainContent({ setSelectedPackage }: {
 
         const matchesPrice = !filters.maxPrice || pkg.price <= parseInt(filters.maxPrice);
 
-        const matchesDate = !filters.startDate || 
-          new Date(pkg.start_date) >= new Date(filters.startDate);
+        const matchesDate = !filters.startDate || (() => {
+          const filterDate = new Date(filters.startDate).toISOString().split('T')[0];
+          
+          if (!pkg.start_date) {
+            return false;
+          }
+
+          if (Array.isArray(pkg.start_date)) {
+            return pkg.start_date.some(date => {
+              const packageDate = new Date(date).toISOString().split('T')[0];
+              return packageDate === filterDate;
+            });
+          }
+
+          const packageDate = new Date(pkg.start_date).toISOString().split('T')[0];
+          return packageDate === filterDate;
+        })();
 
         const matchesTags = filters.tags.length === 0 || 
           filters.tags.some(tag => pkg.tags?.includes(tag));
@@ -606,9 +642,9 @@ function MainContent({ setSelectedPackage }: {
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div ref={packagesRef} id="packages-grid" className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 min-h-[200px]">
               {currentPackages.map((pkg) => (
-                <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden transition-transform hover:scale-[1.02] flex flex-col h-full">
+                <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden h-full">
                   <div className="relative h-48">
                     <img
                       src={pkg.image}
@@ -625,111 +661,91 @@ function MainContent({ setSelectedPackage }: {
                       </span>
                     </div>
                   </div>
-                  <div className="p-6 flex flex-col flex-grow">
-                    <div className="flex justify-between items-start mb-4">
-                      <div className="flex-grow">
-                        <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
-                        <div className="mt-1">
-                          {pkg.agency && (
-                            <>
-                              <p className="text-sm text-gray-600">By {pkg.agency.name}</p>
-                              <div className="flex items-center mt-1">
-                                {renderStars(pkg.agency.rating)}
-                                <span className="ml-1 text-sm text-gray-600">
-                                  ({pkg.agency.rating.toFixed(1)})
-                                </span>
-                              </div>
-                            </>
+                  <div className="p-6 flex flex-col justify-between h-[calc(100%-12rem)]">
+                    <div className="flex-1">
+                      <div className="flex justify-between items-start mb-4">
+                        <div className="flex-grow">
+                          <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
+                          <div className="mt-1">
+                            {pkg.agency && (
+                              <>
+                                <p className="text-sm text-gray-600">By {pkg.agency.name}</p>
+                                <div className="flex items-center mt-1">
+                                  {renderStars(pkg.agency.rating)}
+                                  <span className="ml-1 text-sm text-gray-600">
+                                    ({pkg.agency.rating.toFixed(1)})
+                                  </span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </div>
+                        <span className="text-lg font-bold text-[#1c5d5e] ml-4 flex-shrink-0">₹{pkg.price.toLocaleString()}</span>
+                      </div>
+
+                      {pkg.tags && pkg.tags.length > 0 && (
+                        <div className="flex flex-wrap gap-1 mb-4">
+                          {pkg.tags.map(tag => (
+                            <span
+                              key={tag}
+                              className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600"
+                            >
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="space-y-3">
+                        <div className="flex items-center text-gray-700">
+                          <Calendar className="h-5 w-5 mr-2" />
+                          <p>Available Dates:</p>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {Array.isArray(pkg.start_date) && pkg.start_date.length > 0 ? (
+                            pkg.start_date.map((date, index) => (
+                              <span
+                                key={index}
+                                className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded"
+                              >
+                                {new Date(date).toLocaleDateString('en-GB', {
+                                  day: '2-digit',
+                                  month: 'short',
+                                  year: '2-digit',
+                                })}
+                              </span>
+                            ))
+                          ) : typeof pkg.start_date === 'string' && pkg.start_date ? (
+                            <span className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded">
+                              {new Date(pkg.start_date).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: '2-digit',
+                              })}
+                            </span>
+                          ) : (
+                            <span className="text-yellow-600 text-sm">
+                              No dates available at the moment.
+                            </span>
                           )}
                         </div>
+                        <div className="flex gap-6">
+                          <div className="flex items-center text-gray-700">
+                            <Users className="h-5 w-5 mr-2" />
+                            <span>{pkg.group_size} spots</span>
+                          </div>
+                          <div className="flex items-center text-gray-700">
+                            <Clock className="h-5 w-5 mr-2" />
+                            <span>{pkg.duration} days</span>
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-lg font-bold text-[#1c5d5e] ml-4 flex-shrink-0">₹{pkg.price.toLocaleString()}</span>
-                    </div>
-                    
-                    {pkg.tags && pkg.tags.length > 0 && (
-                      <div className="flex flex-wrap gap-1 mb-4">
-                        {pkg.tags.map(tag => (
-                          <span
-                            key={tag}
-                            className="px-2 py-0.5 rounded-full text-xs font-medium bg-blue-50 text-blue-600"
-                          >
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-{/*  New Multiple Start Date View - Begin */}
-
-                    <div className="space-y-3">
-                      <div className="flex text-gray-700">
-                      <Calendar className="h-5 w-5 mr-2 mt-1" /><p>Available Dates: </p>
-                      </div>
-                      <div className="flex gap-4 text-gray-600">
-                        
-                      <div className="flex items-start text-gray-600 flex-wrap mb-1S">
-
-  <div
-    className="flex flex-wrap gap-2 flex-1 overflow-hidden"
-    style={{
-      maxHeight: '4.5rem', // Limit to ~2 rows
-    }}
-  >
-    {Array.isArray(pkg.start_date)
-      ? pkg.start_date.map((date, index) => (
-          <span
-            key={index}
-            className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded"
-          >
-            {new Date(date).toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: '2-digit',
-            })}
-          </span>
-        ))
-      : (
-        <span className="bg-gray-100 border border-gray-300 text-gray-700 text-sm py-1 px-2 rounded">
-          {new Date(pkg.start_date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          })}
-        </span>
-      )}
-  </div>
-</div>
-
-
-
-
-                      </div>
-                      <div className="flex gap-6">
-                      <div className="flex items-center text-gray-700">
-                        <Users className="h-5 w-5 mr-2" />
-                        <span>{pkg.group_size} spots</span>
-                      </div>
-                      
-                      <div className="flex items-center text-gray-700">
-                        <Clock className="h-5 w-5 mr-2" />
-                        <span>{pkg.duration} days</span>
-                      </div>
-                      </div>
-                      
-
-                      
                     </div>
 
-
-{/*  New Multiple Start Date View - End */}
-
-
-                   
-                   
                     <div className="mt-5">
                       <button
                         onClick={() => setSelectedPackage(pkg)}
-                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-yellow-500 flex items-center justify-center"
+                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-yellow-500 flex items-center justify-center transition-colors duration-200"
                         disabled={pkg.status === 'closed'}
                       >
                         {pkg.status === 'closed' ? 'Booking Closed' : 'View Details'}
@@ -743,9 +759,11 @@ function MainContent({ setSelectedPackage }: {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="mt-8 mb-4 flex justify-center items-center space-x-4">
+              <div className="mt-8 mb-8 flex justify-center items-center space-x-4">
                 <button
-                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  onClick={() => {
+                    setCurrentPage(prev => Math.max(prev - 1, 1));
+                  }}
                   disabled={currentPage === 1}
                   className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -755,7 +773,9 @@ function MainContent({ setSelectedPackage }: {
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
-                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  onClick={() => {
+                    setCurrentPage(prev => Math.min(prev + 1, totalPages));
+                  }}
                   disabled={currentPage === totalPages}
                   className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
