@@ -78,11 +78,14 @@ const goToNext = () => {
 
   const handleBooking = () => {
     if (pkg.booking_link) {
-      var BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${pkg.booking_link}%20${selectedStartDate}` 
-      console.log(BOOKING_LINK)
+      const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.id})`;
+      const BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`;
+      
+      console.log(BOOKING_LINK);
       window.open(BOOKING_LINK, '_blank');
     }
   };
+  
 
   const [selectedStartDate, setSelectedStartDate] = useState<string>(
     Array.isArray(pkg.start_date) ? pkg.start_date[0] : pkg.start_date
