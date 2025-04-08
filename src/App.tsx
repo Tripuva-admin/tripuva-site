@@ -363,12 +363,12 @@ function MainContent({ setSelectedPackage }: {
           if (Array.isArray(pkg.start_date)) {
             return pkg.start_date.some(date => {
               const packageDate = new Date(date).toISOString().split('T')[0];
-              return packageDate === filterDate;
+              return packageDate >= filterDate;
             });
           }
 
           const packageDate = new Date(pkg.start_date).toISOString().split('T')[0];
-          return packageDate === filterDate;
+          return packageDate >= filterDate;
         })();
 
         const matchesTags = filters.tags.length === 0 || 
