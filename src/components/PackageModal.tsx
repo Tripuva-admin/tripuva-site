@@ -207,22 +207,8 @@ const goToNext = () => {
     </div>
   </div>
 
-  <div className="flex items-center text-gray-600 font-semibold">
-    <Clock className="h-5 w-5 mr-2" />
-    <span>Duration: {pkg.duration} days</span>
-  </div>
-
-  <div className="flex items-center text-gray-600 mt-3 font-semibold">
-    <Users className="h-5 w-5 mr-2" />
-    <span>Group Size: {pkg.group_size} people</span>
-  </div>
-
-  <div className="prose max-w-none mb-6 mt-3">
-    <p className="text-gray-600">{pkg.description}</p>
-  </div>
-
-<<<<<<< HEAD
 {/* New Multiple Start Date View - End*/}  
+
     <div className="flex flex-wrap items-center sm:flex-row sm:items-start gap-4">
      
  <div className="flex items-center text-gray-800 font-semibold">
@@ -284,16 +270,6 @@ const goToNext = () => {
                 {pkg.price.toLocaleString()}
               </div>
             </div>
-=======
-  <div className="bg-gray-50 p-6 rounded-lg">
-    <div className="flex items-center justify-between mb-4">
-      <span className="text-lg md:text-xl font-semibold">Price per person</span>
-      <div className="flex items-center text-xl md:text-2xl font-bold text-[#1c5d5e]">
-        <IndianRupee className="h-5 w-5 md:h-6 md:w-6 mr-1" />
-        {pkg.price.toLocaleString()}
-      </div>
-    </div>
->>>>>>> 09f46e9c375d8b419f433f396f1ad489e32d2cac
 
     <div className="space-y-4">
       <div className="bg-blue-50 p-4 rounded-md">
@@ -305,7 +281,6 @@ const goToNext = () => {
         </p>
       </div>
 
-<<<<<<< HEAD
               <button
                 onClick={handleBooking}
                 className="w-full bg-[#1c5d5e] text-white py-3 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
@@ -315,17 +290,6 @@ const goToNext = () => {
             </div> 
           </div>*/}
         </div>
-=======
-      <button
-        onClick={handleBooking}
-        className="w-full bg-[#1c5d5e] text-white py-3 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
-      >
-        Book Now
-      </button>
-    </div>
-  </div>
-</div>
->>>>>>> 09f46e9c375d8b419f433f396f1ad489e32d2cac
       </div>
     </div>
   );
