@@ -142,10 +142,9 @@ const TopPlaces = () => {
                           </div>
                         </>
                       ) : (
-                        <div className="flex items-center">
-                          <Clock className="h-4 w-4 mr-1" />
-                          <span className="text-yellow-600">No dates available</span>
-                        </div>
+                        <span className="text-yellow-600 text-sm">
+                          Exciting departures being planned - Check back soon!
+                        </span>
                       )}
                     </div>
                     <span className="text-lg font-bold text-blue-600">₹{pkg.price.toLocaleString()}</span>

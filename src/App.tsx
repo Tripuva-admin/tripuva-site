@@ -704,29 +704,47 @@ function MainContent({ setSelectedPackage }: {
                         </div>
                         <div className="flex flex-wrap gap-2">
                           {Array.isArray(pkg.start_date) && pkg.start_date.length > 0 ? (
-                            pkg.start_date.map((date, index) => (
-                              <span
-                                key={index}
-                                className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded"
-                              >
-                                {new Date(date).toLocaleDateString('en-GB', {
-                                  day: '2-digit',
-                                  month: 'short',
-                                  year: '2-digit',
-                                })}
-                              </span>
-                            ))
+                            pkg.start_date.map((date, index) => {
+                              const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
+                              return (
+                                <span
+                                  key={index}
+                                  className={`${
+                                    isPastDate
+                                      ? 'bg-gray-100 border-gray-200 text-gray-400'
+                                      : 'bg-yellow-50 border-yellow-200 text-gray-700'
+                                  } border text-sm py-1 px-2 rounded`}
+                                >
+                                  {new Date(date).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: '2-digit',
+                                  })}
+                                </span>
+                              );
+                            })
                           ) : typeof pkg.start_date === 'string' && pkg.start_date ? (
-                            <span className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded">
-                              {new Date(pkg.start_date).toLocaleDateString('en-GB', {
-                                day: '2-digit',
-                                month: 'short',
-                                year: '2-digit',
-                              })}
-                            </span>
+                            (() => {
+                              const isPastDate = new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0));
+                              return (
+                                <span
+                                  className={`${
+                                    isPastDate
+                                      ? 'bg-gray-100 border-gray-200 text-gray-400'
+                                      : 'bg-yellow-50 border-yellow-200 text-gray-700'
+                                  } border text-sm py-1 px-2 rounded`}
+                                >
+                                  {new Date(pkg.start_date).toLocaleDateString('en-GB', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: '2-digit',
+                                  })}
+                                </span>
+                              );
+                            })()
                           ) : (
                             <span className="text-yellow-600 text-sm">
-                              No dates available at the moment.
+                              Exciting departures being planned - Check back soon!
                             </span>
                           )}
                         </div>

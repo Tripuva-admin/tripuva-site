@@ -175,51 +175,94 @@ const goToNext = () => {
     </div>
   )}
 
-  <div className="space-y-5 mb-5">
+  <div className="space-y-3 mb-6">
     <div className="flex items-center text-gray-700">
-      <Calendar className="h-5 w-5 mr-2" />
-      <span className="font-medium">Available Dates:</span>
+      <div className="flex items-center">
+        <Calendar className="h-5 w-5 mr-2" />
+        <span className="font-medium">Available Dates:</span>
+      </div>
+      {((Array.isArray(pkg.start_date) && pkg.start_date.some(date => new Date(date) >= new Date(new Date().setHours(0, 0, 0, 0)))) || 
+        (typeof pkg.start_date === 'string' && new Date(pkg.start_date) >= new Date(new Date().setHours(0, 0, 0, 0)))) ? (
+        <span className="ml-3 text-sm text-yellow-600 italic">Choose your departure</span>
+      ) : null}
     </div>
-    {(Array.isArray(pkg.start_date) && pkg.start_date.length > 0) || (typeof pkg.start_date === 'string' && pkg.start_date) ? (
-      <p className="text-sm text-yellow-600">Select your Trip Date</p>
-    ) : null}
     <div className="flex flex-wrap gap-2">
       {Array.isArray(pkg.start_date) && pkg.start_date.length > 0 ? (
-        pkg.start_date.map((date, index) => (
-          <button
-            key={index}
-            onClick={() => setSelectedStartDate(String(date))}
-            className={`${
-              selectedStartDate === String(date)
-                ? 'bg-yellow-200 border-yellow-300' 
-                : 'bg-yellow-50 border-yellow-200'
-            } border text-gray-700 text-sm py-1 px-2 rounded hover:bg-yellow-100 transition-colors`}
-          >
-            {new Date(date).toLocaleDateString('en-GB', {
-              day: '2-digit',
-              month: 'short',
-              year: '2-digit',
-            })}
-          </button>
-        ))
+        (() => {
+          const allDatesHavePassed = pkg.start_date.every(date => 
+            new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
+          );
+          
+          return (
+            <>
+              {allDatesHavePassed && (
+                <div className="w-full">
+                  <span className="text-yellow-600 text-sm">Missed these dates? Stay tuned for upcoming departures!</span>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-2">
+                {pkg.start_date.map((date, index) => {
+                  const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
+                  return (
+                    <button
+                      key={index}
+                      onClick={() => !isPastDate && setSelectedStartDate(String(date))}
+                      disabled={isPastDate}
+                      aria-disabled={isPastDate}
+                      className={`${
+                        isPastDate 
+                          ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50 pointer-events-none'
+                          : selectedStartDate === String(date)
+                            ? 'bg-yellow-200 border-yellow-300'
+                            : 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100'
+                      } border text-gray-700 text-sm py-1 px-2 rounded transition-colors disabled:pointer-events-none disabled:opacity-50`}
+                    >
+                      {new Date(date).toLocaleDateString('en-GB', {
+                        day: '2-digit',
+                        month: 'short',
+                        year: '2-digit',
+                      })}
+                    </button>
+                  );
+                })}
+              </div>
+            </>
+          );
+        })()
       ) : typeof pkg.start_date === 'string' && pkg.start_date ? (
-        <button
-          onClick={() => setSelectedStartDate(String(pkg.start_date))}
-          className={`${
-            selectedStartDate === String(pkg.start_date)
-              ? 'bg-yellow-200 border-yellow-300' 
-              : 'bg-yellow-50 border-yellow-200'
-          } border text-gray-700 text-sm py-1 px-2 rounded hover:bg-yellow-100 transition-colors`}
-        >
-          {new Date(pkg.start_date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          })}
-        </button>
+        (() => {
+          const isPastDate = new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0));
+          return (
+            <>
+              {isPastDate && (
+                <div className="w-full">
+                  <span className="text-yellow-600 text-sm">Missed these dates? Stay tuned for upcoming departures!</span>
+                </div>
+              )}
+              <button
+                onClick={() => !isPastDate && setSelectedStartDate(String(pkg.start_date))}
+                disabled={isPastDate}
+                aria-disabled={isPastDate}
+                className={`${
+                  isPastDate 
+                    ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50 pointer-events-none'
+                    : selectedStartDate === String(pkg.start_date)
+                      ? 'bg-yellow-200 border-yellow-300'
+                      : 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100'
+                } border text-gray-700 text-sm py-1 px-2 rounded transition-colors disabled:pointer-events-none disabled:opacity-50`}
+              >
+                {new Date(pkg.start_date).toLocaleDateString('en-GB', {
+                  day: '2-digit',
+                  month: 'short',
+                  year: '2-digit',
+                })}
+              </button>
+            </>
+          );
+        })()
       ) : (
         <span className="text-yellow-600 text-sm">
-          No dates available at the moment.
+          Exciting departures being planned - Check back soon!
         </span>
       )}
     </div>
