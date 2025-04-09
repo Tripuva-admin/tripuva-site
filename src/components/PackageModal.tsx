@@ -91,6 +91,26 @@ const goToNext = () => {
     Array.isArray(pkg.start_date) ? pkg.start_date[0] : pkg.start_date
   );
 
+  const isBookingDisabled = Boolean(
+    !selectedStartDate || 
+    (Array.isArray(pkg.start_date) && (
+      pkg.start_date.length === 0 || 
+      pkg.start_date.every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
+    )) ||
+    (!Array.isArray(pkg.start_date) && pkg.start_date && new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0)))
+  );
+
+  const getButtonText = () => {
+    if (!selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)) {
+      return 'Booking Not available';
+    }
+    if ((Array.isArray(pkg.start_date) && pkg.start_date.every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))) ||
+        (!Array.isArray(pkg.start_date) && pkg.start_date && new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0)))) {
+      return 'All dates have passed';
+    }
+    return 'Book Now';
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-lg w-full max-w-5xl max-h-[90vh] flex flex-col md:flex-row overflow-y-auto md:overflow-hidden relative">
@@ -287,7 +307,6 @@ const goToNext = () => {
 <div className="border rounded-md p-4 bg-white shadow-sm">
   {/* Top Row: Booking Advance & Price */}
   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3">
-    
     {/* Booking Advance (Left) */}
     <p className="text-gray-800 text-base font-semibold mb-2 sm:mb-0">
       Booking Advance:  <span className="text-green-600">₹{pkg.advance.toLocaleString()}</span>
@@ -303,63 +322,30 @@ const goToNext = () => {
   <div className="w-full">
     <button
       onClick={handleBooking}
-      disabled={!selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)}
+      disabled={isBookingDisabled}
       className={`w-full py-2 px-4 rounded-md transition duration-200 ${
-        !selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)
+        isBookingDisabled
           ? 'bg-gray-300 cursor-not-allowed'
           : 'bg-[#1c5d5e] text-white hover:bg-primary-600'
       }`}
     >
-      {!selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)
-        ? 'Booking Not available'
-        : 'Book Now'
-      }
+      {getButtonText()}
     </button>
+
+    {!isBookingDisabled && (
+      <p className="text-blue-800 text-sm mt-1">
+        Click "Book Now" to connect with us on WhatsApp and reserve your spot for this amazing trip!
+      </p>
+    )}
   </div>
 </div>
-
-
-      <p className="text-blue-800 text-sm mt-1">
-          Click "Book Now" to connect with us on WhatsApp and reserve your spot for this amazing trip!
-        </p>
-
-              
-            </div>
 
     <div className="prose max-w-none mb-6 mt-3">
             <p className="text-gray-600">{pkg.description}</p>
           </div>
-
-{/*
-          <div className="bg-gray-50 p-6 rounded-lg">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-lg md:text-xl font-semibold">Price per person</span>
-              <div className="flex items-center text-xl md:text-2xl font-bold text-[#1c5d5e]">
-                <IndianRupee className="h-5 w-5 md:h-6 md:w-6 mr-1" />
-                {pkg.price.toLocaleString()}
-              </div>
-            </div>
-
-    <div className="space-y-4">
-      <div className="bg-blue-50 p-4 rounded-md">
-        <p className="text-blue-800 text-sm md:text-base font-bold">
-          Booking Advance: ₹{pkg.advance.toLocaleString()}
-        </p>
-        <p className="text-blue-800 text-sm md:text-base mt-2">
-          Click "Book Now" to connect with us on WhatsApp and reserve your spot for this amazing trip!
-        </p>
-      </div>
-
-              <button
-                onClick={handleBooking}
-                className="w-full bg-[#1c5d5e] text-white py-3 px-4 rounded-md hover:bg-primary-600 transition-colors duration-200"
-              >
-                Book Now
-              </button>
-            </div> 
-          </div>*/}
         </div>
       </div>
+    </div>
     </div>
   );
 }
