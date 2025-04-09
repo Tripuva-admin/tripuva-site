@@ -1,14 +1,33 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { Star, ArrowRight, LogOut, Menu } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Star, ArrowRight, LogOut, Menu, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Profile } from '../types/database.types';
+import { useAuth } from '../contexts/AuthContext';
+import { useNotification } from '../contexts/NotificationContext';
 
 interface HeaderProps {
   user: Profile | null;
 }
 
 export function Header({ user }: HeaderProps) {
+  const navigate = useNavigate();
+  const { setUser } = useAuth();
+  const { addNotification } = useNotification();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      addNotification('success', 'You have been successfully signed out');
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+      addNotification('error', 'Failed to sign out. Please try again.');
+    }
+  };
+
   return (
     <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#1c5d5e]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -24,7 +43,7 @@ export function Header({ user }: HeaderProps) {
               to="/top-places" 
               className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium flex items-center"
             >
-              <Star className="h-4 w-4 mr-2 text-gold style={{ color: '#FFD700' }" />
+              <Star className="h-4 w-4 mr-2 text-gold" />
               Top Places
             </Link>
 
@@ -40,7 +59,7 @@ export function Header({ user }: HeaderProps) {
             
             {user && (
               <button
-                onClick={() => supabase.auth.signOut()}
+                onClick={handleSignOut}
                 className="text-white hover:text-blue-200 flex items-center text-base font-medium"
               >
                 <LogOut className="h-4 w-4 mr-2" />
@@ -50,12 +69,51 @@ export function Header({ user }: HeaderProps) {
           </div>
 
           <button
-            onClick={() => console.log('Mobile menu button clicked')}
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors"
           >
-            <Menu className="h-8 w-8" />
+            {isMobileMenuOpen ? (
+              <X className="h-8 w-8" />
+            ) : (
+              <Menu className="h-8 w-8" />
+            )}
           </button>
         </div>
+
+        {isMobileMenuOpen && (
+          <div className="sm:hidden mt-4 pb-4">
+            <div className="flex flex-col space-y-4">
+              <Link
+                to="/top-places"
+                className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Star className="h-4 w-4 mr-2 text-gold" />
+                Top Places
+              </Link>
+
+              <a
+                href="https://google.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+              >
+                <ArrowRight className="h-4 w-4 mr-2" />
+                Contact us on Whatsapp
+              </a>
+
+              {user && (
+                <button
+                  onClick={handleSignOut}
+                  className="text-white hover:text-gray-200 flex items-center justify-center"
+                >
+                  <LogOut className="h-5 w-5 mr-2" />
+                  Sign Out
+                </button>
+              )}
+            </div>
+          </div>
+        )}
       </nav>
     </header>
   );

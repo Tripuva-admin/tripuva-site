@@ -6,12 +6,14 @@ interface AuthContextType {
   user: Profile | null;
   isAdmin: boolean;
   loading: boolean;
+  setUser: (user: Profile | null) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
   isAdmin: false,
   loading: true,
+  setUser: () => {},
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -47,12 +49,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, isAdmin, loading }}>
+    <AuthContext.Provider value={{ user, isAdmin, loading, setUser }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export function useAuth() {
-  return useContext(AuthContext);
-} 
+export const useAuth = () => useContext(AuthContext); 

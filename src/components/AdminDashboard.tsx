@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Package, Agency } from '../types/database.types';
 import { Plus, Edit, Trash2, X } from 'lucide-react';
+import { useNotification } from '../contexts/NotificationContext';
+import { API_URL } from '../config';
+import { Alert } from '../components/ui/alert';
 
 var AVAILABLE_TAGS: any[]
 var parsedConfig : any
@@ -64,16 +67,43 @@ const generateAlphanumericId = (length = 7): string => {
   return result;
 };
 
+interface Admin {
+  id: string;
+  email: string;
+  name: string;
+}
+
 export function AdminDashboard() {
+  const { addNotification, removeNotification, notifications } = useNotification();
+  const [admin, setAdmin] = useState<Admin | null>(null);
   const [packages, setPackages] = useState<Package[]>([]);
   const [agencies, setAgencies] = useState<Agency[]>([]);
   const [showPackageForm, setShowPackageForm] = useState(false);
   const [showAgencyForm, setShowAgencyForm] = useState(false);
   const [editingPackage, setEditingPackage] = useState<Package | null>(null);
   const [loading, setLoading] = useState(true);
-  const [formData, setFormData] = useState<Omit<Package, 'id' | 'created_at' | 'updated_at'>>(parsedConfig['init_create_package_form_data']);
+  const [formData, setFormData] = useState<Partial<Package>>({
+    title: '',
+    description: '',
+    duration: 1,
+    price: 0,
+    group_size: 1,
+    image: '',
+    start_date: [],
+    agency_id: '',
+    status: 'open',
+    package_id: '',
+    booking_link: '',
+    tags: [],
+    ranking: 1000,
+    advance: 0
+  });
   const [packageImages, setPackageImages] = useState<string[]>(['']);
-  const [newAgency, setNewAgency] = useState({ name: '', rating: 5 });
+  const [newAgency, setNewAgency] = useState({ 
+    name: '', 
+    rating: 5,
+    logo_url: ''
+  });
 
   const fetchPackages = async () => {
     const { data, error } = await supabase
@@ -114,94 +144,142 @@ export function AdminDashboard() {
   };
 
   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = localStorage.getItem('adminToken');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        const response = await fetch(`${API_URL}/admin/verify`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setAdmin(data);
+        } else {
+          localStorage.removeItem('adminToken');
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        localStorage.removeItem('adminToken');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('adminToken');
+    setAdmin(null);
+    addNotification('info', 'Logged out', 'You have been successfully logged out.');
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
 
   const handleCreateAgency = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
+
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('agencies')
-        .insert([newAgency]);
+        .insert([newAgency])
+        .select()
+        .single();
 
       if (error) throw error;
 
-      setNewAgency(parsedConfig['init_create_agency_form_data']);
+      setAgencies([...agencies, data]);
       setShowAgencyForm(false);
-      await fetchAgencies();
-    } catch (error) {
+      addNotification('success', 'Agency created successfully');
+    } catch (error: any) {
       console.error('Error creating agency:', error);
-      alert('Failed to create agency. Please try again.');
+      addNotification('error', 'Failed to create agency: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleCreatePackage = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+    setLoading(true);
+
     try {
-      let packageId = editingPackage?.id;
+      const { data, error } = await supabase
+        .from('packages')
+        .insert([formData])
+        .select()
+        .single();
 
-      if (editingPackage) {
-        const { error } = await supabase
-          .from('packages')
-          .update(formData)
-          .eq('id', editingPackage.id);
+      if (error) throw error;
 
-        if (error) throw error;
-      } else {
-        const { data, error } = await supabase
-          .from('packages')
-          .insert([{ 
-            ...formData,
-            package_id: generateAlphanumericId() // Generates like "A3B9XK7"
-          }])
-          .select()
-          .single();
+      setPackages([...packages, data]);
+      setShowPackageForm(false);
+      addNotification('success', 'Package created successfully');
+    } catch (error: any) {
+      console.error('Error creating package:', error);
+      addNotification('error', 'Failed to create package: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-        if (error) throw error;
-        packageId = data.id;
-      }
+  const handleUpdatePackage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
-      // Handle package images
-      if (packageId) {
-        // Delete existing images if editing
-        if (editingPackage) {
-          await supabase
-            .from('package_images')
-            .delete()
-            .eq('package_id', packageId);
-        }
+    try {
+      const { error } = await supabase
+        .from('packages')
+        .update(formData)
+        .eq('id', editingPackage?.id);
 
-        // Insert new images
-        const imagesToInsert = packageImages
-          .filter(url => url.trim() !== '')
-          .map((url, index) => ({
-            package_id: packageId,
-            image_url: url,
-            is_primary: index === 0
-          }));
+      if (error) throw error;
 
-        if (imagesToInsert.length > 0) {
-          const { error: imageError } = await supabase
-            .from('package_images')
-            .insert(imagesToInsert);
-
-          if (imageError) throw imageError;
-        }
-      }
-
-      setFormData(parsedConfig['init_create_package_form_data']);
-      setPackageImages(['']);
+      setPackages(packages.map(pkg => 
+        pkg.id === editingPackage?.id ? { ...pkg, ...formData } : pkg
+      ));
       setShowPackageForm(false);
       setEditingPackage(null);
-      await fetchPackages();
-    } catch (error) {
-      console.error('Error saving package:', error);
-      alert('Failed to save package. Please try again.');
+      addNotification('success', 'Package updated successfully');
+    } catch (error: any) {
+      console.error('Error updating package:', error);
+      addNotification('error', 'Failed to update package: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const [tempDate, setTempDate] = useState('');
+  const handleDeletePackage = async (id: string) => {
+    if (!window.confirm('Are you sure you want to delete this package?')) return;
+    setLoading(true);
+
+    try {
+      const { error } = await supabase
+        .from('packages')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setPackages(packages.filter(pkg => pkg.id !== id));
+      addNotification('success', 'Package deleted successfully');
+    } catch (error: any) {
+      console.error('Error deleting package:', error);
+      addNotification('error', 'Failed to delete package: ' + error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleEdit = (pkg: Package & { package_images?: { image_url: string }[] }) => {
     setEditingPackage(pkg);
@@ -227,25 +305,6 @@ export function AdminDashboard() {
     setShowPackageForm(true);
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Are you sure you want to delete this package? This action cannot be undone.')) {
-      return;
-    }
-
-    try {
-      const { error } = await supabase
-        .from('packages')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-      await fetchPackages();
-    } catch (error) {
-      console.error('Error deleting package:', error);
-      alert('Failed to delete package. Please try again.');
-    }
-  };
-
   const addImageField = () => {
     setPackageImages([...packageImages, '']);
   };
@@ -262,14 +321,41 @@ export function AdminDashboard() {
     setPackageImages(newImages);
   };
 
-  const handleTagToggle = (tag: string) => {
+  const handleTagChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
     setFormData(prev => ({
       ...prev,
-      tags: prev.tags.includes(tag)
-        ? prev.tags.filter(t => t !== tag)
-        : [...prev.tags, tag]
+      tags: prev.tags ? [...prev.tags, value] : [value]
     }));
   };
+
+  const handleRemoveTag = (tagToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      tags: prev.tags?.filter(tag => tag !== tagToRemove) || []
+    }));
+  };
+
+  const [tempDate, setTempDate] = useState('');
+
+  const handleAddStartDate = () => {
+    if (tempDate) {
+      setFormData(prev => ({
+        ...prev,
+        start_date: Array.isArray(prev.start_date) ? [...prev.start_date, tempDate] : [tempDate]
+      }));
+      setTempDate('');
+    }
+  };
+
+  const handleRemoveStartDate = (dateToRemove: string) => {
+    setFormData(prev => ({
+      ...prev,
+      start_date: Array.isArray(prev.start_date) ? prev.start_date.filter(date => date !== dateToRemove) : []
+    }));
+  };
+
+  const [tempTag, setTempTag] = useState('');
 
   if (loading) {
     return (
@@ -381,28 +467,23 @@ export function AdminDashboard() {
                     <td className="px-6 py-4 text-sm text-gray-500">
                       {pkg.group_size}
                     </td>
-{/* Added on 08-04-25*/}
-
                     <td className="px-2 py-4 text-sm text-gray-500">
-  {Array.isArray(pkg.start_date)
-    ? pkg.start_date.map((date, index) => (
-        <span key={index} className="inline-block mr-2">
-          {new Date(date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit'
-          })}
-        </span>
-      ))
-    : new Date(pkg.start_date).toLocaleDateString('en-GB', {
-        day: '2-digit',
-        month: 'short',
-        year: '2-digit'
-      })}
-</td>
-
-{/* Added on 08-04-25* -*/}
-
+                      {Array.isArray(pkg.start_date)
+                        ? pkg.start_date.map((date, index) => (
+                            <span key={index} className="inline-block mr-2">
+                              {new Date(date).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: '2-digit'
+                              })}
+                            </span>
+                          ))
+                        : new Date(pkg.start_date).toLocaleDateString('en-GB', {
+                            day: '2-digit',
+                            month: 'short',
+                            year: '2-digit'
+                          })}
+                    </td>
                     <td className="px-6 py-4">
                       <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
                         pkg.status === 'open'
@@ -422,7 +503,7 @@ export function AdminDashboard() {
                           <Edit className="h-5 w-5" />
                         </button>
                         <button
-                          onClick={() => handleDelete(pkg.id)}
+                          onClick={() => handleDeletePackage(pkg.id)}
                           className="text-red-600 hover:text-red-900 p-1 rounded-full hover:bg-red-50"
                           title="Delete Package"
                         >
@@ -440,7 +521,7 @@ export function AdminDashboard() {
         {/* Package Form Modal */}
         {showPackageForm && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div className="bg-white rounded-lg p-6 max-w-4xl w-full max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold">
                   {editingPackage ? 'Edit Package' : 'Create New Package'}
@@ -456,7 +537,7 @@ export function AdminDashboard() {
                 </button>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={editingPackage ? handleUpdatePackage : handleCreatePackage} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700">Title</label>
@@ -533,63 +614,39 @@ export function AdminDashboard() {
                     />
                   </div>
 
-{/*  New Multiple Start Date Addition - Begin */}
-
-
-<div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">Start Dates</label>
-
-  <div className="flex items-center gap-2 mb-2">
-    <input
-      type="date"
-      value={tempDate}
-      onChange={(e) => setTempDate(e.target.value)}
-      className="rounded-md border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-primary text-sm"
-    />
-    <button
-      type="button"
-      onClick={() => {
-        if (tempDate && !formData.start_date.includes(tempDate)) {
-          setFormData({ ...formData, start_date: [...formData.start_date, tempDate] });
-          setTempDate('');
-        }
-      }}
-      className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary-600"
-    >
-      Add
-    </button>
-  </div>
-
-  {/* Display selected dates */}
-  <div className="flex flex-wrap gap-2">
-    {formData.start_date.map((date, index) => (
-      <div
-        key={index}
-        className="flex items-center bg-gray-100 border border-gray-300 text-sm rounded px-2 py-1"
-      >
-        {new Date(date).toLocaleDateString('en-GB', {
-          day: '2-digit',
-          month: 'short',
-          year: '2-digit',
-        })}
-        <button
-          type="button"
-          onClick={() => {
-            setFormData({
-              ...formData,
-              start_date: formData.start_date.filter((_, i) => i !== index),
-            });
-          }}
-          className="ml-2 text-red-500 hover:text-red-700 text-xs"
-        >
-          ×
-        </button>
-      </div>
-    ))}
-  </div>
-</div>
-
-{/* New Multiple Start Date Addition - End */}                  
+                  {/* Start Dates */}
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Start Dates</label>
+                    <div className="flex gap-2 mb-2">
+                      <input
+                        type="date"
+                        value={tempDate}
+                        onChange={(e) => setTempDate(e.target.value)}
+                        className="flex-1 rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleAddStartDate}
+                        className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary-600"
+                      >
+                        Add Date
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {Array.isArray(formData.start_date) && formData.start_date.map((date: string, index: number) => (
+                        <div key={index} className="flex items-center bg-gray-100 px-2 py-1 rounded">
+                          <span className="text-sm">{date}</span>
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveStartDate(date)}
+                            className="ml-2 text-red-500 hover:text-red-700 text-xs"
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Status</label>
@@ -629,6 +686,7 @@ export function AdminDashboard() {
                     />
                   </div>
 
+                  {/* Tags */}
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -636,8 +694,15 @@ export function AdminDashboard() {
                         <label key={tag} className="flex items-center space-x-2">
                           <input
                             type="checkbox"
-                            checked={formData.tags.includes(tag)}
-                            onChange={() => handleTagToggle(tag)}
+                            checked={formData.tags?.includes(tag)}
+                            onChange={() => {
+                              setFormData(prev => ({
+                                ...prev,
+                                tags: prev.tags?.includes(tag)
+                                  ? prev.tags.filter(t => t !== tag)
+                                  : [...(prev.tags || []), tag]
+                              }));
+                            }}
                             className="rounded border-gray-300 text-primary focus:ring-primary"
                           />
                           <span className="text-sm text-gray-700">{tag}</span>
@@ -660,14 +725,15 @@ export function AdminDashboard() {
                     </div>
                     {packageImages.map((url, index) => (
                       <div key={index} className="flex space-x-2 mb-2">
-                        <input
-                          type="url"
-                          required
-                          value={url}
-                          onChange={(e) => updateImageField(index, e.target.value)}
-                          placeholder="Enter image URL"
-                          className="flex-1 rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
-                        />
+                        <div className="flex-1">
+                          <input
+                            type="text"
+                            value={url}
+                            onChange={(e) => updateImageField(index, e.target.value)}
+                            placeholder="Image URL"
+                            className="w-full rounded-md border-gray-300 bg-gray-100 shadow-sm focus:outline-none focus:bg-gray-100 focus:ring-primary"
+                          />
+                        </div>
                         {packageImages.length > 1 && (
                           <button
                             type="button"
@@ -680,7 +746,7 @@ export function AdminDashboard() {
                       </div>
                     ))}
                     <p className="text-sm text-gray-500 mt-1">
-                      Add multiple image URLs. The first image will be used as the primary image.
+                      Add multiple images by entering URLs. The first image will be used as the primary image.
                     </p>
                   </div>
                 </div>
@@ -723,6 +789,17 @@ export function AdminDashboard() {
               </div>
 
               <form onSubmit={handleCreateAgency} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Agency Logo URL</label>
+                  <input
+                    type="text"
+                    value={newAgency.logo_url}
+                    onChange={(e) => setNewAgency({ ...newAgency, logo_url: e.target.value })}
+                    placeholder="Enter logo URL"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                  />
+                </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Agency Name</label>
                   <input

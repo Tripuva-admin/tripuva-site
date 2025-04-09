@@ -17,6 +17,7 @@ import { Unauthorized } from './components/ErrorPages';
 import { Forbidden } from './components/ErrorPages';
 import { BadRequest } from './components/ErrorPages';
 import { AuthProvider } from './contexts/AuthContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import { ScrollToTop } from './components/ScrollToTop';
 import { supabase } from './lib/supabase';
 import { Package, Profile } from './types/database.types';
@@ -837,131 +838,137 @@ function App() {
 
   return (
     <AuthProvider>
-      <Router>
-        <ScrollToTop />
-        <div className="min-h-screen bg-background-light">
-          <Header user={user} />
-          <main className="flex-1">
-            <Routes>
-              <Route path="/" element={<MainContent selectedPackage={selectedPackage} setSelectedPackage={setSelectedPackage} />} />
-              <Route path="/top-places" element={<TopPlaces />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/legal/terms" element={<Terms />} />
-              <Route path="/legal/privacy" element={<Privacy />} />
-              <Route path="/legal/refund" element={<Refund />} />
-              <Route path="/legal/disclaimer" element={<Disclaimer />} />
-              <Route path="/admin">
-                <Route index element={<Navigate to="/admin/login" replace />} />
-                <Route path="login" element={<AdminLogin />} />
-                <Route path="dashboard" element={
-                  <ProtectedRoute>
-                    <AdminDashboard />
-                  </ProtectedRoute>
-                } />
-              </Route>
-              <Route path="/404" element={<NotFound />} />
-              <Route path="/500" element={<ServerError />} />
-              <Route path="/401" element={<Unauthorized />} />
-              <Route path="/403" element={<Forbidden />} />
-              <Route path="/400" element={<BadRequest />} />
-              <Route path="*" element={<Navigate to="/404" replace />} />
-            </Routes>
-          </main>
-          <footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
-                  <p className="text-gray-300 text-base">
-                    Connecting travelers across India for unforgettable group adventures and cultural experiences.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
-                        About Us
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-base">
-                        Contact Us
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-base">
-                        FAQ
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
-                  <ul className="space-y-2">
-                    <li>
-                      <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
-                        Terms & Conditions
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-base">
-                        Privacy Policy
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-base">
-                        Refund Policy
-                      </Link>
-                    </li>
-                    <li>
-                      <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-base">
-                        Disclaimer
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
-                  <address className="text-gray-300 not-italic space-y-2 text-base">
-                    <p className="flex items-center">
-                      <span className="block">Email: info@tripuva.com</span>
-                    </p>
-                    <p className="flex items-center">
-                      <span className="block">Phone: +91 93959 29602</span>
-                    </p>
-                    <p className="flex items-center">
-                      <span className="block">Address: Mumbai, Maharashtra, India</span>
-                    </p>
-                  </address>
-                  <div className="mt-4">
-                    <h4 className="text-base font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
+      <NotificationProvider>
+        <Router>
+          <ScrollToTop />
+          <div className="min-h-screen bg-background-light">
+            <Header user={user} />
+            <main className="flex-1">
+              <Routes>
+                <Route path="/" element={<MainContent selectedPackage={selectedPackage} setSelectedPackage={setSelectedPackage} />} />
+                <Route path="/top-places" element={<TopPlaces />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/legal/terms" element={<Terms />} />
+                <Route path="/legal/privacy" element={<Privacy />} />
+                <Route path="/legal/refund" element={<Refund />} />
+                <Route path="/legal/disclaimer" element={<Disclaimer />} />
+                <Route path="/admin">
+                  <Route index element={
+                    <ProtectedRoute>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="login" element={<AdminLogin />} />
+                  <Route path="dashboard" element={
+                    <ProtectedRoute>
+                      <AdminDashboard />
+                    </ProtectedRoute>
+                  } />
+                </Route>
+                <Route path="/404" element={<NotFound />} />
+                <Route path="/500" element={<ServerError />} />
+                <Route path="/401" element={<Unauthorized />} />
+                <Route path="/403" element={<Forbidden />} />
+                <Route path="/400" element={<BadRequest />} />
+                <Route path="*" element={<Navigate to="/404" replace />} />
+              </Routes>
+            </main>
+            <footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
                     <p className="text-gray-300 text-base">
-                      Monday - Friday: 9:00 AM - 6:00 PM IST
-                    </p>
-                    <p className="text-gray-300 text-base">
-                      Saturday: 10:00 AM - 4:00 PM IST
+                      Connecting travelers across India for unforgettable group adventures and cultural experiences.
                     </p>
                   </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
+                          About Us
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-base">
+                          Contact Us
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-base">
+                          FAQ
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
+                    <ul className="space-y-2">
+                      <li>
+                        <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
+                          Terms & Conditions
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-base">
+                          Privacy Policy
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-base">
+                          Refund Policy
+                        </Link>
+                      </li>
+                      <li>
+                        <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-base">
+                          Disclaimer
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
+                    <address className="text-gray-300 not-italic space-y-2 text-base">
+                      <p className="flex items-center">
+                        <span className="block">Email: info@tripuva.com</span>
+                      </p>
+                      <p className="flex items-center">
+                        <span className="block">Phone: +91 93959 29602</span>
+                      </p>
+                      <p className="flex items-center">
+                        <span className="block">Address: Mumbai, Maharashtra, India</span>
+                      </p>
+                    </address>
+                    <div className="mt-4">
+                      <h4 className="text-base font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
+                      <p className="text-gray-300 text-base">
+                        Monday - Friday: 9:00 AM - 6:00 PM IST
+                      </p>
+                      <p className="text-gray-300 text-base">
+                        Saturday: 10:00 AM - 4:00 PM IST
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-8 pt-8 border-t border-gray-700">
+                  <p className="text-gray-300 text-center font-comfortaa text-base">
+                    &copy; {new Date().getFullYear()} tripuva. All rights reserved.
+                  </p>
                 </div>
               </div>
-              <div className="mt-8 pt-8 border-t border-gray-700">
-                <p className="text-gray-300 text-center font-comfortaa text-base">
-                  &copy; {new Date().getFullYear()} tripuva. All rights reserved.
-                </p>
-              </div>
-            </div>
-          </footer>
-          {selectedPackage && (
-            <PackageModal
-              package={selectedPackage}
-              onClose={() => setSelectedPackage(null)}
-            />
-          )}
-        </div>
-      </Router>
+            </footer>
+            {selectedPackage && (
+              <PackageModal
+                package={selectedPackage}
+                onClose={() => setSelectedPackage(null)}
+              />
+            )}
+          </div>
+        </Router>
+      </NotificationProvider>
     </AuthProvider>
   );
 }
