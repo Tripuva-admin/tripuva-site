@@ -78,7 +78,7 @@ const goToNext = () => {
 
   const handleBooking = () => {
     if (pkg.booking_link) {
-      const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.id})`;
+      const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.package_id})`;
       const BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`;
       
       console.log(BOOKING_LINK);
@@ -175,33 +175,48 @@ const goToNext = () => {
     </div>
   )}
 
-  <div className="space-y-4 mb-6">
+  <div className="space-y-5 mb-5">
     <div className="flex items-center text-gray-700">
       <Calendar className="h-5 w-5 mr-2" />
       <span className="font-medium">Available Dates:</span>
     </div>
+    {(Array.isArray(pkg.start_date) && pkg.start_date.length > 0) || (typeof pkg.start_date === 'string' && pkg.start_date) ? (
+      <p className="text-sm text-yellow-600">Select your Trip Date</p>
+    ) : null}
     <div className="flex flex-wrap gap-2">
       {Array.isArray(pkg.start_date) && pkg.start_date.length > 0 ? (
         pkg.start_date.map((date, index) => (
-          <span
+          <button
             key={index}
-            className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded"
+            onClick={() => setSelectedStartDate(String(date))}
+            className={`${
+              selectedStartDate === String(date)
+                ? 'bg-yellow-200 border-yellow-300' 
+                : 'bg-yellow-50 border-yellow-200'
+            } border text-gray-700 text-sm py-1 px-2 rounded hover:bg-yellow-100 transition-colors`}
           >
             {new Date(date).toLocaleDateString('en-GB', {
               day: '2-digit',
               month: 'short',
               year: '2-digit',
             })}
-          </span>
+          </button>
         ))
       ) : typeof pkg.start_date === 'string' && pkg.start_date ? (
-        <span className="bg-yellow-50 border border-yellow-200 text-gray-700 text-sm py-1 px-2 rounded">
+        <button
+          onClick={() => setSelectedStartDate(String(pkg.start_date))}
+          className={`${
+            selectedStartDate === String(pkg.start_date)
+              ? 'bg-yellow-200 border-yellow-300' 
+              : 'bg-yellow-50 border-yellow-200'
+          } border text-gray-700 text-sm py-1 px-2 rounded hover:bg-yellow-100 transition-colors`}
+        >
           {new Date(pkg.start_date).toLocaleDateString('en-GB', {
             day: '2-digit',
             month: 'short',
             year: '2-digit',
           })}
-        </span>
+        </button>
       ) : (
         <span className="text-yellow-600 text-sm">
           No dates available at the moment.
@@ -245,9 +260,17 @@ const goToNext = () => {
   <div className="w-full">
     <button
       onClick={handleBooking}
-      className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-primary-600 transition duration-200"
+      disabled={!selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)}
+      className={`w-full py-2 px-4 rounded-md transition duration-200 ${
+        !selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)
+          ? 'bg-gray-300 cursor-not-allowed'
+          : 'bg-[#1c5d5e] text-white hover:bg-primary-600'
+      }`}
     >
-      Book Now
+      {!selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)
+        ? 'Booking Not available'
+        : 'Book Now'
+      }
     </button>
   </div>
 </div>
