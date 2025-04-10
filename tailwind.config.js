@@ -47,6 +47,9 @@ module.exports = {
           '100%': { transform: 'translateX(-50%)' },
         },
       },
+      fontSize: {
+        '4.5xl': '2.5rem', // adjust as needed (2.5rem = 40px, between 4xl and 5xl)
+      },
       animation: {
         scroll: 'scroll 30s linear infinite',
       },

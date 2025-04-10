@@ -423,7 +423,7 @@ function MainContent({ setSelectedPackage }: {
         <div className="relative w-full z-10 pt-40 sm:pt-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
-              <h2 className="text-5xl sm:text-4xl md:text-5xl lg:text-6xl text-white sm:tracking-tight">
+              <h2 className="text-4.5xl sm:text-4xl md:text-5xl lg:text-6xl text-white sm:tracking-tight">
               <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">Travel Together,</span> <span className="font-medium">Create Memories</span>
               </h2>
             </Link>
@@ -539,7 +539,7 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Popular Destinations */}
-      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
       <h2 className="text-2xl font-bold text-gray-900 text-center">Popular Destinations</h2>
         <div className="flex justify-between items-center mb-4">
         
