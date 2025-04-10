@@ -64,6 +64,8 @@ const generateAlphanumericId = (length = 7): string => {
   return result;
 };
 
+
+
 export function AdminDashboard() {
   const [packages, setPackages] = useState<Package[]>([]);
   const [agencies, setAgencies] = useState<Agency[]>([]);
@@ -74,6 +76,8 @@ export function AdminDashboard() {
   const [formData, setFormData] = useState<Omit<Package, 'id' | 'created_at' | 'updated_at'>>(parsedConfig['init_create_package_form_data']);
   const [packageImages, setPackageImages] = useState<string[]>(['']);
   const [newAgency, setNewAgency] = useState({ name: '', rating: 5 });
+  const [tempDate, setTempDate] = useState('');
+const [tempSlots, setTempSlots] = useState(1);
 
   const fetchPackages = async () => {
     const { data, error } = await supabase
@@ -201,7 +205,6 @@ export function AdminDashboard() {
     }
   };
 
-  const [tempDate, setTempDate] = useState('');
 
   const handleEdit = (pkg: Package & { package_images?: { image_url: string }[] }) => {
     setEditingPackage(pkg);
@@ -303,6 +306,7 @@ export function AdminDashboard() {
                   group_size: 1,
                   image: '',
                   start_date: [],
+                  start_date_2: {},
                   agency_id: '',
                   status: 'open',
                   package_id: '',
@@ -534,7 +538,7 @@ export function AdminDashboard() {
                   </div>
 
 {/*  New Multiple Start Date Addition - Begin */}
-
+{/*}
 
 <div>
   <label className="block text-sm font-medium text-gray-700 mb-1">Start Dates</label>
@@ -558,10 +562,10 @@ export function AdminDashboard() {
     >
       Add
     </button>
-  </div>
+  </div> */}
 
   {/* Display selected dates */}
-  <div className="flex flex-wrap gap-2">
+  {/*<div className="flex flex-wrap gap-2">
     {formData.start_date.map((date, index) => (
       <div
         key={index}
@@ -587,7 +591,79 @@ export function AdminDashboard() {
       </div>
     ))}
   </div>
+</div> */}
+
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">Start Dates & Slots</label>
+
+  <div className="flex items-center gap-2 mb-2">
+    <input
+      type="date"
+      value={tempDate}
+      onChange={(e) => setTempDate(e.target.value)}
+      className="rounded-md border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-primary text-sm"
+    />
+
+    <input
+      type="number"
+      placeholder="Slots"
+      min={1}
+      value={tempSlots}
+      onChange={(e) => setTempSlots(parseInt(e.target.value))}
+      className="w-24 rounded-md border-gray-300 bg-white shadow-sm focus:outline-none focus:ring-primary text-sm"
+    />
+
+    <button
+      type="button"
+      onClick={() => {
+        if (tempDate && tempSlots > 0 && !formData.start_date_2[tempDate]) {
+          setFormData({
+            ...formData,
+            start_date_2: {
+              ...formData.start_date_2,
+              [tempDate]: tempSlots,
+            },
+          });
+          setTempDate('');
+          setTempSlots(1);
+        }
+      }}
+      className="px-3 py-1 bg-primary text-white rounded-md text-sm hover:bg-primary-600"
+    >
+      Add
+    </button>
+  </div>
+
+  {/* Display selected dates with slots */}
+  <div className="flex flex-wrap gap-2">
+    {Object.entries(formData.start_date_2 || {}).map(([date, slots]) => (
+      <div
+        key={date}
+        className="flex items-center bg-gray-100 border border-gray-300 text-sm rounded px-2 py-1"
+      >
+        <span className="mr-2">
+          {new Date(date).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          })} ({slots} slots)
+        </span>
+        <button
+          type="button"
+          onClick={() => {
+            const updated = { ...formData.start_date_2 };
+            delete updated[date];
+            setFormData({ ...formData, start_date_2: updated });
+          }}
+          className="text-red-500 hover:text-red-700 text-xs"
+        >
+          ×
+        </button>
+      </div>
+    ))}
+  </div>
 </div>
+
 
 {/* New Multiple Start Date Addition - End */}                  
 
