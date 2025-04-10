@@ -109,7 +109,7 @@ function Header({ user }: HeaderProps) {
   };
 
   return (
-    <header className={`w-full z-10 transition-colors duration-300 ${
+    <header className={`w-full z-50 transition-colors duration-300 ${
       isMobileMenuOpen 
         ? 'bg-[#0a2472]' 
         : isHomePage 
@@ -119,9 +119,11 @@ function Header({ user }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex items-center">
-            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">Tripuva</h1>
+            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
+              Tripuva
+            </h1>
           </Link>
-
+    
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
               to="/top-places" 
@@ -130,7 +132,7 @@ function Header({ user }: HeaderProps) {
               <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Places
             </Link>
-
+    
             <a 
               href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank" 
@@ -140,7 +142,7 @@ function Header({ user }: HeaderProps) {
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
             </a>
-            
+    
             {user && (
               <button
                 onClick={handleSignOut}
@@ -151,20 +153,20 @@ function Header({ user }: HeaderProps) {
               </button>
             )}
           </nav>
-
+    
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/20"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? (
-              <X className="h-6 w-6 transition-transform duration-200 ease-in-out" strokeWidth={2.5} />
+              <X className="h-9 w-9 transition-transform duration-200 ease-in-out" strokeWidth={2.5} />
             ) : (
-              <Menu className="h-6 w-6 transition-transform duration-200 ease-in-out" strokeWidth={2.5} />
+              <Menu className="h-9 w-9 transition-transform duration-200 ease-in-out" strokeWidth={2.5} />
             )}
           </button>
         </div>
-
+    
         {/* Mobile menu with smooth transition */}
         <div 
           className={`sm:hidden transition-all duration-300 ease-in-out ${
@@ -183,7 +185,7 @@ function Header({ user }: HeaderProps) {
                 <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
                 Top Places
               </Link>
-
+    
               <a
                 href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
                 target="_blank"
@@ -194,7 +196,7 @@ function Header({ user }: HeaderProps) {
                 <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
                 Contact us on Whatsapp
               </a>
-
+    
               {user && (
                 <button
                   onClick={() => {
@@ -212,6 +214,7 @@ function Header({ user }: HeaderProps) {
         </div>
       </div>
     </header>
+    
   );
 }
 
