@@ -230,7 +230,7 @@ const goToNext = () => {
                 const formatted = new Date(date).toLocaleDateString('en-GB', {
                   day: 'numeric',
                   month: 'short',
-                  year: 'numeric'
+                  year: '2-digit'
                 });
 
                 return (

@@ -420,10 +420,10 @@ function MainContent({ setSelectedPackage }: {
           }}
         />
         <div className="absolute inset-0 bg-black bg-opacity-50" />
-        <div className="relative w-full z-10 pt-24 sm:pt-32">
+        <div className="relative w-full z-10 pt-40 sm:pt-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-white sm:tracking-tight">
+              <h2 className="text-5xl sm:text-4xl md:text-5xl lg:text-6xl text-white sm:tracking-tight">
               <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">Travel Together,</span> <span className="font-medium">Create Memories</span>
               </h2>
             </Link>
@@ -432,9 +432,9 @@ function MainContent({ setSelectedPackage }: {
             </p>
 
             {/* Search and Filters */}
-            <div className="mt-8">
-              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 sm:p-8 max-w-3xl mx-auto border border-gray-100">
-                <h3 className="text-lg font-semibold text-gray-800 mb-6 text-center">Find Your Perfect Trip</h3>
+            <div className="mt-8 mb-5">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 sm:p-5 max-w-3xl mx-auto">
+                <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">Find Your Perfect Trip</h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Destination Field */}
                   <div className="relative group">
@@ -446,7 +446,7 @@ function MainContent({ setSelectedPackage }: {
                       <input
                         type="text"
                         placeholder="Where do you want to go?"
-                        className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
+                        className="w-full pl-4 pr-3 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
                         value={filters.destination}
                         onChange={(e) => handleFilterChange({ destination: e.target.value })}
                       />
@@ -522,7 +522,7 @@ function MainContent({ setSelectedPackage }: {
 
                 {/* Reset Button */}
                 {(filters.destination || filters.maxPrice || filters.startDate) && (
-                  <div className="mt-6 flex justify-center">
+                  <div className="mt-2 flex justify-center">
                     <button
                       onClick={resetFilters}
                       className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
@@ -539,7 +539,7 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Popular Destinations */}
-      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
       <h2 className="text-2xl font-bold text-gray-900 text-center">Popular Destinations</h2>
         <div className="flex justify-between items-center mb-4">
         
@@ -593,8 +593,8 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Tags Filter */}
-      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-md p-8 border border-gray-100">
+      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-md p-4 border border-gray-100">
           <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
           <div className="flex flex-wrap gap-3 justify-center">
             {AVAILABLE_TAGS.map(tag => (
@@ -626,8 +626,8 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* All Trips */}
-      <div className="max-w-7xl mx-auto px-4 py-0 sm:px-6 lg:px-8">
-      <div className="relative mb-6 flex items-center justify-center">
+      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
+      <div className="relative mb-4 flex items-center justify-center">
   {/* Centered Heading */}
   <h2 className="text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
     All Trips
@@ -815,7 +815,7 @@ function MainContent({ setSelectedPackage }: {
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="mt-8 mb-8 flex justify-center items-center space-x-4">
+              <div className="mt-8 mb-2 flex justify-center items-center space-x-4">
                 <button
                   onClick={() => {
                     setCurrentPage(prev => Math.max(prev - 1, 1));
@@ -844,14 +844,14 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/* Partner Carousel Section */}
-      <div className="bg-background-light py-3">
+      <div className="bg-background-light py-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <PartnerCarousel />
         </div>
       </div>
 
       {/* Customer Rating Section */}
-      <div className="bg-gray-50 py-3">
+      <div className="bg-gray-50 py-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <CustomerRating />
         </div>
@@ -934,7 +934,7 @@ function App() {
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
                   <div>
-                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">About tripuva</h3>
+                    <h3 className="text-lg text-yellow-400 font-semibold mb-4 font-comfortaa">About tripuva</h3>
                     <p className="text-gray-300 text-base">
                       Connecting travelers across India for unforgettable group adventures and cultural experiences.
                     </p>
@@ -988,24 +988,16 @@ function App() {
                     <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
                     <address className="text-gray-300 not-italic space-y-2 text-base">
                       <p className="flex items-center">
-                        <span className="block">Email: info@tripuva.com</span>
+                        <span className="block">Email: tripuva@gmail.com</span>
                       </p>
                       <p className="flex items-center">
-                        <span className="block">Phone: +91 93959 29602</span>
+                        <span className="block">Phone: +91 9395929602</span>
                       </p>
                       <p className="flex items-center">
-                        <span className="block">Address: Mumbai, Maharashtra, India</span>
+                        <span className="block">Address: Guwahati, Assam, India</span>
                       </p>
                     </address>
-                    <div className="mt-4">
-                      <h4 className="text-base font-semibold mb-2 font-comfortaa text-white">Business Hours</h4>
-                      <p className="text-gray-300 text-base">
-                        Monday - Friday: 9:00 AM - 6:00 PM IST
-                      </p>
-                      <p className="text-gray-300 text-base">
-                        Saturday: 10:00 AM - 4:00 PM IST
-                      </p>
-                    </div>
+                    
                   </div>
                 </div>
                 <div className="mt-8 pt-8 border-t border-gray-700">

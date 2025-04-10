@@ -47,7 +47,7 @@ const ReviewsSection: React.FC = () => {
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
     return (
-      <div className="flex text-yellow-500 text-2xl">
+      <div className="flex text-yellow-400 text-2xl">
         {[...Array(fullStars)].map((_, i) => <span key={`full-${i}`}>★</span>)}
         {halfStar && <span key="half">☆</span>}
         {[...Array(emptyStars)].map((_, i) => <span key={`empty-${i}`}>☆</span>)}
@@ -75,8 +75,8 @@ const ReviewsSection: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <h2 className="text-3xl font-bold text-center mb-8 bg-gradient-to-r from-[#0f424c] via-yellow-300 to-yellow-200 bg-clip-text text-transparent">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <h2 className="text-2xl font-bold text-center mb-8 bg-gradient-to-r text-gray-800">
         Customer Reviews
       </h2>
       
@@ -84,22 +84,22 @@ const ReviewsSection: React.FC = () => {
         {reviews.map((review) => (
           <div
             key={review.review_id}
-            className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-200"
+            className="bg-white rounded-lg shadow-md p-5 hover:shadow-lg transition-shadow duration-200"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="mb-0">
               <h3 className="text-lg font-semibold text-gray-900">
                 {review.review_package_name}
               </h3>
               <div className="text-sm text-gray-500">
-                {new Date(review.rating_package_by_agency).toLocaleDateString()}
+              {review.rating_package_by_agency}
               </div>
             </div>
             
-            <div className="mb-4">
+            <div className="mb-1">
               {renderStars(review.review_rating)}
             </div>
             
-            <p className="text-gray-600 mb-4">{review.review_comment}</p>
+            <p className="text-gray-600 mb-1">{review.review_comment}</p>
             
             <div className="text-sm text-gray-500">
               - {review.review_customer_name}
