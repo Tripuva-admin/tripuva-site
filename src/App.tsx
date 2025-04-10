@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown } from 'lucide-react';
+import { Users, Calendar, ArrowRight, Star, LogOut, Clock, Menu, X, ChevronLeft, ChevronRight, ChevronDown, MapPin, IndianRupee } from 'lucide-react';
 import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { PackageModal } from './components/PackageModal';
 import { AdminDashboard } from './components/AdminDashboard';
@@ -26,6 +26,9 @@ import CustomerRating from "./components/CustomerRating";
 import PartnerCarousel from "./components/PartnerCarousel";
 import './index.css' 
 import { ProtectedRoute } from './components/ProtectedRoute';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import "./styles/datepicker.css";
 
 const backgroundImageUrl = import.meta.env.VITE_HOMEPAGE_BACKGROUND_IMAGE;
 
@@ -151,25 +154,33 @@ function Header({ user }: HeaderProps) {
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors"
+            className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/20"
+            aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? (
-              <X className="h-8 w-8" />
+              <X className="h-6 w-6 transition-transform duration-200 ease-in-out" strokeWidth={2.5} />
             ) : (
-              <Menu className="h-8 w-8" />
+              <Menu className="h-6 w-6 transition-transform duration-200 ease-in-out" strokeWidth={2.5} />
             )}
           </button>
         </div>
 
-        {isMobileMenuOpen && (
-          <nav className="sm:hidden mt-4 pb-4">
+        {/* Mobile menu with smooth transition */}
+        <div 
+          className={`sm:hidden transition-all duration-300 ease-in-out ${
+            isMobileMenuOpen 
+              ? 'max-h-96 opacity-100' 
+              : 'max-h-0 opacity-0 pointer-events-none'
+          } overflow-hidden`}
+        >
+          <nav className="mt-4 pb-4">
             <div className="flex flex-col space-y-4">
               <Link
                 to="/top-places"
-                className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+                className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-md text-base font-medium w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
-                <Star className="h-4 w-4 mr-2 text-gold fill-current drop-shadow-md transition-transform hover:scale-110" />
+                <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
                 Top Places
               </Link>
 
@@ -177,24 +188,28 @@ function Header({ user }: HeaderProps) {
                 href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+                className="bg-transparent text-white px-4 py-3 rounded-md border-2 border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+                onClick={() => setIsMobileMenuOpen(false)}
               >
-                <ArrowRight className="h-4 w-4 mr-2" />
+                <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
                 Contact us on Whatsapp
               </a>
 
               {user && (
                 <button
-                  onClick={handleSignOut}
-                  className="text-white hover:text-gray-200 flex items-center justify-center"
+                  onClick={() => {
+                    handleSignOut();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-white hover:text-gray-200 flex items-center justify-center py-3 w-full border-2 border-transparent hover:border-white/20 rounded-md transition-all duration-200"
                 >
-                  <LogOut className="h-5 w-5 mr-2" />
+                  <LogOut className="h-5 w-5 mr-2" strokeWidth={2} />
                   Sign Out
                 </button>
               )}
             </div>
           </nav>
-        )}
+        </div>
       </div>
     </header>
   );
@@ -350,26 +365,22 @@ function MainContent({ setSelectedPackage }: {
   const filteredPackages = hasUserInteracted
     ? packages.filter(pkg => {
         const matchesDestination = !filters.destination || 
-          pkg.title.toLowerCase().includes(filters.destination.toLowerCase());
+          pkg.title.toLowerCase().includes(filters.destination.toLowerCase()) ||
+          pkg.description.toLowerCase().includes(filters.destination.toLowerCase());
 
         const matchesPrice = !filters.maxPrice || pkg.price <= parseInt(filters.maxPrice);
 
         const matchesDate = !filters.startDate || (() => {
           const filterDate = new Date(filters.startDate).toISOString().split('T')[0];
+          const startDate2 = pkg.start_date_2 || {};
           
-          if (!pkg.start_date) {
-            return false;
-          }
-
-          if (Array.isArray(pkg.start_date)) {
-            return pkg.start_date.some(date => {
+          if (Object.keys(startDate2).length > 0) {
+            return Object.keys(startDate2).some(date => {
               const packageDate = new Date(date).toISOString().split('T')[0];
-              return packageDate >= filterDate;
+              return packageDate >= filterDate && startDate2[date] > 0;
             });
           }
-
-          const packageDate = new Date(pkg.start_date).toISOString().split('T')[0];
-          return packageDate >= filterDate;
+          return false;
         })();
 
         const matchesTags = filters.tags.length === 0 || 
@@ -422,63 +433,105 @@ function MainContent({ setSelectedPackage }: {
 
             {/* Search and Filters */}
             <div className="mt-8">
-              <div className="bg-white rounded-lg shadow-lg p-4 sm:p-6 max-w-3xl mx-auto">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+              <div className="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 sm:p-8 max-w-3xl mx-auto border border-gray-100">
+                <h3 className="text-lg font-semibold text-gray-800 mb-6 text-center">Find Your Perfect Trip</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {/* Destination Field */}
+                  <div className="relative group">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-[#1c5d5e]" />
                       Destination
                     </label>
                     <div className="relative">
                       <input
                         type="text"
-                        placeholder="Enter destination"
-                        className="w-full text-center rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none pr-10"
+                        placeholder="Where do you want to go?"
+                        className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
                         value={filters.destination}
                         onChange={(e) => handleFilterChange({ destination: e.target.value })}
                       />
                       {filters.destination && (
                         <button
                           onClick={clearDestination}
-                          className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
                         >
-                          <X className="h-5 w-5" />
+                          <X className="h-4 w-4" />
                         </button>
                       )}
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Max Price (₹)
+
+                  {/* Price Field */}
+                  <div className="relative group">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      <IndianRupee className="h-4 w-4 text-[#1c5d5e]" />
+                      Budget
                     </label>
-                    <input
-                      type="number"
-                      placeholder="100000"
-                      min="0"
-                      className="w-full text-center rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                      value={filters.maxPrice}
-                      onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
-                    />
+                    <div className="relative">
+                      <input
+                        type="number"
+                        placeholder="Max budget"
+                        min="0"
+                        className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
+                        value={filters.maxPrice}
+                        onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
+                      />
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                        <span className="text-sm font-medium">₹</span>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Start Date
+
+                  {/* Date Field */}
+                  <div className="relative group">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                      <Calendar className="h-4 w-4 text-[#1c5d5e]" />
+                      Travel Date
                     </label>
-                    <input
-                      type="date"
-                      className="w-full text-center rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary focus:ring-opacity-50 outline-none"
-                      value={filters.startDate}
-                      onChange={(e) => handleFilterChange({ startDate: e.target.value })}
-                    />
+                    <div className="relative datepicker-wrapper">
+                      <DatePicker
+                        selected={filters.startDate ? new Date(filters.startDate) : null}
+                        onChange={(date: Date | null) => {
+                          handleFilterChange({
+                            startDate: date ? date.toISOString().split('T')[0] : ''
+                          });
+                        }}
+                        minDate={new Date()}
+                        placeholderText="Select travel date"
+                        dateFormat="dd MMM yyyy"
+                        showPopperArrow={false}
+                        isClearable
+                        customInput={
+                          <input
+                            type="text"
+                            className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 text-gray-600 cursor-pointer"
+                            readOnly
+                          />
+                        }
+                        className="w-full"
+                        calendarClassName="shadow-lg rounded-lg border border-gray-100 bg-white"
+                        popperClassName="z-[1000]"
+                        popperPlacement="bottom-start"
+                      />
+                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                        <Calendar className="h-4 w-4" />
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="mt-4 flex justify-end">
-                  <button
-                    onClick={resetFilters}
-                    className="text-sm text-primary hover:text-primary-700"
-                  >
-                    Reset All
-                  </button>
-                </div>
+
+                {/* Reset Button */}
+                {(filters.destination || filters.maxPrice || filters.startDate) && (
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      onClick={resetFilters}
+                      className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                    >
+                      <X className="h-4 w-4" />
+                      Reset All Filters
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -541,17 +594,17 @@ function MainContent({ setSelectedPackage }: {
 
       {/* Tags Filter */}
       <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-lg shadow-sm p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4 text-center">Filter by Experience</h3>
-          <div className="flex flex-wrap gap-2">
+        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-md p-8 border border-gray-100">
+          <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
+          <div className="flex flex-wrap gap-3 justify-center">
             {AVAILABLE_TAGS.map(tag => (
               <button
                 key={tag}
                 onClick={() => handleTagToggle(tag)}
-                className={`px-4 py-2 rounded-md text-md font-medium transition-colors ${
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                   filters.tags.includes(tag)
-                    ? 'bg-yellow-400 text-black'
-                    : 'bg-blue-50 text-gray-700 hover:bg-yellow-400'
+                    ? 'bg-[#1c5d5e] text-white shadow-md scale-105'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
               >
                 {tag}
@@ -559,11 +612,12 @@ function MainContent({ setSelectedPackage }: {
             ))}
           </div>
           {filters.tags.length > 0 && (
-            <div className="mt-4 flex justify-end">
+            <div className="mt-6 flex justify-center">
               <button
                 onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
-                className="text-sm text-primary hover:text-primary-700"
+                className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
               >
+                <X className="h-4 w-4" />
                 Clear Tags
               </button>
             </div>
@@ -703,11 +757,10 @@ function MainContent({ setSelectedPackage }: {
                           <p>Available Dates:</p>
                         </div>
 
-                        {/*}
-                        <div className="flex flex-wrap gap-2">
-                          {Array.isArray(pkg.start_date) && pkg.start_date.length > 0 ? (
-                            pkg.start_date.map((date, index) => {
-                              const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
+                        <div className="flex flex-wrap gap-2 max-h-[4.5rem] overflow-hidden">
+                          {pkg.start_date_2 && Object.keys(pkg.start_date_2).length > 0 ? (
+                            Object.keys(pkg.start_date_2).map((date, index) => {
+                              const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0));
                               return (
                                 <span
                                   key={index}
@@ -725,65 +778,12 @@ function MainContent({ setSelectedPackage }: {
                                 </span>
                               );
                             })
-                          ) : typeof pkg.start_date === 'string' && pkg.start_date ? (
-                            (() => {
-                              const isPastDate = new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0));
-                              return (
-                                <span
-                                  className={`${
-                                    isPastDate
-                                      ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                      : 'bg-yellow-50 border-yellow-200 text-gray-700'
-                                  } border text-sm py-1 px-2 rounded`}
-                                >
-                                  {new Date(pkg.start_date).toLocaleDateString('en-GB', {
-                                    day: '2-digit',
-                                    month: 'short',
-                                    year: '2-digit',
-                                  })}
-                                </span>
-                              );
-                            })()
                           ) : (
                             <span className="text-yellow-600 text-sm">
                               Exciting departures being planned - Check back soon!
                             </span>
                           )}
                         </div>
-*/}
-
-{/*    NEw   */}
-
-<div className="flex flex-wrap gap-2 max-h-[4.5rem] overflow-hidden">
-  {pkg.start_date_2 && Object.keys(pkg.start_date_2).length > 0 ? (
-    Object.keys(pkg.start_date_2).map((date, index) => {
-      const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
-      return (
-        <span
-          key={index}
-          className={`${
-            isPastDate
-              ? 'bg-gray-100 border-gray-200 text-gray-400'
-              : 'bg-yellow-50 border-yellow-200 text-gray-700'
-          } border text-sm py-1 px-2 rounded`}
-        >
-          {new Date(date).toLocaleDateString('en-GB', {
-            day: '2-digit',
-            month: 'short',
-            year: '2-digit',
-          })}
-        </span>
-      );
-    })
-  ) : (
-    <span className="text-yellow-600 text-sm">
-      Exciting departures being planned - Check back soon!
-    </span>
-  )}
-</div>
-
-
-{/*  END */}
 
                         <div className="flex gap-6">
                           <div className="flex items-center text-gray-700">

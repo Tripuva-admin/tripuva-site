@@ -76,41 +76,45 @@ const goToNext = () => {
     ));
   };
 
-  const handleBooking = () => {
-    if (pkg.booking_link) {
-      const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.package_id})`;
-      const BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`;
-      
-      console.log(BOOKING_LINK);
-      window.open(BOOKING_LINK, '_blank');
-    }
-  };
-  
-
   const [selectedStartDate, setSelectedStartDate] = useState<string>(
-    Array.isArray(pkg.start_date) ? pkg.start_date[0] : pkg.start_date
+    pkg.start_date_2 ? Object.keys(pkg.start_date_2)[0] : ''
   );
 
   const [availableSlots, setAvailableSlots] = useState<number | null>(null);
 
+  useEffect(() => {
+    if (selectedStartDate && pkg.start_date_2) {
+      setAvailableSlots(pkg.start_date_2[selectedStartDate] || null);
+    }
+  }, [selectedStartDate, pkg.start_date_2]);
+
   const isBookingDisabled = Boolean(
     !selectedStartDate || 
-    (Array.isArray(pkg.start_date) && (
-      pkg.start_date.length === 0 || 
-      pkg.start_date.every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
-    )) ||
-    (!Array.isArray(pkg.start_date) && pkg.start_date && new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0)))
+    !pkg.start_date_2 ||
+    Object.keys(pkg.start_date_2).length === 0 ||
+    Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))) ||
+    (selectedStartDate && pkg.start_date_2[selectedStartDate] === 0)
   );
 
-  const getButtonText = () => {
-    if (!selectedStartDate || (Array.isArray(pkg.start_date) && pkg.start_date.length === 0)) {
-      return 'Booking Not available';
+  const allDatesHavePassed = Boolean(
+    pkg.start_date_2 && Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
+  );
+
+  const noDatesAvailable = Boolean(
+    !pkg.start_date_2 || Object.keys(pkg.start_date_2).length === 0
+  );
+
+  const handleBooking = () => {
+    if (selectedStartDate) {
+      const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.package_id})`;
+      const BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`;
+      
+      console.log('Booking Link:', BOOKING_LINK);
+      console.log('Selected Date:', selectedStartDate);
+      console.log('Package:', pkg);
+      
+      window.open(BOOKING_LINK, '_blank');
     }
-    if ((Array.isArray(pkg.start_date) && pkg.start_date.every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))) ||
-        (!Array.isArray(pkg.start_date) && pkg.start_date && new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0)))) {
-      return 'All dates have passed';
-    }
-    return 'Book Now';
   };
 
   return (
@@ -197,90 +201,62 @@ const goToNext = () => {
     </div>
   )}
 
-{/*
-
   <div className="space-y-3 mb-6">
     <div className="flex items-center text-gray-700">
       <div className="flex items-center">
         <Calendar className="h-5 w-5 mr-2" />
         <span className="font-medium">Available Dates:</span>
       </div>
-      {((Array.isArray(pkg.start_date) && pkg.start_date.some(date => new Date(date) >= new Date(new Date().setHours(0, 0, 0, 0)))) || 
-        (typeof pkg.start_date === 'string' && new Date(pkg.start_date) >= new Date(new Date().setHours(0, 0, 0, 0)))) ? (
+      {pkg.start_date_2 && Object.keys(pkg.start_date_2).some(date => new Date(date) >= new Date(new Date().setHours(0, 0, 0, 0))) && (
         <span className="ml-3 text-sm text-yellow-600 italic">Choose your departure</span>
-      ) : null}
+      )}
     </div>
+
     <div className="flex flex-wrap gap-2">
-      {Array.isArray(pkg.start_date) && pkg.start_date.length > 0 ? (
+      {pkg.start_date_2 && Object.keys(pkg.start_date_2).length > 0 ? (
         (() => {
-          const allDatesHavePassed = pkg.start_date.every(date => 
-            new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
-          );
-          
+          const allPast = Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)));
+
           return (
             <>
-              {allDatesHavePassed && (
+              {allPast && (
                 <div className="w-full">
                   <span className="text-yellow-600 text-sm">Missed these dates? Stay tuned for upcoming departures!</span>
                 </div>
               )}
-              <div className="flex flex-wrap gap-2">
-                {pkg.start_date.map((date, index) => {
-                  const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
-                  return (
-                    <button
-                      key={index}
-                      onClick={() => !isPastDate && setSelectedStartDate(String(date))}
-                      disabled={isPastDate}
-                      aria-disabled={isPastDate}
-                      className={`${
-                        isPastDate 
-                          ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50 pointer-events-none'
-                          : selectedStartDate === String(date)
-                            ? 'bg-yellow-200 border-yellow-300'
-                            : 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100'
-                      } border text-gray-700 text-sm py-1 px-2 rounded transition-colors disabled:pointer-events-none disabled:opacity-50`}
-                    >
-                      {new Date(date).toLocaleDateString('en-GB', {
-                        day: '2-digit',
-                        month: 'short',
-                        year: '2-digit',
-                      })}
-                    </button>
-                  );
-                })}
-              </div>
-            </>
-          );
-        })()
-      ) : typeof pkg.start_date === 'string' && pkg.start_date ? (
-        (() => {
-          const isPastDate = new Date(pkg.start_date) < new Date(new Date().setHours(0, 0, 0, 0));
-          return (
-            <>
-              {isPastDate && (
-                <div className="w-full">
-                  <span className="text-yellow-600 text-sm">Missed these dates? Stay tuned for upcoming departures!</span>
-                </div>
-              )}
-              <button
-                onClick={() => !isPastDate && setSelectedStartDate(String(pkg.start_date))}
-                disabled={isPastDate}
-                aria-disabled={isPastDate}
-                className={`${
-                  isPastDate 
-                    ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50 pointer-events-none'
-                    : selectedStartDate === String(pkg.start_date)
-                      ? 'bg-yellow-200 border-yellow-300'
-                      : 'bg-yellow-50 border-yellow-200 hover:bg-yellow-100'
-                } border text-gray-700 text-sm py-1 px-2 rounded transition-colors disabled:pointer-events-none disabled:opacity-50`}
-              >
-                {new Date(pkg.start_date).toLocaleDateString('en-GB', {
-                  day: '2-digit',
+              {Object.entries(pkg.start_date_2).map(([date, slots]: [string, number]) => {
+                const isPast = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
+                const isSoldOut = slots === 0;
+                const formatted = new Date(date).toLocaleDateString('en-GB', {
+                  day: 'numeric',
                   month: 'short',
-                  year: '2-digit',
-                })}
-              </button>
+                  year: 'numeric'
+                });
+
+                return (
+                  <div key={date} className="flex flex-col items-center">
+                    <button
+                      onClick={() => !isPast && !isSoldOut && setSelectedStartDate(formatted)}
+                      disabled={isPast || isSoldOut}
+                      aria-disabled={isPast || isSoldOut}
+                      className={`text-sm py-1 px-2 rounded border transition-colors ${
+                        isPast || isSoldOut
+                          ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50 pointer-events-none'
+                          : selectedStartDate === formatted
+                          ? 'bg-yellow-300 border-yellow-300'
+                          : 'bg-yellow-50 border-yellow-300 hover:bg-yellow-100'
+                      }`}
+                    >
+                      {formatted}
+                    </button>
+                    {!isPast && (
+                      <span className={`text-xs mt-1 ${isSoldOut ? 'text-red-500' : 'text-gray-500'}`}>
+                        {isSoldOut ? 'Sold Out' : `${slots} slots left`}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
             </>
           );
         })()
@@ -290,76 +266,7 @@ const goToNext = () => {
         </span>
       )}
     </div>
-  </div> */}
-
-  {/* ccccccccccccccccccccc */}
-
-  <div className="space-y-3 mb-6">
-  <div className="flex items-center text-gray-700">
-    <div className="flex items-center">
-      <Calendar className="h-5 w-5 mr-2" />
-      <span className="font-medium">Available Dates:</span>
-    </div>
-    {pkg.start_date_2 && Object.keys(pkg.start_date_2).some(date => new Date(date) >= new Date(new Date().setHours(0, 0, 0, 0))) && (
-      <span className="ml-3 text-sm text-yellow-600 italic">Choose your departure</span>
-    )}
   </div>
-
-  <div className="flex flex-wrap gap-2">
-    {pkg.start_date_2 && Object.keys(pkg.start_date_2).length > 0 ? (
-      (() => {
-        const allPast = Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)));
-
-        return (
-          <>
-            {allPast && (
-              <div className="w-full">
-                <span className="text-yellow-600 text-sm">Missed these dates? Stay tuned for upcoming departures!</span>
-              </div>
-            )}
-            {Object.entries(pkg.start_date_2).map(([date, slots]: [string, number]) => {
-              const isPast = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
-              const formatted = new Date(date).toLocaleDateString('en-GB', {
-                day: '2-digit',
-                month: 'short',
-                year: '2-digit',
-              });
-
-              return (
-                <div key={date} className="flex flex-col items-center">
-                  <button
-                    onClick={() => !isPast && setSelectedStartDate(date)}
-                    disabled={isPast}
-                    aria-disabled={isPast}
-                    className={`text-sm py-1 px-2 rounded border transition-colors ${
-                      isPast
-                        ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50 pointer-events-none'
-                        : selectedStartDate === date
-                        ? 'bg-yellow-300 border-yellow-300'
-                        : 'bg-yellow-50 border-yellow-300 hover:bg-yellow-100'
-                    }`}
-                  >
-                    {formatted}
-                  </button>
-                  {!isPast && (
-                    <span className="text-xs text-gray-500 mt-1">{slots} slots left</span>
-                  )}
-                </div>
-              );
-            })}
-          </>
-        );
-      })()
-    ) : (
-      <span className="text-yellow-600 text-sm">
-        Exciting departures being planned - Check back soon!
-      </span>
-    )}
-  </div>
-</div>
-
-  
-{/* New Multiple Start Date View - End*/}  
 
     <div className="flex flex-wrap items-center sm:flex-row sm:items-start gap-4">
      
@@ -396,14 +303,19 @@ const goToNext = () => {
       disabled={isBookingDisabled}
       className={`w-full py-2 px-4 rounded-md transition duration-200 ${
         isBookingDisabled
-          ? 'bg-gray-300 cursor-not-allowed'
+          ? 'bg-gray-100 text-gray-700 cursor-not-allowed pointer-events-none'
           : 'bg-[#1c5d5e] text-white hover:bg-primary-600'
       }`}
     >
-      {getButtonText()}
+      {noDatesAvailable
+        ? 'Exciting departures being planned - Check back soon!'
+        : allDatesHavePassed
+          ? 'Missed these dates? Stay tuned for upcoming departures!'
+          : 'Book Now'
+      }
     </button>
 
-    {!isBookingDisabled && (
+    {!isBookingDisabled && !allDatesHavePassed && !noDatesAvailable && (
       <p className="text-blue-800 text-sm mt-1">
         Click "Book Now" to connect with us on WhatsApp and reserve your spot for this amazing trip!
       </p>

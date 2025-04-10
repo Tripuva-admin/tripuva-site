@@ -158,12 +158,12 @@ export function MainContent({
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <div className="relative min-h-[600px] flex items-center">
+      <div className="relative min-h-[500px] sm:min-h-[600px] flex items-center">
         {/* ... hero section content ... */}
       </div>
 
       {/* Package Grid */}
-      <div id="package-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-6">
+      <div id="package-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6">
         {currentPackages.map(pkg => (
           <div
             key={pkg.id}
@@ -173,15 +173,15 @@ export function MainContent({
             <img
               src={pkg.image}
               alt={pkg.title}
-              className="w-full h-48 object-cover"
+              className="w-full h-40 sm:h-48 object-cover"
               onLoad={handleImageLoad}
             />
-            <div className="p-4">
-              <h3 className="text-xl font-semibold mb-2">{pkg.title}</h3>
-              <p className="text-gray-600 mb-4">{pkg.description}</p>
+            <div className="p-3 sm:p-4">
+              <h3 className="text-lg sm:text-xl font-semibold mb-2">{pkg.title}</h3>
+              <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">{pkg.description}</p>
               <div className="flex justify-between items-center">
-                <span className="text-lg font-bold text-indigo-600">₹{pkg.price}</span>
-                <button className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                <span className="text-base sm:text-lg font-bold text-indigo-600">₹{pkg.price}</span>
+                <button className="px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 text-white text-sm sm:text-base rounded hover:bg-indigo-700">
                   View Details
                 </button>
               </div>

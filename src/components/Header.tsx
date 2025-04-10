@@ -28,16 +28,24 @@ export function Header({ user }: HeaderProps) {
     }
   };
 
+  const toggleMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
-    <header className="absolute top-0 left-0 right-0 z-50 pt-4 bg-[#1c5d5e]">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-[#1c5d5e]">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
+        <div className="relative flex items-center justify-between h-16 md:h-20">
+          {/* Logo */}
+          <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">Tripuva</h1>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-white tracking-wide">
+                Tripuva
+              </h1>
             </Link>
           </div>
 
+          {/* Desktop Navigation */}
           <div className="hidden sm:flex items-center space-x-6">
             <Link 
               to="/top-places" 
@@ -68,47 +76,59 @@ export function Header({ user }: HeaderProps) {
             )}
           </div>
 
+          {/* Mobile Menu Button */}
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors"
+            type="button"
+            onClick={toggleMenu}
+            className="sm:hidden inline-flex items-center justify-center w-12 h-12 rounded-lg text-white hover:bg-white/10 focus:outline-none active:bg-white/20"
           >
             {isMobileMenuOpen ? (
-              <X className="h-8 w-8" />
+              <X className="h-7 w-7" />
             ) : (
-              <Menu className="h-8 w-8" />
+              <Menu className="h-7 w-7" />
             )}
           </button>
         </div>
 
+        {/* Mobile Navigation */}
         {isMobileMenuOpen && (
-          <div className="sm:hidden mt-4 pb-4">
-            <div className="flex flex-col space-y-4">
+          <div className="sm:hidden py-4">
+            <div className="space-y-3 px-1">
               <Link
                 to="/top-places"
-                className="bg-gradient-to-r from-white to-gray-100 text-black px-4 py-2 rounded-md hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
-                onClick={() => setIsMobileMenuOpen(false)}
+                onClick={toggleMenu}
+                className="block bg-gradient-to-r from-white to-gray-100 text-black px-5 py-3.5 rounded-xl hover:from-gray-100 hover:to-white transition-all duration-200 text-base font-medium"
               >
-                <Star className="h-4 w-4 mr-2 text-gold" />
-                Top Places
+                <div className="flex items-center">
+                  <Star className="h-5 w-5 mr-3 text-gold" />
+                  Top Places
+                </div>
               </Link>
 
               <a
                 href="https://google.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
+                className="block bg-transparent text-white px-5 py-3.5 rounded-xl border border-white/30 hover:bg-white/10 transition-all duration-200 text-base font-medium"
               >
-                <ArrowRight className="h-4 w-4 mr-2" />
-                Contact us on Whatsapp
+                <div className="flex items-center">
+                  <ArrowRight className="h-5 w-5 mr-3" />
+                  Contact us on Whatsapp
+                </div>
               </a>
 
               {user && (
                 <button
-                  onClick={handleSignOut}
-                  className="text-white hover:text-gray-200 flex items-center justify-center"
+                  onClick={() => {
+                    handleSignOut();
+                    toggleMenu();
+                  }}
+                  className="w-full text-left text-white px-5 py-3.5 rounded-xl hover:bg-white/10 transition-all duration-200 text-base font-medium"
                 >
-                  <LogOut className="h-5 w-5 mr-2" />
-                  Sign Out
+                  <div className="flex items-center">
+                    <LogOut className="h-5 w-5 mr-3" />
+                    Sign Out
+                  </div>
                 </button>
               )}
             </div>

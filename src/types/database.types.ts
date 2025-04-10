@@ -15,8 +15,7 @@ export interface Package {
   price: number;
   group_size: number;
   image: string;
-  start_date: string | string[];
-  start_date_2?: { [key: string]: number };
+  start_date_2: { [key: string]: number };
   agency_id: string;
   status: 'open' | 'closed';
   booking_link?: string;
