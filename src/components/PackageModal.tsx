@@ -91,6 +91,8 @@ const goToNext = () => {
     Array.isArray(pkg.start_date) ? pkg.start_date[0] : pkg.start_date
   );
 
+  const [availableSlots, setAvailableSlots] = useState<number | null>(null);
+
   const isBookingDisabled = Boolean(
     !selectedStartDate || 
     (Array.isArray(pkg.start_date) && (
@@ -195,6 +197,8 @@ const goToNext = () => {
     </div>
   )}
 
+{/*
+
   <div className="space-y-3 mb-6">
     <div className="flex items-center text-gray-700">
       <div className="flex items-center">
@@ -286,8 +290,75 @@ const goToNext = () => {
         </span>
       )}
     </div>
+  </div> */}
+
+  {/* ccccccccccccccccccccc */}
+
+  <div className="space-y-3 mb-6">
+  <div className="flex items-center text-gray-700">
+    <div className="flex items-center">
+      <Calendar className="h-5 w-5 mr-2" />
+      <span className="font-medium">Available Dates:</span>
+    </div>
+    {pkg.start_date_2 && Object.keys(pkg.start_date_2).some(date => new Date(date) >= new Date(new Date().setHours(0, 0, 0, 0))) && (
+      <span className="ml-3 text-sm text-yellow-600 italic">Choose your departure</span>
+    )}
   </div>
 
+  <div className="flex flex-wrap gap-2">
+    {pkg.start_date_2 && Object.keys(pkg.start_date_2).length > 0 ? (
+      (() => {
+        const allPast = Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)));
+
+        return (
+          <>
+            {allPast && (
+              <div className="w-full">
+                <span className="text-yellow-600 text-sm">Missed these dates? Stay tuned for upcoming departures!</span>
+              </div>
+            )}
+            {Object.entries(pkg.start_date_2).map(([date, slots]: [string, number]) => {
+              const isPast = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
+              const formatted = new Date(date).toLocaleDateString('en-GB', {
+                day: '2-digit',
+                month: 'short',
+                year: '2-digit',
+              });
+
+              return (
+                <div key={date} className="flex flex-col items-center">
+                  <button
+                    onClick={() => !isPast && setSelectedStartDate(date)}
+                    disabled={isPast}
+                    aria-disabled={isPast}
+                    className={`text-sm py-1 px-2 rounded border transition-colors ${
+                      isPast
+                        ? 'bg-gray-100 border-gray-200 text-gray-400 cursor-not-allowed opacity-50 pointer-events-none'
+                        : selectedStartDate === date
+                        ? 'bg-yellow-300 border-yellow-300'
+                        : 'bg-yellow-50 border-yellow-300 hover:bg-yellow-100'
+                    }`}
+                  >
+                    {formatted}
+                  </button>
+                  {!isPast && (
+                    <span className="text-xs text-gray-500 mt-1">{slots} slots left</span>
+                  )}
+                </div>
+              );
+            })}
+          </>
+        );
+      })()
+    ) : (
+      <span className="text-yellow-600 text-sm">
+        Exciting departures being planned - Check back soon!
+      </span>
+    )}
+  </div>
+</div>
+
+  
 {/* New Multiple Start Date View - End*/}  
 
     <div className="flex flex-wrap items-center sm:flex-row sm:items-start gap-4">
@@ -314,7 +385,7 @@ const goToNext = () => {
     
     {/* Price Per Person (Right) */}
     <p className="text-gray-800 text-base font-semibold">
-      Price per person: <span className="text-gray-500">₹{pkg.price.toLocaleString()}</span>
+      Price per person: <span className="text-gray-700">₹{pkg.price.toLocaleString()}</span>
     </p>
   </div>
 

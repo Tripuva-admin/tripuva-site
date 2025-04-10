@@ -702,6 +702,8 @@ function MainContent({ setSelectedPackage }: {
                           <Calendar className="h-5 w-5 mr-2" />
                           <p>Available Dates:</p>
                         </div>
+
+                        {/*}
                         <div className="flex flex-wrap gap-2">
                           {Array.isArray(pkg.start_date) && pkg.start_date.length > 0 ? (
                             pkg.start_date.map((date, index) => {
@@ -748,6 +750,41 @@ function MainContent({ setSelectedPackage }: {
                             </span>
                           )}
                         </div>
+*/}
+
+{/*    NEw   */}
+
+<div className="flex flex-wrap gap-2 max-h-[4.5rem] overflow-hidden">
+  {pkg.start_date_2 && Object.keys(pkg.start_date_2).length > 0 ? (
+    Object.keys(pkg.start_date_2).map((date, index) => {
+      const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
+      return (
+        <span
+          key={index}
+          className={`${
+            isPastDate
+              ? 'bg-gray-100 border-gray-200 text-gray-400'
+              : 'bg-yellow-50 border-yellow-200 text-gray-700'
+          } border text-sm py-1 px-2 rounded`}
+        >
+          {new Date(date).toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: 'short',
+            year: '2-digit',
+          })}
+        </span>
+      );
+    })
+  ) : (
+    <span className="text-yellow-600 text-sm">
+      Exciting departures being planned - Check back soon!
+    </span>
+  )}
+</div>
+
+
+{/*  END */}
+
                         <div className="flex gap-6">
                           <div className="flex items-center text-gray-700">
                             <Users className="h-5 w-5 mr-2" />

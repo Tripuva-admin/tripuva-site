@@ -43,6 +43,7 @@ export interface Database {
           group_size: number
           image: string
           start_date: string[]
+          start_date_2?: { [key: string]: number };
           agency_id: string | null
           status: 'open' | 'closed'
           booking_link: string
