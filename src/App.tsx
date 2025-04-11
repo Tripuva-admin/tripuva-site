@@ -118,11 +118,30 @@ function Header({ user }: HeaderProps) {
     } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex items-center">
-            <h1 className="text-3xl sm:text-3xl md:text-4xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
-              Tripuva
-            </h1>
-          </Link>
+        <Link to="/" className="flex flex-col items-center justify-center leading-none group">
+  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
+    Tripuva
+  </h1>
+  <svg
+    className="w-28 sm:w-32 h-5 mt-1 transition-transform duration-300 group-hover:scale-105"
+    viewBox="0 0 100 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M5 15 C 25 5, 75 5, 95 15"
+      stroke="#facc15"
+      strokeWidth="4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      fill="none"
+    />
+  </svg>
+</Link>
+
+
+
+
     
           <nav className="hidden sm:flex items-center space-x-6">
             <Link 
