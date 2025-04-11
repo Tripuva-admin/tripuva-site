@@ -109,7 +109,7 @@ function Header({ user }: HeaderProps) {
   };
 
   return (
-    <header className={`w-full z-50 transition-colors duration-300 ${
+    <header className={`w-full z-50 ${
       isMobileMenuOpen 
         ? 'bg-[#0a2b2f]' 
         : isHomePage 
@@ -168,50 +168,49 @@ function Header({ user }: HeaderProps) {
         </div>
     
         {/* Mobile menu with smooth transition */}
-        <div 
-          className={`sm:hidden transition-all duration-300 ease-in-out ${
-            isMobileMenuOpen 
-              ? 'max-h-96 opacity-100' 
-              : 'max-h-0 opacity-0 pointer-events-none'
-          } overflow-hidden`}
+        <div
+  className={`sm:hidden fixed top-16 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${
+    isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
+  } overflow-hidden`}
+>
+  <nav className="mt-4 pb-4 px-4">
+    <div className="flex flex-col space-y-4">
+      <Link
+        to="/top-places"
+        className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-xl text-base font-semibold w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700 shadow-sm"
+        onClick={() => setIsMobileMenuOpen(false)}
+      >
+        <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
+        Top Places
+      </Link>
+
+      <a
+        href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="bg-white/10 text-white px-4 py-3 rounded-xl border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center backdrop-blur-md"
+        onClick={() => setIsMobileMenuOpen(false)}
+      >
+        <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
+        Contact us on Whatsapp
+      </a>
+
+      {user && (
+        <button
+          onClick={() => {
+            handleSignOut();
+            setIsMobileMenuOpen(false);
+          }}
+          className="text-white hover:text-gray-200 flex items-center justify-center py-3 px-4 w-full border border-white/20 rounded-xl transition-all duration-200 hover:bg-white/10"
         >
-          <nav className="mt-4 pb-4">
-            <div className="flex flex-col space-y-4">
-              <Link
-                to="/top-places"
-                className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-md text-base font-medium w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
-                Top Places
-              </Link>
-    
-              <a
-                href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-transparent text-white px-4 py-3 rounded-md border-2 border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
-                Contact us on Whatsapp
-              </a>
-    
-              {user && (
-                <button
-                  onClick={() => {
-                    handleSignOut();
-                    setIsMobileMenuOpen(false);
-                  }}
-                  className="text-white hover:text-gray-200 flex items-center justify-center py-3 w-full border-2 border-transparent hover:border-white/20 rounded-md transition-all duration-200"
-                >
-                  <LogOut className="h-5 w-5 mr-2" strokeWidth={2} />
-                  Sign Out
-                </button>
-              )}
-            </div>
-          </nav>
-        </div>
+          <LogOut className="h-5 w-5 mr-2" strokeWidth={2} />
+          Sign Out
+        </button>
+      )}
+    </div>
+  </nav>
+</div>
+
       </div>
     </header>
     

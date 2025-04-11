@@ -53,7 +53,11 @@ module.exports = {
       animation: {
         scroll: 'scroll 30s linear infinite',
       },
+      backdropBlur: {
+        xs: '2px',
+      },
     },
+    
   },
   plugins: [],
 }
