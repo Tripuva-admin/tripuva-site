@@ -74,19 +74,54 @@ const TopPlaces = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background-light">
-      <div className="relative w-full h-72 overflow-hidden shadow-md">
-        <img
-          src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Top-Places-bg4.png"
-          alt="Trip Image"
-          className="w-full h-full object-cover"
-        />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <h2 className="text-5xl font-bold text-yellow-100 text-center drop-shadow-md">
-            Top Places to visit this Summer
-          </h2>
-        </div>
-      </div>
+    <div className="min-h-screen bg-#ffffff">
+    
+    <div className="relative w-full h-80 md:h-96 overflow-hidden rounded-b-none">
+    <img
+  src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Top-Places-bg4.png"
+  alt="Summer Destination"
+  className="w-full h-full object-cover transform scale-105 scale-y-[-1] transition-transform duration-700"
+/>
+
+
+  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 z-10"></div>
+
+  <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-20">
+  <div className="max-w-md sm:max-w-xl">
+    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+      Explore the Best Places <br className="sm:hidden" /> to Visit This Summer
+    </h2>
+
+    <p className="mt-6 italic text-white/90 text-sm sm:text-base leading-relaxed sm:leading-loose drop-shadow-sm">
+      Handpicked destinations across India for your next unforgettable journey.
+      <br />
+      Mountains, beaches, forests — all waiting for you.
+    </p>
+  </div>
+</div>
+
+
+
+
+
+
+
+  <svg
+    className="absolute bottom-0 left-0 w-full h-20 z-10"
+    viewBox="0 0 1440 320"
+    preserveAspectRatio="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      fill="#ffffff"
+      d="M0,192L60,181.3C120,171,240,149,360,154.7C480,160,600,192,720,197.3C840,203,960,181,1080,154.7C1200,128,1320,96,1380,80L1440,64L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"
+    />
+  </svg>
+</div>
+
+
+
+
         
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {loading ? (
