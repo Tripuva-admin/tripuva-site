@@ -77,34 +77,28 @@ const TopPlaces = () => {
     <div className="min-h-screen bg-#ffffff">
     
     <div className="relative w-full h-80 md:h-96 overflow-hidden rounded-b-none">
-    <img
-  src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Top-Places-bg4.png"
-  alt="Summer Destination"
-  className="w-full h-full object-cover transform scale-105 scale-y-[-1] transition-transform duration-700"
-/>
+  <img
+    src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Top-Places-bg4.png"
+    alt="Summer Destination"
+    className="w-full h-full object-cover transform rotate-180 scale-105 transition-transform duration-700"
+  />
 
-
-  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/10 z-10"></div>
+  {/* ✅ Black gradient overlay from top to transparent */}
+  <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-transparent z-10"></div>
 
   <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6 z-20">
-  <div className="max-w-md sm:max-w-xl">
-    <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
-      Explore the Best Places <br className="sm:hidden" /> to Visit This Summer
-    </h2>
+    <div className="max-w-md sm:max-w-xl">
+      <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-100 to-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">
+        Explore the Best Places <br className="sm:hidden" /> to Visit This Summer
+      </h2>
 
-    <p className="mt-6 italic text-white/90 text-sm sm:text-base leading-relaxed sm:leading-loose drop-shadow-sm">
-      Handpicked destinations across India for your next unforgettable journey.
-      <br />
-      Mountains, beaches, forests — all waiting for you.
-    </p>
+      <p className="mt-6 italic text-white/90 text-sm sm:text-base leading-relaxed sm:leading-loose drop-shadow-sm">
+        Handpicked destinations across India for your next unforgettable journey.
+        <br />
+        Mountains, beaches, forests — all waiting for you.
+      </p>
+    </div>
   </div>
-</div>
-
-
-
-
-
-
 
   <svg
     className="absolute bottom-0 left-0 w-full h-20 z-10"
@@ -118,6 +112,7 @@ const TopPlaces = () => {
     />
   </svg>
 </div>
+
 
 
 
