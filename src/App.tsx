@@ -292,7 +292,8 @@ function MainContent({ setSelectedPackage }: {
             id,
             image_url,
             is_primary
-          )
+          ),
+          itenary
         `)
         .eq('status', 'open')
         .order('ranking', { ascending: false });

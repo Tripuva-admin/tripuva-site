@@ -37,6 +37,7 @@ export interface Package {
     id: string;
     start_date: string;
   }[];
+  itenary: string;
 }
 
 export interface Profile {

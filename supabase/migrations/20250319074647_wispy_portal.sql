@@ -4,6 +4,7 @@
   1. Changes
     - Add `ranking` column (integer, 1-10000)
     - Add `advance` column (numeric)
+    - Add `itenary` column (text)
     - Update existing packages with random values
     - Add check constraints
 
@@ -14,7 +15,8 @@
 -- Add new columns
 ALTER TABLE packages 
 ADD COLUMN IF NOT EXISTS ranking integer DEFAULT 1000,
-ADD COLUMN IF NOT EXISTS advance numeric DEFAULT 0;
+ADD COLUMN IF NOT EXISTS advance numeric DEFAULT 0,
+ADD COLUMN IF NOT EXISTS itenary text;
 
 -- Add check constraints
 ALTER TABLE packages
