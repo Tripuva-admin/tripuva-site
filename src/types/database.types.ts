@@ -11,14 +11,15 @@ export interface Package {
   title: string;
   description: string;
   price: number;
-  duration: string;
-  group_size: string;
-  image_url: string[];
-  itenary?: string;
-  start_date_2: { [key: string]: number };
+  duration: number;
+  group_size: number;
+  image_url: string | string[];
+  itenary: string;
+  start_date_2: Record<string, number>;
   location: string;
-  ranking?: number;
-  advance?: number;
+  status: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Profile {

@@ -1,78 +1,96 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { Package } from '../../types/database.types';
+import { supabase } from '../../lib/supabase';
 import { Calendar, Users, Clock, IndianRupee, Star, Building2, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
-import { supabase } from '../../supabaseClient';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
 import { format } from 'date-fns';
 
-interface PackageDetailProps {
-  package: Package & {
-    agency?: { name: string; rating: number };
-    package_images?: { id: string; image_url: string; is_primary: boolean; is_landscape: boolean }[];
-    image_url?: string;
-  };
+interface PackageDetail {
+  id: string;
+  title: string;
+  description: string;
+  price: number;
+  duration: number;
+  group_size: number;
+  image_url: string;
+  itenary: string;
+  detailed_itenary?: string;
+  start_date_2: Record<string, number>;
+  location: string;
+  ranking?: number;
+  advance?: number;
+  agency?: { name: string; rating: number; };
+  package_images?: { id: string; image_url: string; is_primary: boolean; is_landscape: boolean; }[];
 }
 
-export default function PackageDetail() {
+const PackageDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [pkg, setPkg] = useState<PackageDetailProps['package'] | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [pkg, setPkg] = useState<PackageDetail | null>(null);
+  const [images, setImages] = useState<string[]>([]);
+  const [bookingOptions, setBookingOptions] = useState<{ date: string; spots: number }[]>([]);
+  const [selectedDate, setSelectedDate] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedStartDate, setSelectedStartDate] = useState<string>('');
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [availableDates, setAvailableDates] = useState<string[]>([]);
 
   useEffect(() => {
     async function fetchPackage() {
-      setLoading(true);
+      setIsLoading(true);
       if (!id) return;
       
-      const { data, error } = await supabase
-        .from('packages')
-        .select(`
-          *,
-          agencies (
-            name,
-            rating
-          ),
-          package_images (
-            id,
-            image_url,
-            is_primary,
-            is_landscape
-          )
-        `)
-        .eq('id', id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('packages')
+          .select(`
+            *,
+            agency:agencies(
+              name,
+              rating
+            ),
+            package_images(
+              id,
+              image_url,
+              is_primary,
+              is_landscape
+            )
+          `)
+          .eq('id', id)
+          .single();
 
-      if (error) {
+        if (error) throw error;
+
+        if (data) {
+          setPkg(data);
+          
+          // Debug logs for itinerary
+          console.log('Detailed Itinerary:', data.detailed_itenary);
+          
+          // Handle images - only use landscape images
+          const imageUrls = data.package_images
+            ?.filter((img: { is_landscape: boolean }) => img.is_landscape)
+            .map((img: { image_url: string }) => img.image_url) || [data.image_url];
+          setImages(imageUrls.filter(Boolean));
+          
+          // Extract available dates
+          const dates = Object.entries(data.start_date_2 || {})
+            .filter(([_, spots]) => {
+              const spotsNum = Number(spots);
+              return !isNaN(spotsNum) && spotsNum > 0;
+            })
+            .map(([date]) => date);
+            
+          setAvailableDates(dates);
+          if (dates.length > 0) {
+            setSelectedDate(dates[0]);
+          }
+        }
+      } catch (error) {
         console.error('Error fetching package:', error);
         setError('Failed to load package details');
-        setLoading(false);
-        return;
-      }
-
-      // Transform the data to match the expected structure
-      const transformedData = {
-        ...data,
-        agency: data.agencies,
-      };
-      delete transformedData.agencies;
-
-      setPkg(transformedData);
-      setLoading(false);
-
-      // Set available dates
-      if (data?.start_date_2) {
-        const dates = Object.keys(data.start_date_2).filter(
-          (date) => data.start_date_2[date] > 0
-        );
-        setAvailableDates(dates);
-        if (dates.length > 0) {
-          setSelectedStartDate(dates[0]);
-        }
+      } finally {
+        setIsLoading(false);
       }
     }
 
@@ -80,15 +98,15 @@ export default function PackageDetail() {
   }, [id]);
 
   const handleBooking = () => {
-    if (!selectedStartDate || !pkg?.start_date_2) return;
+    if (!selectedDate || !pkg?.start_date_2) return;
     
-    const availableSpots = pkg.start_date_2[selectedStartDate];
-    if (availableSpots <= 0) {
+    const availableSpots = Number(pkg.start_date_2[selectedDate]);
+    if (isNaN(availableSpots) || availableSpots <= 0) {
       alert('No spots available for selected date');
       return;
     }
 
-    const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.id})`;
+    const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedDate}%0A%0A(Experience Code: ${pkg.id})`;
     const BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`;
     
     window.open(BOOKING_LINK, '_blank');
@@ -107,22 +125,25 @@ export default function PackageDetail() {
     ));
   };
 
-  if (loading) {
+  if (isLoading) {
     return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>;
   }
 
   if (error || !pkg) {
-    return <div className="min-h-screen bg-gray-50 flex items-center justify-center text-red-500">{error || 'Package not found'}</div>;
+    return <div className="min-h-screen bg-gray-50 flex items-center justify-center">{error || 'Package not found'}</div>;
   }
 
   const primaryImage = pkg.package_images?.find(img => img.is_primary && img.is_landscape)?.image_url || 
                       pkg.package_images?.find(img => img.is_landscape)?.image_url ||
                       pkg.image_url;
+  
+  console.log('Primary Image:', primaryImage);
+  console.log('Package Images for Carousel:', pkg.package_images?.filter(img => img.is_landscape).map(img => img.image_url) || [primaryImage]);
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Image Gallery Section */}
-      <div className="relative h-[65vh] bg-gray-900">
+      <div className="relative h-[65vh] bg-gray-900 overflow-hidden">
         <Carousel
           showThumbs={false}
           infiniteLoop
@@ -160,12 +181,16 @@ export default function PackageDetail() {
             />
           )}
         >
-          {(pkg.package_images?.filter(img => img.is_landscape).map(img => img.image_url) || [primaryImage]).map((image, index) => (
-            <div key={index} className="h-[65vh]">
+          {images.map((image, index) => (
+            <div key={index} className="h-[65vh] relative">
               <img
                 src={image}
                 alt={`${pkg.title} - View ${index + 1}`}
                 className="w-full h-full object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  target.src = '/placeholder-image.jpg';
+                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             </div>
@@ -197,7 +222,7 @@ export default function PackageDetail() {
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
             {/* Introduction Card */}
             <div className="bg-white rounded-2xl p-5 md:p-6 shadow-xl">
-              <h2 className="text-xl md:text-2xl font-semibold mb-4">Journey Highlights</h2>
+              <h2 className="text-xl md:text-2xl font-semibold mb-4">Experience Overview</h2>
               <p className="text-gray-700 leading-relaxed mb-6">{pkg.description}</p>
               
               <div className="grid grid-cols-2 gap-4">
@@ -213,23 +238,49 @@ export default function PackageDetail() {
             </div>
 
             {/* Itinerary Timeline */}
-            {pkg.itenary && (
-              <div className="bg-white rounded-2xl p-5 md:p-6 shadow-xl">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl md:text-2xl font-semibold">Your Journey</h2>
-                </div>
-                <div className="space-y-8">
-                  {pkg.itenary.split('\n').map((item, index) => {
-                    const [day, details] = item.split(':');
-                    return (
-                      <div key={index} className="flex items-start space-x-3">
-                        <div className="flex-1">
-                          <div className="font-medium">{day}</div>
-                          <div className="text-gray-600 mt-1">{details}</div>
+            {pkg.detailed_itenary && (
+              <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
+                <h2 className="text-xl md:text-2xl font-semibold mb-8">Day-by-Day Adventure</h2>
+                <div className="relative">
+                  {/* Vertical Timeline Line */}
+                  <div className="absolute left-[27px] top-0 bottom-0 w-[2px] bg-[#1c5d5e]/20" />
+                  
+                  <div className="space-y-8">
+                    {pkg.detailed_itenary.split('\n').reduce((acc: { day: string; activities: string[] }[], line: string) => {
+                      const trimmedLine = line.trim();
+                      if (!trimmedLine) return acc;
+                      
+                      if (trimmedLine.startsWith('Day')) {
+                        acc.push({
+                          day: trimmedLine,
+                          activities: []
+                        });
+                      } else if (trimmedLine.startsWith('-') && acc.length > 0) {
+                        acc[acc.length - 1].activities.push(trimmedLine.substring(1).trim());
+                      }
+                      return acc;
+                    }, []).map((dayGroup, index) => (
+                      <div key={index} className="relative flex gap-6">
+                        {/* Timeline Circle */}
+                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1c5d5e] flex items-center justify-center z-10">
+                          <span className="text-white font-medium text-sm">D{index + 1}</span>
+                        </div>
+                        
+                        {/* Content Card */}
+                        <div className="flex-1 bg-[#F8F8F8] rounded-xl p-4 shadow-sm">
+                          <h3 className="text-[#1c5d5e] font-medium text-lg mb-3">{dayGroup.day}</h3>
+                          <div className="space-y-2">
+                            {dayGroup.activities.map((activity: string, idx: number) => (
+                              <div key={idx} className="flex items-start gap-3">
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-2 flex-shrink-0" />
+                                <p className="text-gray-600 leading-relaxed">{activity}</p>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    );
-                  })}
+                    ))}
+                  </div>
                 </div>
               </div>
             )}
@@ -264,13 +315,13 @@ export default function PackageDetail() {
                       return (
                         <div key={date} className="flex flex-col items-center">
                           <button
-                            onClick={() => !isPast && !isSoldOut && setSelectedStartDate(date)}
+                            onClick={() => !isPast && !isSoldOut && setSelectedDate(date)}
                             disabled={isPast || isSoldOut}
                             aria-disabled={isPast || isSoldOut}
                             className={`w-full text-sm py-2 px-2 rounded transition-colors ${
                               isPast || isSoldOut
                                 ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                                : selectedStartDate === date
+                                : selectedDate === date
                                 ? 'bg-[#1c5d5e] text-white'
                                 : 'bg-[#FFF9E7] text-gray-800 hover:bg-[#1c5d5e] hover:text-white'
                             }`}
@@ -290,16 +341,16 @@ export default function PackageDetail() {
 
                 <button
                   onClick={handleBooking}
-                  disabled={!selectedStartDate}
+                  disabled={!selectedDate}
                   className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-colors ${
-                    !selectedStartDate
+                    !selectedDate
                       ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
                       : 'bg-[#1c5d5e] hover:bg-[#164445] shadow-sm'
                   }`}
                 >
                   {availableDates.length === 0
                     ? 'Exciting departures being planned - Check back soon!'
-                    : !selectedStartDate
+                    : !selectedDate
                       ? 'Select a date to book'
                       : 'Book Now'
                   }
@@ -311,4 +362,6 @@ export default function PackageDetail() {
       </div>
     </div>
   );
-}
+};
+
+export default PackageDetail;

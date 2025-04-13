@@ -1,6 +1,6 @@
 import React,{ useState, useEffect } from 'react';
 import { Package } from '../types/database.types';
-import { X, Calendar, Users, Clock, IndianRupee, Star, Building2, Users2, Receipt, CircleDollarSign, ExternalLink } from 'lucide-react';
+import { X, Calendar, Users, Clock, IndianRupee, Star, Building2, Users2, Receipt, CircleDollarSign, ExternalLink, ArrowRight } from 'lucide-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
@@ -113,30 +113,32 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
               <X className="h-5 w-5" />
             </button>
 
-            <div className="w-full md:w-1/2 h-[250px] md:h-auto flex-shrink-0 relative overflow-hidden rounded-t-xl md:rounded-l-xl md:rounded-tr-none">
-              {images.map((image, index) => (
-                <div
-                  key={index}
-                  className={`absolute inset-0 transition-transform duration-500 ease-in-out ${
-                    index === currentIndex 
-                      ? 'translate-x-0' 
-                      : index < currentIndex 
-                        ? '-translate-x-full' 
-                        : 'translate-x-full'
-                  }`}
-                  style={{ zIndex: index === currentIndex ? 1 : 0 }}
-                >
-                  <img
-                    src={image || '/placeholder-image.jpg'}
-                    alt={`${pkg.title} ${index + 1}`}
-                    className="w-full h-full object-cover"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.src = '/placeholder-image.jpg';
-                    }}
-                  />
-                </div>
-              ))}
+            <div className="w-full md:w-1/2 h-[250px] md:h-auto flex-shrink-0 relative overflow-hidden rounded-t-xl md:rounded-l-xl md:rounded-tr-none overflow-y-auto md:overflow-y-hidden">
+              <div className="h-full md:h-auto">
+                {images.map((image, index) => (
+                  <div
+                    key={index}
+                    className={`absolute inset-0 transition-transform duration-500 ease-in-out ${
+                      index === currentIndex 
+                        ? 'translate-x-0' 
+                        : index < currentIndex 
+                          ? '-translate-x-full' 
+                          : 'translate-x-full'
+                    }`}
+                    style={{ zIndex: index === currentIndex ? 1 : 0 }}
+                  >
+                    <img
+                      src={image || '/placeholder-image.jpg'}
+                      alt={`${pkg.title} ${index + 1}`}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.src = '/placeholder-image.jpg';
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
               {images.length > 1 && (
                 <>
                   <button
@@ -295,25 +297,30 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                 {pkg.itenary && (
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-4">
-                      <span className="text-lg font-semibold">Itinerary</span>
+                      <span className="text-lg font-semibold">Your Journey</span>
                       <Link 
                         to={`/package/${pkg.id}`}
                         onClick={onClose}
                         className="flex items-center text-gray-500 hover:text-[#1c5d5e] text-sm"
                       >
-                        • View detailed itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
+                        View full itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
                       </Link>
                     </div>
-                    <div className="space-y-4">
+                    <div className="space-y-3">
                       {pkg.itenary.split('\n').map((item: string, index: number) => {
                         const [day, ...details] = item.split(':');
                         const description = details.join(':').trim();
                         return (
-                          <div key={index} className="flex flex-col space-y-1">
-                            <span className="text-sm font-medium text-[#1c5d5e]">{day}</span>
-                            {description && (
-                              <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
-                            )}
+                          <div key={index} className="flex items-center space-x-3 bg-[#1c5d5e]/5 rounded-lg p-3">
+                            <div className="flex-shrink-0 w-10 h-10 bg-[#1c5d5e] rounded-full flex items-center justify-center text-white font-medium text-sm">
+                              {`D${index + 1}`}
+                            </div>
+                            <div className="flex-1 min-w-0 flex flex-col justify-center">
+                              <span className="text-sm font-medium text-[#1c5d5e] block">{day}</span>
+                              {description && (
+                                <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
+                              )}
+                            </div>
                           </div>
                         );
                       })}

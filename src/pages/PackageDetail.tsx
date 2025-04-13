@@ -2,13 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Package } from '../types/database.types';
 import { Calendar, Users, Clock, Star, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '../lib/supabase';
+import { arunachalItinerary } from '../data/arunachal-itinerary';
 
 export default function PackageDetail() {
   const { id } = useParams();
   const [pkg, setPkg] = useState<Package & {
     agency?: { name: string; rating: number };
     package_images?: { id: string; image_url: string; is_primary: boolean }[];
+    detailed_itenary?: string;
   }>();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
@@ -19,11 +21,25 @@ export default function PackageDetail() {
       const { data, error } = await supabase
         .from('packages')
         .select(`
-          *,
-          agency:agency_id (*),
+          id,
+          title,
+          description,
+          price,
+          duration,
+          group_size,
+          image_url,
+          detailed_itenary,
+          start_date_2,
+          location,
+          ranking,
+          advance,
+          agency:agency_id (
+            name,
+            rating
+          ),
           package_images (*)
         `)
-        .eq('package_id', id)
+        .eq('id', id)
         .single();
 
       if (error) {
@@ -31,7 +47,24 @@ export default function PackageDetail() {
         return;
       }
 
-      setPkg(data);
+      console.log('Fetched package data:', data);
+      console.log('Detailed itinerary:', data.detailed_itenary);
+
+      // Transform the data to match the expected type
+      const transformedData = {
+        ...data,
+        agency: data.agency?.[0] || undefined,
+      };
+
+      // If this is the Arunachal package, use the detailed itinerary
+      const itinerary = transformedData.title?.toLowerCase().includes('arunachal') 
+        ? arunachalItinerary 
+        : transformedData.detailed_itenary;
+
+      setPkg({
+        ...transformedData,
+        detailed_itenary: itinerary
+      });
       if (data.start_date_2) {
         setSelectedStartDate(Object.keys(data.start_date_2)[0]);
       }
@@ -39,6 +72,11 @@ export default function PackageDetail() {
 
     fetchPackage();
   }, [id]);
+
+  // Add console log for the current package state
+  useEffect(() => {
+    console.log('Current package state:', pkg);
+  }, [pkg]);
 
   const renderStars = (rating: number) => {
     return [...Array(5)].map((_, index) => (
@@ -55,7 +93,7 @@ export default function PackageDetail() {
 
   if (!pkg) return <div className="min-h-screen bg-gray-50 flex items-center justify-center">Loading...</div>;
 
-  const images = pkg.package_images?.map(img => img.image_url) || [pkg.image];
+  const images = pkg.package_images?.map(img => img.image_url) || [pkg.image_url?.[0]];
 
   const isBookingDisabled = Boolean(
     !selectedStartDate || 
@@ -67,7 +105,7 @@ export default function PackageDetail() {
 
   const handleBooking = () => {
     if (selectedStartDate) {
-      const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.package_id})`;
+      const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedStartDate}%0A%0A(Experience Code: ${pkg.id})`;
       const BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`;
       window.open(BOOKING_LINK, '_blank');
     }
@@ -156,11 +194,11 @@ export default function PackageDetail() {
               </div>
 
               {/* Itinerary Section */}
-              {pkg.itenary && (
+              {pkg.detailed_itenary && (
                 <div className="border-t pt-6">
                   <h2 className="text-xl font-semibold text-gray-800 mb-4">Itinerary</h2>
                   <div className="space-y-4">
-                    {pkg.itenary.split('\n').map((item: string, index: number) => {
+                    {pkg.detailed_itenary.split('\n').map((item: string, index: number) => {
                       const [day, ...details] = item.split(':');
                       const description = details.join(':').trim();
                       return (
@@ -186,14 +224,16 @@ export default function PackageDetail() {
                     <div className="flex flex-col gap-2 mb-2">
                       <div className="text-gray-700">
                         <span className="font-medium">Booking Advance: </span>
-                        <span className="text-[#1c5d5e] font-semibold">₹ {pkg.advance.toLocaleString()}</span>
+                        <span className="text-[#1c5d5e] font-semibold">₹ {pkg.advance?.toLocaleString() || '0'}</span>
                       </div>
                       <div className="text-gray-700">
                         <span className="font-medium">Price per person: </span>
                         <span className="text-[#1c5d5e] font-semibold">₹ {pkg.price.toLocaleString()}</span>
                       </div>
                     </div>
-                    <p className="text-sm text-[#1c5d5e] text-center">Pay only booking advance to confirm your spot</p>
+                    <div className="text-sm text-[#1c5d5e] text-center">
+                      Pay only booking advance to confirm your spot
+                    </div>
                   </div>
 
                   {/* Available Dates */}
@@ -251,7 +291,7 @@ export default function PackageDetail() {
 
                   {!isBookingDisabled && (
                     <p className="text-sm text-[#1c5d5e] text-center">
-                      Click 'Book Now' to reserve your spot on WhatsApp • Pay ₹ {pkg.advance.toLocaleString()} now
+                      Click 'Book Now' to reserve your spot on WhatsApp • Pay ₹ {pkg.advance?.toLocaleString() || '0'} now
                     </p>
                   )}
                 </div>
