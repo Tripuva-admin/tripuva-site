@@ -30,6 +30,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles/datepicker.css";
 import PackageDetail from './components/pages/PackageDetail';
+import TallyForm from "./components/pages/TallyForm";
 
 const backgroundImageUrl = import.meta.env.VITE_HOMEPAGE_BACKGROUND_IMAGE;
 
@@ -932,6 +933,7 @@ function App() {
                 <Route path="/legal/terms" element={<Terms />} />
                 <Route path="/legal/privacy" element={<Privacy />} />
                 <Route path="/legal/refund" element={<Refund />} />
+                <Route path="/form" element={<TallyForm />} />
                 <Route path="/legal/disclaimer" element={<Disclaimer />} />
                 <Route path="/admin">
                   <Route index element={
