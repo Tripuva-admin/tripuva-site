@@ -190,7 +190,7 @@ function Header({ user }: HeaderProps) {
     
         {/* Mobile menu with smooth transition */}
         <div
-  className={`sm:hidden fixed top-16 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${
+  className={`sm:hidden fixed top-20 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${
     isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
   } overflow-hidden`}
 >
