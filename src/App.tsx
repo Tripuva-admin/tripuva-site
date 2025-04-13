@@ -451,8 +451,9 @@ function MainContent({ setSelectedPackage }: {
               </h2>
             </Link>
             <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-              Join group trips across India's most beautiful cities. Meet new people and explore together.
-            </p>
+  Trips that start <span className="text-yellow-400 font-medium">solo</span> and end with a <span className="text-yellow-400 font-medium"> squad</span>
+</p>
+
 
             {/* Search and Filters */}
             <div className="mt-8 mb-5">
