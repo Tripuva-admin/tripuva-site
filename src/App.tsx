@@ -150,14 +150,14 @@ function Header({ user }: HeaderProps) {
               className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-md text-base font-medium flex items-center"
             >
               <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
-              Top Places
+              Top Trips
             </Link>
     
             <a 
               href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank" 
               rel="noopener noreferrer"
-              className="bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+              className="bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-normal flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -201,14 +201,14 @@ function Header({ user }: HeaderProps) {
         onClick={() => setIsMobileMenuOpen(false)}
       >
         <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
-        Top Places
+        Top Trips
       </Link>
 
       <a
         href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="bg-white/10 text-white px-4 py-3 rounded-xl border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-medium w-full text-center flex items-center justify-center backdrop-blur-md"
+        className="bg-white/10 text-white px-4 py-3 rounded-xl border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-normal w-full text-center flex items-center justify-center backdrop-blur-md"
         onClick={() => setIsMobileMenuOpen(false)}
       >
         <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />

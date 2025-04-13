@@ -286,10 +286,10 @@ const PackageDetail: React.FC = () => {
                 </div>
               </div>)}
 
-              {/* Itinerary Inclusion */}
+  {/* Itinerary Inclusion */}
               {pkg.inclusion && (
   <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
-    <h2 className="text-xl md:text-2xl font-semibold mb-8">What’s Included</h2>
+    <h2 className="text-xl md:text-2xl font-semibold mb-4">What’s Included</h2>
 
     <div className="space-y-2">
       {pkg.inclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
@@ -306,7 +306,7 @@ const PackageDetail: React.FC = () => {
 {/* Itinerary Exclusion */}
 {pkg.exclusion && (
   <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
-    <h2 className="text-xl md:text-2xl font-semibold mb-8">What’s not Included</h2>
+    <h2 className="text-xl md:text-2xl font-semibold mb-4">What’s not Included</h2>
 
     <div className="space-y-2">
       {pkg.exclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (

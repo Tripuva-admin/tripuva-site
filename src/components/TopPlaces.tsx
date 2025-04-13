@@ -177,7 +177,7 @@ const TopPlaces = () => {
                         </span>
                       )}
                     </div>
-                    <span className="text-lg font-bold text-blue-600">₹{pkg.price.toLocaleString()}</span>
+                    <span className="text-lg font-bold text-[#1c5d5e]">₹{pkg.price.toLocaleString()}</span>
                   </div>
                 </div>
               </div>
