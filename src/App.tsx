@@ -29,6 +29,7 @@ import { ProtectedRoute } from './components/ProtectedRoute';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "./styles/datepicker.css";
+import PackageDetail from './components/pages/PackageDetail';
 
 const backgroundImageUrl = import.meta.env.VITE_HOMEPAGE_BACKGROUND_IMAGE;
 
@@ -334,14 +335,13 @@ function MainContent({ setSelectedPackage }: {
         break;
       case 'date':
         sortedPackages.sort((a, b) => {
-          const getLatestDate = (dates: string | string[] | null): number => {
-            if (!dates) return 0;
-            if (Array.isArray(dates)) {
-              return Math.max(...dates.map(d => new Date(d).setHours(0, 0, 0, 0)));
-            }
-            return new Date(dates).setHours(0, 0, 0, 0);
+          const getLatestDate = (pkg: any): number => {
+            if (!pkg.start_date_2) return 0;
+            const dates = Object.keys(pkg.start_date_2);
+            if (dates.length === 0) return 0;
+            return Math.max(...dates.map(d => new Date(d).setHours(0, 0, 0, 0)));
           };
-          return getLatestDate(b.start_date) - getLatestDate(a.start_date);
+          return getLatestDate(b) - getLatestDate(a);
         });
         break;
     }
@@ -743,6 +743,12 @@ function MainContent({ setSelectedPackage }: {
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-grow">
                           <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
+                          <Link 
+                            to={`/package/${pkg.id}`}
+                            className="text-sm text-[#1c5d5e] hover:text-[#164445] flex items-center mt-1"
+                          >
+                            See full itinerary & details <ArrowRight className="h-4 w-4 ml-1" />
+                          </Link>
                           <div className="mt-1">
                             {pkg.agency && (
                               <>
@@ -826,7 +832,7 @@ function MainContent({ setSelectedPackage }: {
                         className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-yellow-500 flex items-center justify-center transition-colors duration-200"
                         disabled={pkg.status === 'closed'}
                       >
-                        {pkg.status === 'closed' ? 'Booking Closed' : 'View Details'}
+                        {pkg.status === 'closed' ? 'Booking Closed' : 'View Info'}
                         {pkg.status === 'open' && <ArrowRight className="ml-2 h-4 w-4" />}
                       </button>
                     </div>
@@ -923,6 +929,7 @@ function App() {
             <main className="flex-1">
               <Routes>
                 <Route path="/" element={<MainContent selectedPackage={selectedPackage} setSelectedPackage={setSelectedPackage} />} />
+                <Route path="/package/:id" element={<PackageDetail />} />
                 <Route path="/top-places" element={<TopPlaces />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/contact" element={<Contact />} />

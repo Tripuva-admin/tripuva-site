@@ -8,36 +8,17 @@ export interface Agency {
 
 export interface Package {
   id: string;
-  package_id: string;
   title: string;
   description: string;
-  duration: number;
   price: number;
-  group_size: number;
-  image: string;
+  duration: string;
+  group_size: string;
+  image_url: string[];
+  itenary?: string;
   start_date_2: { [key: string]: number };
-  agency_id: string;
-  status: 'open' | 'closed';
-  booking_link?: string;
-  tags?: string[];
-  ranking: number;
-  advance: number;
-  created_at: string;
-  updated_at: string;
-  agency?: {
-    name: string;
-    rating: number;
-  };
-  package_images?: {
-    id: string;
-    image_url: string;
-    is_primary: boolean;
-  }[];
-  listings?: {
-    id: string;
-    start_date: string;
-  }[];
-  itenary: string;
+  location: string;
+  ranking?: number;
+  advance?: number;
 }
 
 export interface Profile {
