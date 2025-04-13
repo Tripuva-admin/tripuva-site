@@ -392,6 +392,11 @@ const PackageDetail: React.FC = () => {
                       : 'Book Now'
                   }
                 </button>
+                {selectedDate && (
+                    <p className="text-sm text-[#1c5d5e] mt-2 text-center">
+                      Click 'Book Now' to reserve your spot on WhatsApp • <span className="font-bold">PAY ₹ {pkg.advance?.toLocaleString() || 1} NOW</span>
+                    </p>
+                  )}
               </div>
             </div>
           </div>
