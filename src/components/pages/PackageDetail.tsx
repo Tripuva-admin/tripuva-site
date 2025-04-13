@@ -16,6 +16,8 @@ interface PackageDetail {
   image_url: string;
   itenary: string;
   detailed_itenary?: string;
+  inclusion?: string;
+  exclusion?: string;
   start_date_2: Record<string, number>;
   location: string;
   ranking?: number;
@@ -282,8 +284,43 @@ const PackageDetail: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </div>
-            )}
+              </div>)}
+
+              {/* Itinerary Inclusion */}
+              {pkg.inclusion && (
+  <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
+    <h2 className="text-xl md:text-2xl font-semibold mb-8">What’s Included</h2>
+
+    <div className="space-y-2">
+      {pkg.inclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
+        <div key={idx} className="flex items-start gap-3">
+          {/* Bullet Point (matches the one in itinerary) */}
+          <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-3 flex-shrink-0" />
+          <p className="text-gray-700 leading-relaxed">{item.trim()}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* Itinerary Exclusion */}
+{pkg.exclusion && (
+  <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
+    <h2 className="text-xl md:text-2xl font-semibold mb-8">What’s not Included</h2>
+
+    <div className="space-y-2">
+      {pkg.exclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
+        <div key={idx} className="flex items-start gap-3">
+          {/* Bullet Point (matches the one in itinerary) */}
+          <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-3 flex-shrink-0" />
+          <p className="text-gray-700 leading-relaxed">{item.trim()}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
+
+            
           </div>
 
           {/* Right Column - Booking Widget */}
@@ -294,12 +331,12 @@ const PackageDetail: React.FC = () => {
                   <h3 className="text-lg font-medium mb-4">Price Details</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Price per person</span>
-                      <span className="text-xl font-semibold">₹ {pkg.price?.toLocaleString()}</span>
+                      <span className="text-gray-600">Booking Advance</span>
+                      <span className="text-xl font-semibold">₹ {pkg.advance?.toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Booking Advance</span>
-                      <span>₹ {pkg.advance?.toLocaleString()}</span>
+                      <span className="text-gray-600">Price per person</span>
+                      <span>₹ {pkg.price?.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -323,7 +360,7 @@ const PackageDetail: React.FC = () => {
                                 ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                 : selectedDate === date
                                 ? 'bg-[#1c5d5e] text-white'
-                                : 'bg-[#FFF9E7] text-gray-800 hover:bg-[#1c5d5e] hover:text-white'
+                                : 'bg-[#fffbea] border border-yellow-300 text-[#92400e] hover:bg-[#1c5d5e] hover:text-white'
                             }`}
                           >
                             {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}

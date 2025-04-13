@@ -743,12 +743,7 @@ function MainContent({ setSelectedPackage }: {
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-grow">
                           <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
-                          <Link 
-                            to={`/package/${pkg.id}`}
-                            className="text-sm text-[#1c5d5e] hover:text-[#164445] flex items-center mt-1"
-                          >
-                            See full itinerary & details <ArrowRight className="h-4 w-4 ml-1" />
-                          </Link>
+                          
                           <div className="mt-1">
                             {pkg.agency && (
                               <>
@@ -795,7 +790,7 @@ function MainContent({ setSelectedPackage }: {
                                   className={`${
                                     isPastDate
                                       ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                      : 'bg-yellow-50 border-yellow-200 text-gray-700'
+                                      : 'bg-[#fffbea] border border-yellow-300 text-[#92400e]'
                                   } border text-sm py-1 px-2 rounded`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {

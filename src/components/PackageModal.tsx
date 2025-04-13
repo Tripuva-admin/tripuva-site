@@ -235,8 +235,8 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                                       isPast || isSoldOut
                                         ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                         : selectedDate === date
-                                          ? 'bg-[#1c5d5e] text-white'
-                                          : 'bg-[#FFF9E7] text-gray-800 hover:bg-[#1c5d5e] hover:text-white'
+                                          ? 'bg-[#004e4f] text-white border border-[#004e4f]'
+                                          : 'bg-[#fffbea] border border-yellow-300 text-[#92400e] hover:bg-[#1c5d5e] hover:text-white'
                                     }`}
                                   >
                                     {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}
@@ -290,7 +290,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                 </div>
 
                 <div className="prose max-w-none mb-6">
-                  <p className="text-gray-600 leading-relaxed">{pkg.description}</p>
+                  <p className="text-gray-800 leading-relaxed">{pkg.description}</p>
                 </div>
 
                 {/* Itinerary Section */}
@@ -301,7 +301,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                       <Link 
                         to={`/package/${pkg.id}`}
                         onClick={onClose}
-                        className="flex items-center text-gray-500 hover:text-[#1c5d5e] text-sm"
+                        className="bg-[#1c5d5e] p-2 rounded-lg flex items-center text-white text-sm"
                       >
                         View full itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
                       </Link>
@@ -351,7 +351,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
 
                   {selectedDate && (
                     <p className="text-sm text-[#1c5d5e] mt-2 text-center">
-                      Click 'Book Now' to reserve your spot on WhatsApp • Pay ₹ {pkg.advance?.toLocaleString() || 1} now
+                      Click 'Book Now' to reserve your spot on WhatsApp • <span className="font-bold">PAY ₹ {pkg.advance?.toLocaleString() || 1} NOW</span>
                     </p>
                   )}
                 </div>
