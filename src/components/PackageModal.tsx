@@ -312,8 +312,8 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                         const description = details.join(':').trim();
                         return (
                           <div key={index} className="flex items-center space-x-3 bg-[#1c5d5e]/5 rounded-lg p-3">
-                            <div className="flex-shrink-0 w-10 h-10 bg-[#1c5d5e] rounded-full flex items-center justify-center text-white font-medium text-sm">
-                              {`D${index + 1}`}
+                            <div className="flex-shrink-0 w-11 h-11 bg-[#1c5d5e] rounded-full flex items-center justify-center text-white font-normal text-xs">
+                              {`Day ${index + 1}`}
                             </div>
                             <div className="flex-1 min-w-0 flex flex-col justify-center">
                               <span className="text-sm font-medium text-[#1c5d5e] block">{day}</span>

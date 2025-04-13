@@ -245,7 +245,7 @@ const PackageDetail: React.FC = () => {
                 <h2 className="text-xl md:text-2xl font-semibold mb-8">Day-by-Day Adventure</h2>
                 <div className="relative">
                   {/* Vertical Timeline Line */}
-                  <div className="absolute left-[27px] top-0 bottom-0 w-[2px] bg-[#1c5d5e]/20" />
+                  <div className="absolute left-[18px] top-0 bottom-0 w-[2px] bg-[#1c5d5e]/20" />
                   
                   <div className="space-y-8">
                     {pkg.detailed_itenary.split('\n').reduce((acc: { day: string; activities: string[] }[], line: string) => {
@@ -264,8 +264,8 @@ const PackageDetail: React.FC = () => {
                     }, []).map((dayGroup, index) => (
                       <div key={index} className="relative flex gap-6">
                         {/* Timeline Circle */}
-                        <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1c5d5e] flex items-center justify-center z-10">
-                          <span className="text-white font-medium text-sm">D{index + 1}</span>
+                        <div className="flex-shrink-0 w-9 h-9 rounded-full bg-[#1c5d5e] flex items-center justify-center z-10">
+                          <span className="text-white font-medium text-sm">{index + 1}</span>
                         </div>
                         
                         {/* Content Card */}
