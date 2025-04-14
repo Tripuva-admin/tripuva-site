@@ -357,10 +357,10 @@ const PackageDetail: React.FC = () => {
                             aria-disabled={isPast || isSoldOut}
                             className={`w-full text-sm py-2 px-2 rounded transition-colors ${
                               isPast || isSoldOut
-                                ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
-                                : selectedDate === date
-                                ? 'bg-[#1c5d5e] text-white'
-                                : 'bg-[#fffbea] border border-yellow-300 text-[#92400e] hover:bg-[#1c5d5e] hover:text-white'
+                                        ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
+                                        : selectedDate === date
+                                          ? 'bg-gradient-to-r from-[#FFC74C] to-[#FFD639] text-gray-800 border border-yellow-400'
+                                          : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
                             }`}
                           >
                             {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}

@@ -190,7 +190,7 @@ function Header({ user }: HeaderProps) {
     
         {/* Mobile menu with smooth transition */}
         <div
-  className={`sm:hidden fixed top-20 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${
+  className={`sm:hidden fixed top-24 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${
     isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
   } overflow-hidden`}
 >
@@ -451,7 +451,7 @@ function MainContent({ setSelectedPackage }: {
               </h2>
             </Link>
             <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-  Trips that start <span className="text-yellow-400 font-medium">Solo</span> and end with a <span className="text-yellow-400 font-medium">Squad ✨</span>
+  Trips that start <span className="text-yellow-400 font-medium">Solo</span> and end with a <span className="text-yellow-400 font-medium">Squad</span>
 </p>
 
 
@@ -618,17 +618,17 @@ function MainContent({ setSelectedPackage }: {
 
       {/* Tags Filter */}
       <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
-        <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-md p-4 border border-gray-100">
+        <div className="bg-gradient-to-r from-yellow-50 via-orange-100 to-yellow-50 backdrop-blur-sm rounded-xl p-4 border border-gray-100">
           <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
           <div className="flex flex-wrap gap-3 justify-center">
             {AVAILABLE_TAGS.map(tag => (
               <button
                 key={tag}
                 onClick={() => handleTagToggle(tag)}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`px-4 py-2 rounded-lg text-md font-medium transition-all duration-200 ${
                   filters.tags.includes(tag)
-                    ? 'bg-[#1c5d5e] text-white shadow-md scale-105'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                    ? 'bg-gradient-to-r from-orange-400 to-yellow-500 text-white'
+                    : 'bg-white text-gray-700 hover:bg-gradient-to-r from-orange-400 to-yellow-500 hover:text-white'
                 }`}
               >
                 {tag}
@@ -792,7 +792,7 @@ function MainContent({ setSelectedPackage }: {
                                   className={`${
                                     isPastDate
                                       ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                      : 'bg-[#fffbea] border border-yellow-300 text-[#92400e]'
+                                      : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e]'
                                   } border text-sm py-1 px-2 rounded`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {

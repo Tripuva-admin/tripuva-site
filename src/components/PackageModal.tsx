@@ -252,8 +252,8 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                                       isPast || isSoldOut
                                         ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                         : selectedDate === date
-                                          ? 'bg-[#004e4f] text-white border border-[#004e4f]'
-                                          : 'bg-[#fffbea] border border-yellow-300 text-[#92400e] hover:bg-[#1c5d5e] hover:text-white'
+                                          ? 'bg-gradient-to-r from-[#FFC74C] to-[#FFD639] text-gray-800 border border-yellow-400'
+                                          : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
                                     }`}
                                   >
                                     {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}
@@ -318,7 +318,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                       <Link 
                         to={`/package/${pkg.id}`}
                         onClick={onClose}
-                        className="bg-[#1c5d5e] p-2 rounded-lg flex items-center text-white text-sm"
+                        className="bg-gradient-to-r from-[#f97316] to-[#fcd34d] text-white font-medium pt-2 pb-2 pl-4 pr-4 rounded-full flex items-center text-sm"
                       >
                         View full itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
                       </Link>
@@ -333,7 +333,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                               {`Day ${index + 1}`}
                             </div>
                             <div className="flex-1 min-w-0 flex flex-col justify-center">
-                              <span className="text-sm font-medium text-[#1c5d5e] block">{day}</span>
+                              <span className="text-md font-medium text-[#1c5d5e] block">{day}</span>
                               {description && (
                                 <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
                               )}

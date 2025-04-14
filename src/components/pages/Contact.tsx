@@ -45,9 +45,9 @@ export function Contact() {
   };
 
   return (
-    <div className="pt-20 pb-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8 bg-gradient-to-r from-[#0f424c] via-yellow-300 to-yellow-200 bg-clip-text text-transparent">Contact Us</h1>
+    <div className="pt-12 pb-12">
+      <div className="max-w-4xl mx-auto px-6 sm:px-6 lg:px-8">
+        <h1 className="text-4xl font-bold text-gray-700 mb-8">Contact Us</h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div>
