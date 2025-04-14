@@ -285,7 +285,7 @@ export default function PackageDetail() {
 
                   {!isBookingDisabled && (
                     <p className="text-sm text-[#1c5d5e] text-center">
-                      Click 'Book Now' to reserve your spot on WhatsApp • Pay ₹ {pkg.advance?.toLocaleString() || '0'} now
+                      Click 'Book Now' to reserve your spot through WhatsApp • Pay ₹ {pkg.advance?.toLocaleString() || '0'} now
                     </p>
                   )}
                 </div>

@@ -26,6 +26,24 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
   const navigate = useNavigate();
   const [availableDates, setAvailableDates] = useState<string[]>([]);
 
+  // Auto-scrolling effect
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+
+    if (isAutoPlaying && images.length > 1) {
+      intervalId = setInterval(() => {
+        setTransitionDirection('right');
+        setCurrentIndex(prev => (prev + 1) % images.length);
+      }, 3000);
+    }
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    };
+  }, [isAutoPlaying, images.length]);
+
   useEffect(() => {
     if (pkg?.start_date_2) {
       const dates = Object.keys(pkg.start_date_2).filter(
@@ -352,7 +370,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
 
                   {selectedDate && !Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))) && (
                     <p className="text-sm text-[#1c5d5e] mt-2 text-center">
-                      Click 'Book Now' to reserve your spot on WhatsApp • <span className="font-bold">PAY ₹ {pkg.advance?.toLocaleString() || 1} NOW</span>
+                      Click 'Book Now' to reserve your spot through WhatsApp • <span className="font-bold">PAY ₹ {pkg.advance?.toLocaleString() || 1} NOW</span>
                     </p>
                   )}
                 </div>
