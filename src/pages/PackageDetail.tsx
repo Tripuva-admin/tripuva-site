@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Package } from '../types/database.types';
 import { Calendar, Users, Clock, Star, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { supabase } from '../lib/supabaseClient';
-import { arunachalItinerary } from '../data/arunachal-itinerary';
+import { supabase } from '../lib/supabase';
 
 // Utility function to clean up tags
 const cleanTag = (tag: string): string => {
@@ -47,9 +46,7 @@ export default function PackageDetail() {
         };
 
         // If this is the Arunachal package, use the detailed itinerary
-        const itinerary = cleanedData.title?.toLowerCase().includes('arunachal') 
-          ? arunachalItinerary 
-          : cleanedData.detailed_itenary;
+        const itinerary = cleanedData.detailed_itenary;
 
         setPkg({
           ...cleanedData,

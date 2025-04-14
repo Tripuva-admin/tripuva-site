@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { MapPin, Users, Calendar, ArrowRight, Star, Clock, ChevronLeft, ChevronRight, ChevronDown, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { Package } from '../types/database.types';
 import { LoadingScreen } from './LoadingScreen';
@@ -257,7 +256,7 @@ export function MainContent({
           >
             <div className="relative h-48">
               <img
-                src={pkg.image_url instanceof Array ? pkg.image_url[0] : pkg.image_url}
+                src={Array.isArray(pkg.image_url) ? pkg.image_url[0] : pkg.image_url}
                 alt={pkg.title}
                 className="w-full h-full object-cover"
                 onLoad={handleImageLoad}
