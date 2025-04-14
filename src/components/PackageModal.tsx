@@ -11,7 +11,6 @@ interface PackageModalProps {
     package_images?: { id: string; image_url: string; is_primary: boolean }[];
     listings?: { id: string; start_date: string }[];
     package_id?: string;
-    image_url?: string;
   };
   onClose: () => void;
   userId?: string;
@@ -334,22 +333,24 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                 <div className="p-4">
                   <button
                     onClick={handleBookNow}
-                    disabled={!selectedDate}
+                    disabled={!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))}
                     className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-                      !selectedDate
+                      !selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
                         ? 'bg-gray-100 text-gray-900 cursor-not-allowed'
                         : 'bg-[#1c5d5e] hover:bg-[#164445] text-white shadow-sm'
                     }`}
                   >
                     {availableDates.length === 0
                       ? 'Exciting departures being planned - Check back soon!'
-                      : !selectedDate
-                        ? 'Select a date to book'
-                        : 'Book Now'
+                      : Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
+                        ? 'All dates have passed - Check back for new dates!'
+                        : !selectedDate
+                          ? 'Select a date to book'
+                          : 'Book Now'
                     }
                   </button>
 
-                  {selectedDate && (
+                  {selectedDate && !Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))) && (
                     <p className="text-sm text-[#1c5d5e] mt-2 text-center">
                       Click 'Book Now' to reserve your spot on WhatsApp • <span className="font-bold">PAY ₹ {pkg.advance?.toLocaleString() || 1} NOW</span>
                     </p>

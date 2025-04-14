@@ -12,6 +12,17 @@ interface MainContentProps {
   config: any;
 }
 
+// Utility function to clean up tags
+const cleanTag = (tag: string): string => {
+  // Remove special characters, extra spaces, and convert to lowercase
+  return tag
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '') // Remove special characters
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+};
+
 export function MainContent({ 
   selectedPackage, 
   setSelectedPackage,
@@ -66,7 +77,8 @@ export function MainContent({
           listings!inner(
             id,
             start_date
-          )
+          ),
+          tags
         `)
         .eq('status', 'open')
         .order('ranking', { ascending: false });
@@ -86,7 +98,8 @@ export function MainContent({
           ...pkg,
           image: primaryImage || pkg.image,
           package_images: pkg.package_images || [],
-          listings: pkg.listings || []
+          listings: pkg.listings || [],
+          tags: pkg.tags || []
         };
         console.log('Transformed package:', JSON.stringify(transformedPkg, null, 2));
         return transformedPkg;
@@ -129,6 +142,47 @@ export function MainContent({
     }
   };
 
+  const handleTagToggle = (tag: string) => {
+    const cleanedTag = cleanTag(tag);
+    setFilters(prev => {
+      const newTags = prev.tags.includes(cleanedTag)
+        ? prev.tags.filter(t => t !== cleanedTag)
+        : [...prev.tags, cleanedTag];
+      return { ...prev, tags: newTags };
+    });
+    setHasUserInteracted(true);
+    setCurrentPage(1);
+  };
+
+  const filteredPackages = hasUserInteracted
+    ? packages.filter(pkg => {
+        const matchesDestination = !filters.destination || 
+          pkg.title.toLowerCase().includes(filters.destination.toLowerCase()) ||
+          pkg.description.toLowerCase().includes(filters.destination.toLowerCase());
+
+        const matchesPrice = !filters.maxPrice || pkg.price <= parseInt(filters.maxPrice);
+
+        const matchesDate = !filters.startDate || (() => {
+          const filterDate = new Date(filters.startDate).toISOString().split('T')[0];
+          const startDate2 = pkg.start_date_2 || {};
+          
+          if (Object.keys(startDate2).length > 0) {
+            return Object.keys(startDate2).some(date => {
+              const packageDate = new Date(date).toISOString().split('T')[0];
+              return packageDate >= filterDate && startDate2[date] > 0;
+            });
+          }
+          return false;
+        })();
+
+        // Updated tag filtering logic
+        const matchesTags = filters.tags.length === 0 || 
+          filters.tags.every(tag => pkg.tags?.includes(tag));
+
+        return matchesDestination && matchesPrice && matchesDate && matchesTags;
+      })
+    : packages;
+
   // Show loading screen until all images are loaded
   if (loading || imagesLoaded < totalImages.current) {
     return <LoadingScreen message="Loading amazing trips for you..." />;
@@ -162,26 +216,71 @@ export function MainContent({
         {/* ... hero section content ... */}
       </div>
 
+      {/* Tags Filter */}
+      <div className="bg-white/95 backdrop-blur-sm rounded-xl shadow-md p-4 border border-gray-100 max-w-7xl mx-auto mb-8">
+        <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
+        <div className="flex flex-wrap gap-3 justify-center">
+          {availableTags.map(tag => (
+            <button
+              key={tag}
+              onClick={() => handleTagToggle(tag)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                filters.tags.includes(tag)
+                  ? 'bg-[#1c5d5e] text-white shadow-md scale-105'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+        {filters.tags.length > 0 && (
+          <div className="mt-6 flex justify-center">
+            <button
+              onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
+              className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
+            >
+              <X className="h-4 w-4" />
+              Clear Tags
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Package Grid */}
-      <div id="package-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6">
+      <div id="package-grid" className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6 max-w-7xl mx-auto">
         {currentPackages.map(pkg => (
           <div
             key={pkg.id}
             className="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
             onClick={() => setSelectedPackage(pkg)}
           >
-            <img
-              src={pkg.image}
-              alt={pkg.title}
-              className="w-full h-40 sm:h-48 object-cover"
-              onLoad={handleImageLoad}
-            />
-            <div className="p-3 sm:p-4">
-              <h3 className="text-lg sm:text-xl font-semibold mb-2">{pkg.title}</h3>
-              <p className="text-gray-600 text-sm sm:text-base mb-3 sm:mb-4">{pkg.description}</p>
+            <div className="relative h-48">
+              <img
+                src={pkg.image_url instanceof Array ? pkg.image_url[0] : pkg.image_url}
+                alt={pkg.title}
+                className="w-full h-full object-cover"
+                onLoad={handleImageLoad}
+              />
+              {pkg.tags && pkg.tags.length > 0 && (
+                <div className="absolute bottom-2 left-2 flex flex-wrap gap-1">
+                  {pkg.tags.map(tag => (
+                    <span
+                      key={tag}
+                      className="px-2 py-1 rounded-full text-xs font-medium bg-white/90 text-gray-800 shadow-sm"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="p-4">
+              <h3 className="text-lg font-semibold mb-2">{pkg.title}</h3>
+              <p className="text-gray-600 text-sm mb-4 line-clamp-2">{pkg.description}</p>
               <div className="flex justify-between items-center">
-                <span className="text-base sm:text-lg font-bold text-indigo-600">₹{pkg.price}</span>
-                <button className="px-3 py-1.5 sm:px-4 sm:py-2 bg-indigo-600 text-white text-sm sm:text-base rounded hover:bg-indigo-700">
+                <span className="text-lg font-bold text-[#1c5d5e]">₹{pkg.price.toLocaleString()}</span>
+                <button className="px-4 py-2 bg-[#1c5d5e] text-white text-sm rounded hover:bg-[#133f40] transition-colors">
                   View Details
                 </button>
               </div>

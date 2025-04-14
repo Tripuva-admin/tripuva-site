@@ -451,7 +451,7 @@ function MainContent({ setSelectedPackage }: {
               </h2>
             </Link>
             <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-  Trips that start <span className="text-yellow-400 font-medium">solo</span> and end with a <span className="text-yellow-400 font-medium"> squad</span>
+  Trips that start <span className="text-yellow-400 font-medium">Solo</span> and end with a <span className="text-yellow-400 font-medium">Squad ✨</span>
 </p>
 
 
@@ -662,7 +662,7 @@ function MainContent({ setSelectedPackage }: {
     <div className="relative">
       <button
         onClick={() => setSortMenuOpen(!sortMenuOpen)}
-        className="text-sm text-primary hover:text-primary-700 flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
+        className="text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
       >
         Sort by
         <ChevronDown className="h-4 w-4 ml-1" />

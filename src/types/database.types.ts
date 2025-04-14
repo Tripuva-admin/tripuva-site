@@ -13,13 +13,17 @@ export interface Package {
   price: number;
   duration: number;
   group_size: number;
-  image_url: string | string[];
+  image_url: string;
+  image?: string;
   itenary: string;
   start_date_2: Record<string, number>;
   location: string;
   status: string;
   created_at: string;
   updated_at: string;
+  tags: string[];
+  advance: number;
+  package_images?: Array<{ id: string; image_url: string; is_primary: boolean; }>;
 }
 
 export interface Profile {

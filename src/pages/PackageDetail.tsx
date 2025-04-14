@@ -1,9 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Package } from '../types/database.types';
 import { Calendar, Users, Clock, Star, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../lib/supabaseClient';
 import { arunachalItinerary } from '../data/arunachal-itinerary';
+
+// Utility function to clean up tags
+const cleanTag = (tag: string): string => {
+  // Remove special characters, extra spaces, and convert to lowercase
+  return tag
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '') // Remove special characters
+    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .trim();
+};
 
 export default function PackageDetail() {
   const { id } = useParams();
@@ -15,63 +26,46 @@ export default function PackageDetail() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const [selectedStartDate, setSelectedStartDate] = useState<string>('');
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPackage = async () => {
-      const { data, error } = await supabase
-        .from('packages')
-        .select(`
-          id,
-          title,
-          description,
-          price,
-          duration,
-          group_size,
-          image_url,
-          detailed_itenary,
-          start_date_2,
-          location,
-          ranking,
-          advance,
-          agency:agency_id (
-            name,
-            rating
-          ),
-          package_images (*)
-        `)
-        .eq('id', id)
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from('packages')
+          .select('*')
+          .eq('id', id)
+          .single();
 
-      if (error) {
+        if (error) throw error;
+
+        // Clean up tags
+        const cleanedData = {
+          ...data,
+          tags: data.tags ? data.tags.map(cleanTag) : [],
+          agency: data.agency?.[0] || undefined,
+        };
+
+        // If this is the Arunachal package, use the detailed itinerary
+        const itinerary = cleanedData.title?.toLowerCase().includes('arunachal') 
+          ? arunachalItinerary 
+          : cleanedData.detailed_itenary;
+
+        setPkg({
+          ...cleanedData,
+          detailed_itenary: itinerary
+        });
+        if (data.start_date_2) {
+          setSelectedStartDate(Object.keys(data.start_date_2)[0]);
+        }
+      } catch (error) {
         console.error('Error fetching package:', error);
-        return;
-      }
-
-      console.log('Fetched package data:', data);
-      console.log('Detailed itinerary:', data.detailed_itenary);
-
-      // Transform the data to match the expected type
-      const transformedData = {
-        ...data,
-        agency: data.agency?.[0] || undefined,
-      };
-
-      // If this is the Arunachal package, use the detailed itinerary
-      const itinerary = transformedData.title?.toLowerCase().includes('arunachal') 
-        ? arunachalItinerary 
-        : transformedData.detailed_itenary;
-
-      setPkg({
-        ...transformedData,
-        detailed_itenary: itinerary
-      });
-      if (data.start_date_2) {
-        setSelectedStartDate(Object.keys(data.start_date_2)[0]);
+        navigate('/');
       }
     };
 
     fetchPackage();
-  }, [id]);
+  }, [id, navigate]);
 
   // Add console log for the current package state
   useEffect(() => {

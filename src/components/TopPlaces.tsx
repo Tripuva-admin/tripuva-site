@@ -5,9 +5,16 @@ import { Package } from "../types/database.types";
 import { Link } from 'react-router-dom';
 import { Star, ArrowRight, Users, Clock } from 'lucide-react';
 
+type ExtendedPackage = Package & {
+  agency?: { name: string; rating: number };
+  package_images?: { id: string; image_url: string; is_primary: boolean }[];
+  listings?: { id: string; start_date: string }[];
+  package_id?: string;
+}
+
 const TopPlaces = () => {
-  const [packages, setPackages] = useState<Package[]>([]);
-  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+  const [packages, setPackages] = useState<ExtendedPackage[]>([]);
+  const [selectedPackage, setSelectedPackage] = useState<ExtendedPackage | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -43,10 +50,26 @@ const TopPlaces = () => {
           throw new Error('No packages found');
         }
 
-        const transformedData = data.map(pkg => ({
-          ...pkg,
-          image: pkg.package_images?.find((img: any) => img.is_primary)?.image_url || pkg.image
-        }));
+        const transformedData = data.map(pkg => {
+          const primaryImage = pkg.package_images?.find((img: any) => img.is_primary)?.image_url;
+          const fallbackImage = pkg.image_url || pkg.image;
+          const defaultImage = "https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/placeholder.jpg";
+          
+          console.log(`Package: ${pkg.title}`);
+          console.log('Primary Image:', primaryImage);
+          console.log('Fallback Image:', fallbackImage);
+          console.log('Package Images:', pkg.package_images);
+          console.log('Image URL:', pkg.image_url);
+          console.log('Image:', pkg.image);
+          
+          const finalImage = primaryImage || fallbackImage || defaultImage;
+          console.log('Final Image Used:', finalImage);
+          
+          return {
+            ...pkg,
+            image: finalImage
+          };
+        });
 
         setPackages(transformedData);
       } catch (err: any) {
@@ -151,6 +174,11 @@ const TopPlaces = () => {
                     src={pkg.image}
                     alt={pkg.title}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      console.log(`Image load error for ${pkg.title}:`, target.src);
+                      target.src = "https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/placeholder.jpg";
+                    }}
                   />
                 </div>
 
@@ -159,7 +187,7 @@ const TopPlaces = () => {
                   
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-4 text-gray-600 text-sm">
-                      {pkg.start_date ? (
+                      {pkg.start_date_2 && Object.entries(pkg.start_date_2).some(([_, spots]) => Number(spots) > 0) ? (
                         <>
                           <div className="flex items-center">
                             <Clock className="h-4 w-4 mr-1" />
