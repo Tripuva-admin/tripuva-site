@@ -12,7 +12,11 @@ const TallyForm = () => {
   }, []);
 
   return (
+      
+
     <div className="min-h-screen bg-white flex items-center justify-center p-4">
+
+
       <iframe
         data-tally-src="https://tally.so/embed/m6Vr8B?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1"
         loading="lazy"

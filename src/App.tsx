@@ -618,7 +618,7 @@ function MainContent({ setSelectedPackage }: {
 
       {/* Tags Filter */}
       <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-yellow-50 via-orange-100 to-yellow-50 backdrop-blur-sm rounded-xl p-4 border border-gray-100">
+        <div className="bg-gradient-to-r from-[#F5E3C8] via-orange-100 to-yellow-50 rounded-xl p-4 border border-gray-100">
           <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
           <div className="flex flex-wrap gap-3 justify-center">
             {AVAILABLE_TAGS.map(tag => (
@@ -628,7 +628,7 @@ function MainContent({ setSelectedPackage }: {
                 className={`px-4 py-2 rounded-lg text-md font-medium transition-all duration-200 ${
                   filters.tags.includes(tag)
                     ? 'bg-gradient-to-r from-orange-400 to-yellow-500 text-white'
-                    : 'bg-white text-gray-700 hover:bg-gradient-to-r from-orange-400 to-yellow-500 hover:text-white'
+                    : 'bg-white text-gray-700 hover:text-white hover:from-orange-400 hover:to-yellow-500 hover:bg-gradient-to-r shadow-sm border border-orange-200'
                 }`}
               >
                 {tag}
@@ -826,7 +826,7 @@ function MainContent({ setSelectedPackage }: {
                     <div className="mt-5">
                       <button
                         onClick={() => setSelectedPackage(pkg)}
-                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-yellow-500 flex items-center justify-center transition-colors duration-200"
+                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-gradient-to-r hover:from-[#1c5d5e] hover:via-[#3d8a89] hover:to-[#5ec1aa] flex items-center justify-center transition-colors duration-200"
                         disabled={pkg.status === 'closed'}
                       >
                         {pkg.status === 'closed' ? 'Booking Closed' : 'View Info'}
