@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 
 function ErrorPage({ title, message, code }: { title: string; message: string; code: number }) {

@@ -18,11 +18,15 @@ export interface Package {
   itenary: string;
   start_date_2: Record<string, number>;
   location: string;
-  status: string;
+  status: 'open' | 'closed';
   created_at: string;
   updated_at: string;
   tags: string[];
   advance: number;
+  agency_id: string;
+  package_id: string;
+  booking_link: string;
+  ranking: number;
   package_images?: Array<{ id: string; image_url: string; is_primary: boolean; }>;
 }
 

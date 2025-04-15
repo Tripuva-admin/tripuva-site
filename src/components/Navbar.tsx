@@ -30,7 +30,7 @@ export default function Navbar() {
               />
             </Link>
           </div>
-          
+
           {/* Mobile menu button */}
           <div className="flex items-center sm:hidden">
             <button

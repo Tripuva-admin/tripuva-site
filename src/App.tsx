@@ -24,7 +24,7 @@ import { Package, Profile } from './types/database.types';
 import TopPlaces from "./components/TopPlaces";
 import CustomerRating from "./components/CustomerRating";
 import PartnerCarousel from "./components/PartnerCarousel";
-import './index.css' 
+import './index.css'
 import { ProtectedRoute } from './components/ProtectedRoute';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -35,7 +35,7 @@ import TallyForm from "./components/pages/TallyForm";
 const backgroundImageUrl = import.meta.env.VITE_HOMEPAGE_BACKGROUND_IMAGE;
 
 var AVAILABLE_TAGS: any[]
-var parsedConfig: any 
+var parsedConfig: any
 
 const config_response = await supabase
   .from('config')
@@ -58,7 +58,7 @@ if (config_response.error) {
               .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":') // Fix unquoted keys, avoid URLs
               .replace(/'([^']*)'/g, '"$1"') // Convert single quotes to double quotes
               .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3'); // Add quotes around unquoted keys
-            
+
             try {
               return [item.config_key, JSON.parse(formattedValue)];
             } catch (parseError) {
@@ -111,59 +111,54 @@ function Header({ user }: HeaderProps) {
   };
 
   return (
-    <header className={`w-full z-50 ${
-      isMobileMenuOpen 
-        ? 'bg-[#081314]' 
-        : isHomePage 
-          ? 'absolute top-0 left-0 right-0 bg-transparent' 
-          : 'bg-[#081314]'
-    } ${isTopPlaces ? 'border-b-0' : ''}`}>
+    <header className={`w-full z-50 ${isMobileMenuOpen
+      ? 'bg-[#081314]'
+      : isHomePage
+        ? 'absolute top-0 left-0 right-0 bg-transparent'
+        : 'bg-[#081314]'
+      } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-        <Link to="/" className="flex flex-col items-center justify-center leading-none group">
-  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
-    Tripuva
-  </h1>
-  <svg
-    className="w-28 sm:w-32 h-5 mt-1 transition-transform duration-300 group-hover:scale-105"
-    viewBox="0 0 100 20"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M5 15 C 25 5, 75 5, 95 15"
-      stroke="#facc15"
-      strokeWidth="4"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      fill="none"
-    />
-  </svg>
-</Link>
+          <Link to="/" className="flex flex-col items-center justify-center leading-none group">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
+              Tripuva
+            </h1>
+            <svg
+              className="w-28 sm:w-32 h-5 mt-1 transition-transform duration-300 group-hover:scale-105"
+              viewBox="0 0 100 20"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M5 15 C 25 5, 75 5, 95 15"
+                stroke="#facc15"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                fill="none"
+              />
+            </svg>
+          </Link>
 
-
-
-
-    
           <nav className="hidden sm:flex items-center space-x-6">
-            <Link 
-              to="/top-places" 
+            <Link
+              to="/top-places"
               className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-md text-base font-medium flex items-center"
             >
               <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Trips
             </Link>
-    
-            <a 
+
+            <a
               href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
-              target="_blank" 
+              target="_blank"
               rel="noopener noreferrer"
               className="bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-normal flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
             </a>
-    
+
             {user && (
               <button
                 onClick={handleSignOut}
@@ -174,7 +169,7 @@ function Header({ user }: HeaderProps) {
               </button>
             )}
           </nav>
-    
+
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/20"
@@ -187,54 +182,53 @@ function Header({ user }: HeaderProps) {
             )}
           </button>
         </div>
-    
+
         {/* Mobile menu with smooth transition */}
         <div
-  className={`sm:hidden fixed top-24 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${
-    isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
-  } overflow-hidden`}
->
-  <nav className="mt-4 pb-4 px-4">
-    <div className="flex flex-col space-y-4">
-      <Link
-        to="/top-places"
-        className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-xl text-base font-semibold w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700 shadow-sm"
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
-        Top Trips
-      </Link>
-
-      <a
-        href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="bg-white/10 text-white px-4 py-3 rounded-xl border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-normal w-full text-center flex items-center justify-center backdrop-blur-md"
-        onClick={() => setIsMobileMenuOpen(false)}
-      >
-        <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
-        Contact us on Whatsapp
-      </a>
-
-      {user && (
-        <button
-          onClick={() => {
-            handleSignOut();
-            setIsMobileMenuOpen(false);
-          }}
-          className="text-white hover:text-gray-200 flex items-center justify-center py-3 px-4 w-full border border-white/20 rounded-xl transition-all duration-200 hover:bg-white/10"
+          className={`sm:hidden fixed top-24 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
+            } overflow-hidden`}
         >
-          <LogOut className="h-5 w-5 mr-2" strokeWidth={2} />
-          Sign Out
-        </button>
-      )}
-    </div>
-  </nav>
-</div>
+          <nav className="mt-4 pb-4 px-4">
+            <div className="flex flex-col space-y-4">
+              <Link
+                to="/top-places"
+                className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-xl text-base font-semibold w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700 shadow-sm"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
+                Top Trips
+              </Link>
+
+              <a
+                href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-white/10 text-white px-4 py-3 rounded-xl border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-normal w-full text-center flex items-center justify-center backdrop-blur-md"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
+                Contact us on Whatsapp
+              </a>
+
+              {user && (
+                <button
+                  onClick={() => {
+                    handleSignOut();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-white hover:text-gray-200 flex items-center justify-center py-3 px-4 w-full border border-white/20 rounded-xl transition-all duration-200 hover:bg-white/10"
+                >
+                  <LogOut className="h-5 w-5 mr-2" strokeWidth={2} />
+                  Sign Out
+                </button>
+              )}
+            </div>
+          </nav>
+        </div>
 
       </div>
     </header>
-    
+
   );
 }
 
@@ -308,7 +302,7 @@ function MainContent({ setSelectedPackage }: {
       }
 
       const transformedData = data.map(pkg => {
-        const primaryImage = pkg.package_images?.find((img: { is_primary: any; })=> img.is_primary)?.image_url;
+        const primaryImage = pkg.package_images?.find((img: { is_primary: any; }) => img.is_primary)?.image_url;
         return {
           ...pkg,
           image: primaryImage || pkg.image,
@@ -387,30 +381,30 @@ function MainContent({ setSelectedPackage }: {
 
   const filteredPackages = hasUserInteracted
     ? packages.filter(pkg => {
-        const matchesDestination = !filters.destination || 
-          pkg.title.toLowerCase().includes(filters.destination.toLowerCase()) ||
-          pkg.description.toLowerCase().includes(filters.destination.toLowerCase());
+      const matchesDestination = !filters.destination ||
+        pkg.title.toLowerCase().includes(filters.destination.toLowerCase()) ||
+        pkg.description.toLowerCase().includes(filters.destination.toLowerCase());
 
-        const matchesPrice = !filters.maxPrice || pkg.price <= parseInt(filters.maxPrice);
+      const matchesPrice = !filters.maxPrice || pkg.price <= parseInt(filters.maxPrice);
 
-        const matchesDate = !filters.startDate || (() => {
-          const filterDate = new Date(filters.startDate).toISOString().split('T')[0];
-          const startDate2 = pkg.start_date_2 || {};
-          
-          if (Object.keys(startDate2).length > 0) {
-            return Object.keys(startDate2).some(date => {
-              const packageDate = new Date(date).toISOString().split('T')[0];
-              return packageDate >= filterDate && startDate2[date] > 0;
-            });
-          }
-          return false;
-        })();
+      const matchesDate = !filters.startDate || (() => {
+        const filterDate = new Date(filters.startDate).toISOString().split('T')[0];
+        const startDate2 = pkg.start_date_2 || {};
 
-        const matchesTags = filters.tags.length === 0 || 
-          filters.tags.some(tag => pkg.tags?.includes(tag));
+        if (Object.keys(startDate2).length > 0) {
+          return Object.keys(startDate2).some(date => {
+            const packageDate = new Date(date).toISOString().split('T')[0];
+            return packageDate >= filterDate && startDate2[date] > 0;
+          });
+        }
+        return false;
+      })();
 
-        return matchesDestination && matchesPrice && matchesDate && matchesTags;
-      })
+      const matchesTags = filters.tags.length === 0 ||
+        filters.tags.some(tag => pkg.tags?.includes(tag));
+
+      return matchesDestination && matchesPrice && matchesDate && matchesTags;
+    })
     : packages;
 
   // Calculate pagination
@@ -423,11 +417,10 @@ function MainContent({ setSelectedPackage }: {
     return [...Array(5)].map((_, index) => (
       <Star
         key={index}
-        className={`h-4 w-4 ${
-          index < rating
-            ? 'text-yellow-400 fill-current'
-            : 'text-gray-300'
-        }`}
+        className={`h-4 w-4 ${index < rating
+          ? 'text-yellow-400 fill-current'
+          : 'text-gray-300'
+          }`}
       />
     ));
   };
@@ -436,7 +429,7 @@ function MainContent({ setSelectedPackage }: {
     <div>
       {/* Hero Section */}
       <div className="relative min-h-[600px] flex items-center">
-        <div 
+        <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${backgroundImageUrl})`
@@ -447,12 +440,12 @@ function MainContent({ setSelectedPackage }: {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
               <h2 className="text-4.5xl sm:text-4xl md:text-5xl lg:text-6xl text-white sm:tracking-tight">
-              <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">Travel Together,</span> <span className="font-medium">Create Memories</span>
+                <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">Travel Together,</span> <span className="font-medium">Create Memories</span>
               </h2>
             </Link>
             <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-  Trips that start <span className="text-yellow-400 font-medium">Solo</span> and end with a <span className="text-yellow-400 font-medium">Squad</span>
-</p>
+              Trips that start <span className="text-yellow-400 font-medium">Solo</span> and end with a <span className="text-yellow-400 font-medium">Squad</span>
+            </p>
 
 
             {/* Search and Filters */}
@@ -564,9 +557,9 @@ function MainContent({ setSelectedPackage }: {
 
       {/* Popular Destinations */}
       <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-      <h2 className="text-2xl font-bold text-gray-900 text-center">Popular Destinations</h2>
+        <h2 className="text-2xl font-bold text-gray-900 text-center">Popular Destinations</h2>
         <div className="flex justify-between items-center mb-4">
-        
+
           {filters.destination && (
             <button
               onClick={clearDestination}
@@ -590,9 +583,8 @@ function MainContent({ setSelectedPackage }: {
             <div key={city.name} className="relative group">
               <button
                 onClick={() => handleFilterChange({ destination: city.name })}
-                className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full ${
-                  filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
-                }`}
+                className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full ${filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
+                  }`}
               >
                 <div className="w-full pb-[100%] relative">
                   <img
@@ -625,11 +617,10 @@ function MainContent({ setSelectedPackage }: {
               <button
                 key={tag}
                 onClick={() => handleTagToggle(tag)}
-                className={`px-4 py-2 rounded-lg text-md font-medium transition-all duration-200 ${
-                  filters.tags.includes(tag)
-                    ? 'bg-gradient-to-r from-orange-400 to-yellow-500 text-white'
-                    : 'bg-white text-gray-700 hover:text-white hover:from-orange-400 hover:to-yellow-500 hover:bg-gradient-to-r shadow-sm border border-orange-200'
-                }`}
+                className={`px-4 py-2 rounded-lg text-md font-medium transition-all duration-200 ${filters.tags.includes(tag)
+                  ? 'bg-gradient-to-r from-orange-400 to-yellow-500 text-white'
+                  : 'bg-white text-gray-700 hover:text-white hover:from-orange-400 hover:to-yellow-500 hover:bg-gradient-to-r shadow-sm border border-orange-200'
+                  }`}
               >
                 {tag}
               </button>
@@ -651,47 +642,47 @@ function MainContent({ setSelectedPackage }: {
 
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
-      <div className="relative mb-4 flex items-center justify-center">
-  {/* Centered Heading */}
-  <h2 className="text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
-    All Trips
-  </h2>
+        <div className="relative mb-4 flex items-center justify-center">
+          {/* Centered Heading */}
+          <h2 className="text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
+            All Trips
+          </h2>
 
-  {/* Sort by Dropdown on Right */}
-  <div className="ml-auto">
-    <div className="relative">
-      <button
-        onClick={() => setSortMenuOpen(!sortMenuOpen)}
-        className="text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
-      >
-        Sort by
-        <ChevronDown className="h-4 w-4 ml-1" />
-      </button>
-      {sortMenuOpen && (
-        <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-10">
-          <button
-            onClick={() => handleSort('price')}
-            className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
-          >
-            Price (Low to High)
-          </button>
-          <button
-            onClick={() => handleSort('-price')}
-            className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
-          >
-            Price (High to Low)
-          </button>
-          <button
-            onClick={() => handleSort('date')}
-            className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
-          >
-            Date (Newest)
-          </button>
+          {/* Sort by Dropdown on Right */}
+          <div className="ml-auto">
+            <div className="relative">
+              <button
+                onClick={() => setSortMenuOpen(!sortMenuOpen)}
+                className="text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
+              >
+                Sort by
+                <ChevronDown className="h-4 w-4 ml-1" />
+              </button>
+              {sortMenuOpen && (
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-10">
+                  <button
+                    onClick={() => handleSort('price')}
+                    className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+                  >
+                    Price (Low to High)
+                  </button>
+                  <button
+                    onClick={() => handleSort('-price')}
+                    className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+                  >
+                    Price (High to Low)
+                  </button>
+                  <button
+                    onClick={() => handleSort('date')}
+                    className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+                  >
+                    Date (Newest)
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-      )}
-    </div>
-  </div>
-</div>
 
 
         {loading ? (
@@ -731,11 +722,10 @@ function MainContent({ setSelectedPackage }: {
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute top-4 right-4">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${
-                        pkg.status === 'open'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${pkg.status === 'open'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}>
                         {pkg.status.charAt(0).toUpperCase() + pkg.status.slice(1)}
                       </span>
                     </div>
@@ -745,7 +735,7 @@ function MainContent({ setSelectedPackage }: {
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-grow">
                           <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
-                          
+
                           <div className="mt-1">
                             {pkg.agency && (
                               <>
@@ -789,11 +779,10 @@ function MainContent({ setSelectedPackage }: {
                               return (
                                 <span
                                   key={index}
-                                  className={`${
-                                    isPastDate
-                                      ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                      : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e]'
-                                  } border text-sm py-1 px-2 rounded`}
+                                  className={`${isPastDate
+                                    ? 'bg-gray-100 border-gray-200 text-gray-400'
+                                    : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e]'
+                                    } border text-sm py-1 px-2 rounded`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {
                                     day: '2-digit',
@@ -1024,7 +1013,7 @@ function App() {
                         <span className="block">Address: Guwahati, Assam, India</span>
                       </p>
                     </address>
-                    
+
                   </div>
                 </div>
                 <div className="mt-8 pt-8 border-t border-gray-700">

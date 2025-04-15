@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function Refund() {
   return (
     <div className="min-h-screen bg-background-light pt-12 pb-10">

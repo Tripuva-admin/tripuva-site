@@ -56,7 +56,7 @@ export function Header({ user }: HeaderProps) {
             </Link>
 
             <a 
-              href="https://google.com"
+              href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank" 
               rel="noopener noreferrer"
               className="bg-transparent text-white px-4 py-2 rounded-md border border-white hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
@@ -106,7 +106,7 @@ export function Header({ user }: HeaderProps) {
               </Link>
 
               <a
-                href="https://google.com"
+                href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="block bg-transparent text-white px-5 py-3.5 rounded-xl border border-white/30 hover:bg-white/10 transition-all duration-200 text-base font-medium"

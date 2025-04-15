@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function About() {
   return (
     <div className="pt-12 pb-12">

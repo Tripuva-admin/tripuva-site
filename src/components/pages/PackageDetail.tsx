@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Calendar, Users, Clock, IndianRupee, Star, Building2, ChevronLeft, ChevronRight, MapPin } from 'lucide-react';
+import { Users, Clock, Star, Building2, ChevronLeft, ChevronRight } from 'lucide-react';
 import "react-responsive-carousel/lib/styles/carousel.min.css";
 import { Carousel } from 'react-responsive-carousel';
-import { format } from 'date-fns';
 
 interface PackageDetail {
   id: string;
@@ -284,41 +283,41 @@ const PackageDetail: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </div>)}
+            </div>)}
 
-  {/* Itinerary Inclusion */}
-              {pkg.inclusion && (
-  <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
-    <h2 className="text-xl md:text-2xl font-semibold mb-4">What's Included</h2>
+            {/* Itinerary Inclusion */}
+            {pkg.inclusion && (
+            <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
+              <h2 className="text-xl md:text-2xl font-semibold mb-4">What's Included</h2>
 
-    <div className="space-y-2">
-      {pkg.inclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
-        <div key={idx} className="flex items-start gap-3">
-          {/* Bullet Point (matches the one in itinerary) */}
-          <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-3 flex-shrink-0" />
-          <p className="text-gray-700 leading-relaxed">{item.trim()}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+              <div className="space-y-2">
+                {pkg.inclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    {/* Bullet Point (matches the one in itinerary) */}
+                    <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-3 flex-shrink-0" />
+                    <p className="text-gray-700 leading-relaxed">{item.trim()}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            )}
 
-{/* Itinerary Exclusion */}
-{pkg.exclusion && (
-  <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
-    <h2 className="text-xl md:text-2xl font-semibold mb-4">What's not Included</h2>
+            {/* Itinerary Exclusion */}
+            {pkg.exclusion && (
+              <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
+                <h2 className="text-xl md:text-2xl font-semibold mb-4">What's not Included</h2>
 
-    <div className="space-y-2">
-      {pkg.exclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
-        <div key={idx} className="flex items-start gap-3">
-          {/* Bullet Point (matches the one in itinerary) */}
-          <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-3 flex-shrink-0" />
-          <p className="text-gray-700 leading-relaxed">{item.trim()}</p>
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+                <div className="space-y-2">
+                  {pkg.exclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      {/* Bullet Point (matches the one in itinerary) */}
+                      <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-3 flex-shrink-0" />
+                      <p className="text-gray-700 leading-relaxed">{item.trim()}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             
           </div>

@@ -31,7 +31,7 @@ export function UserAccount() {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
-      
+
       if (user) {
         // Fetch profile
         const { data: profileData, error: profileError } = await supabase
@@ -112,21 +112,19 @@ export function UserAccount() {
           <nav className="-mb-px flex space-x-8">
             <button
               onClick={() => setActiveTab('profile')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'profile'
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'profile'
                   ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+                }`}
             >
               Profile
             </button>
             <button
               onClick={() => setActiveTab('bookings')}
-              className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                activeTab === 'bookings'
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${activeTab === 'bookings'
                   ? 'border-indigo-500 text-indigo-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-              }`}
+                }`}
             >
               My Bookings
             </button>
@@ -239,13 +237,12 @@ export function UserAccount() {
                           {booking.package.title}
                         </h3>
                         <span
-                          className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                            booking.status === 'confirmed'
+                          className={`px-2 py-1 rounded-full text-xs font-semibold ${booking.status === 'confirmed'
                               ? 'bg-green-100 text-green-800'
                               : booking.status === 'cancelled'
-                              ? 'bg-red-100 text-red-800'
-                              : 'bg-yellow-100 text-yellow-800'
-                          }`}
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}
                         >
                           {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
                         </span>

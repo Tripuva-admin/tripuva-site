@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React,{ useState } from 'react';
 import { MapPin, Phone, Mail, Clock } from 'lucide-react';
 import { Alert } from '../Alert';
 

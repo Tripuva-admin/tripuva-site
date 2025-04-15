@@ -288,20 +288,20 @@ export function AdminDashboard() {
       title: pkg.title,
       description: pkg.description,
       duration: pkg.duration,
-      price: pkg.price,
-      group_size: pkg.group_size,
-      image: pkg.image,
+      price: pkg.price || 0,
+      group_size: pkg.group_size || 0,
+      image: pkg.image || '',
       start_date_2: pkg.start_date_2 || {},
       agency_id: pkg.agency_id || '',
-      status: pkg.status,
-      package_id: pkg.package_id,
+      status: pkg.status || 'open',
+      package_id: pkg.package_id || '',
       booking_link: pkg.booking_link || '',
       tags: pkg.tags || [],
       ranking: pkg.ranking || 1000,
       advance: pkg.advance || 0
     });
     setPackageImages(
-      pkg.package_images?.map(img => img.image_url) || [pkg.image]
+      pkg.package_images?.map(img => img.image_url) || [pkg.image || '']
     );
     setShowPackageForm(true);
   };

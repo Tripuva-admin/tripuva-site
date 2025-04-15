@@ -1,12 +1,12 @@
-import React,{ useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Package } from '../types/database.types';
-import { X, Calendar, Users, Clock, IndianRupee, Star, Building2, Users2, Receipt, CircleDollarSign, ExternalLink, ArrowRight } from 'lucide-react';
+import { X, Calendar, Users, Clock, Star, Building2, ExternalLink } from 'lucide-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
 interface PackageModalProps {
-  package: Package & { 
+  package: Package & {
     agency?: { name: string; rating: number };
     package_images?: { id: string; image_url: string; is_primary: boolean }[];
     listings?: { id: string; start_date: string }[];
@@ -22,7 +22,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const images = pkg.package_images?.map(img => img.image_url) || [pkg.image_url];
-  const [transitionDirection, setTransitionDirection] = useState<'left'|'right'>('right');
+  const [transitionDirection, setTransitionDirection] = useState<'left' | 'right'>('right');
   const navigate = useNavigate();
   const [availableDates, setAvailableDates] = useState<string[]>([]);
 
@@ -81,11 +81,10 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
     return [...Array(5)].map((_, index) => (
       <Star
         key={index}
-        className={`h-4 w-4 ${
-          index < rating
+        className={`h-4 w-4 ${index < rating
             ? 'text-yellow-400 fill-current'
             : 'text-gray-300'
-        }`}
+          }`}
       />
     ));
   };
@@ -96,7 +95,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
 
   const handleBookNow = () => {
     if (!selectedDate || !pkg?.start_date_2) return;
-    
+
     const availableSpots = pkg.start_date_2[selectedDate];
     if (availableSpots <= 0) {
       toast.error('No spots available for selected date');
@@ -105,11 +104,11 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
 
     const message = `Hi, I want to book the Trip: ${pkg.title}%0A%0ATrip Date: ${selectedDate}%0A%0A(Experience Code: ${pkg.package_id || ''})`;
     const BOOKING_LINK = `${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}?text=${message}`;
-    
+
     console.log('Booking Link:', BOOKING_LINK);
     console.log('Selected Date:', selectedDate);
     console.log('Package:', pkg);
-    
+
     window.open(BOOKING_LINK, '_blank');
   };
 
@@ -135,13 +134,12 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                 {images.map((image, index) => (
                   <div
                     key={index}
-                    className={`absolute inset-0 transition-transform duration-500 ease-in-out ${
-                      index === currentIndex 
-                        ? 'translate-x-0' 
-                        : index < currentIndex 
-                          ? '-translate-x-full' 
+                    className={`absolute inset-0 transition-transform duration-500 ease-in-out ${index === currentIndex
+                        ? 'translate-x-0'
+                        : index < currentIndex
+                          ? '-translate-x-full'
                           : 'translate-x-full'
-                    }`}
+                      }`}
                     style={{ zIndex: index === currentIndex ? 1 : 0 }}
                   >
                     <img
@@ -178,15 +176,14 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                   {images.map((_, index) => (
                     <button
                       key={index}
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setCurrentIndex(index);
                         setIsAutoPlaying(false);
                         setTimeout(() => setIsAutoPlaying(true), 10000);
                       }}
-                      className={`w-2 h-2 rounded-full transition-all ${
-                        index === currentIndex ? 'bg-white w-4' : 'bg-white/50'
-                      }`}
+                      className={`w-2 h-2 rounded-full transition-all ${index === currentIndex ? 'bg-white w-4' : 'bg-white/50'
+                        }`}
                     />
                   ))}
                 </div>
@@ -197,7 +194,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
               <div className="flex-1 overflow-y-auto px-4 py-4 md:p-8">
                 <div className="flex flex-col mb-3 md:mb-4">
                   <h2 className="text-xl md:text-2xl font-bold text-gray-800">{pkg.title}</h2>
-                  
+
                   {pkg.agency && (
                     <div className="mt-2 flex items-start space-x-2">
                       <Building2 className="h-5 w-5 text-[#1c5d5e] mt-0.5" />
@@ -241,20 +238,19 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                               const isPast = new Date(date) < new Date(new Date().setHours(0, 0, 0, 0));
                               const isSoldOut = slots === 0;
                               const dateObj = new Date(date);
-                              
+
                               return (
                                 <div key={date} className="flex flex-col items-center">
                                   <button
                                     onClick={() => !isPast && !isSoldOut && handleDateSelect(date)}
                                     disabled={isPast || isSoldOut}
                                     aria-disabled={isPast || isSoldOut}
-                                    className={`text-sm py-1 px-2.5 rounded-md transition-colors whitespace-nowrap ${
-                                      isPast || isSoldOut
+                                    className={`text-sm py-1 px-2.5 rounded-md transition-colors whitespace-nowrap ${isPast || isSoldOut
                                         ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                         : selectedDate === date
                                           ? 'bg-gradient-to-r from-[#FFC74C] to-[#FFD639] text-gray-800 border border-yellow-400'
                                           : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
-                                    }`}
+                                      }`}
                                   >
                                     {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}
                                   </button>
@@ -283,7 +279,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                     <span className="font-medium text-sm md:text-base">Duration:</span>
                     <span className="ml-1 text-gray-600 text-sm md:text-base">{pkg.duration} days</span>
                   </div>
-                
+
                   <div className="flex items-center text-gray-700">
                     <Users className="h-4 w-4 md:h-5 md:w-5 mr-2 text-[#1c5d5e]" />
                     <span className="font-medium text-sm md:text-base">Group Size:</span>
@@ -315,7 +311,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-lg font-semibold">Your Journey</span>
-                      <Link 
+                      <Link
                         to={`/package/${pkg.id}`}
                         onClick={onClose}
                         className="bg-gradient-to-r from-[#f97316] to-[#fcd34d] text-white font-medium pt-2 pb-2 pl-4 pr-4 rounded-full flex items-center text-sm"
@@ -352,11 +348,10 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                   <button
                     onClick={handleBookNow}
                     disabled={!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))}
-                    className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
-                      !selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
+                    className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
                         ? 'bg-gray-100 text-gray-900 cursor-not-allowed'
                         : 'bg-[#1c5d5e] hover:bg-[#164445] text-white shadow-sm'
-                    }`}
+                      }`}
                   >
                     {availableDates.length === 0
                       ? 'Exciting departures being planned - Check back soon!'

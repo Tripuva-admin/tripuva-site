@@ -1,5 +1,3 @@
-import React from 'react';
-
 export function Disclaimer() {
   return (
     <div className="min-h-screen bg-background-light pt-24">
