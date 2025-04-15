@@ -826,7 +826,7 @@ function MainContent({ setSelectedPackage }: {
                     <div className="mt-5">
                       <button
                         onClick={() => setSelectedPackage(pkg)}
-                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-gradient-to-r hover:from-[#1c5d5e] hover:via-[#3d8a89] hover:to-[#5ec1aa] flex items-center justify-center transition-colors duration-200"
+                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-[#164445] flex items-center justify-center transition-colors duration-200"
                         disabled={pkg.status === 'closed'}
                       >
                         {pkg.status === 'closed' ? 'Booking Closed' : 'View Info'}
