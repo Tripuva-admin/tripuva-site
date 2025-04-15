@@ -40,11 +40,21 @@ export interface Profile {
 }
 
 export interface Booking {
-  id: number;
-  status: string;
-  booking_date: Date;
-  number_of_people: number;
-  total_price: number;
+  booking_id: string;
+  booking_user_name: string;
+  booking_user_email: string;
+  booking_user_phone: string;
+  booking_date: string;
+  booking_package_start_date: string;
+  booking_adv_status: 'pending' | 'paid' | 'failed';
+  booking_rm_status: 'pending' | 'paid' | 'failed';
+  booking_confirmation_status: 'pending' | 'confirmed' | 'cancelled';
+  user_id: string;
+  package_id: string;
+  created_at: string;
+  updated_at: string;
+  package?: Package;
+  profile?: Profile;
 }
 
 export interface Config {

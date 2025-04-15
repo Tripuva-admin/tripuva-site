@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { Package, Agency } from '../types/database.types';
+import { Package, Agency, Booking } from '../types/database.types';
 import { Plus, Edit, Trash2, X } from 'lucide-react';
 
 var AVAILABLE_TAGS: any[]
@@ -112,8 +112,11 @@ export function AdminDashboard() {
   const [newAgency, setNewAgency] = useState({ name: '', rating: 5 });
   const [tempDate, setTempDate] = useState('');
   const [tempSlots, setTempSlots] = useState(1);
-  const [activeTab, setActiveTab] = useState<'packages' | 'agencies'>('packages');
+  const [activeTab, setActiveTab] = useState<'packages' | 'agencies' | 'bookings'>('packages');
   const [editingAgency, setEditingAgency] = useState<Agency | null>(null);
+  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+  const [showBookingForm, setShowBookingForm] = useState(false);
 
   const fetchPackages = async () => {
     const { data, error } = await supabase
@@ -139,12 +142,31 @@ export function AdminDashboard() {
     setAgencies(data || []);
   };
 
+  const fetchBookings = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('bookings')
+        .select('*')
+        .order('booking_date', { ascending: false });
+
+      if (error) {
+        console.error('Error fetching bookings:', error);
+        throw error;
+      }
+
+      setBookings(data || []);
+    } catch (error) {
+      console.error('Error in fetchBookings:', error);
+    }
+  };
+
   const fetchData = async () => {
     try {
       setLoading(true);
       await Promise.all([
         fetchPackages(),
-        fetchAgencies()
+        fetchAgencies(),
+        fetchBookings()
       ]);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -156,6 +178,13 @@ export function AdminDashboard() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'bookings') {
+      console.log('Active tab changed to bookings, fetching...');
+      fetchBookings();
+    }
+  }, [activeTab]);
 
   const handleCreateAgency = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -420,6 +449,40 @@ export function AdminDashboard() {
     setShowAgencyForm(true);
   };
 
+  const handleEditBooking = (booking: Booking) => {
+    if (window.confirm('Are you sure you want to edit this booking?')) {
+      setEditingBooking({
+        ...booking,
+        booking_confirmation_status: booking.booking_confirmation_status || 'pending'
+      });
+      setShowBookingForm(true);
+    }
+  };
+
+  const handleUpdateBooking = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingBooking) return;
+
+    try {
+      const { error } = await supabase
+        .from('bookings')
+        .update({
+          booking_adv_status: editingBooking.booking_adv_status,
+          booking_rm_status: editingBooking.booking_rm_status,
+          booking_confirmation_status: editingBooking.booking_confirmation_status
+        })
+        .eq('booking_id', editingBooking.booking_id);
+
+      if (error) throw error;
+
+      setShowBookingForm(false);
+      setEditingBooking(null);
+      await fetchBookings();
+    } catch (error) {
+      console.error('Error updating booking:', error);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -479,48 +542,58 @@ export function AdminDashboard() {
               >
                 Agencies ({agencies.length})
               </button>
+              <button
+                onClick={() => setActiveTab('bookings')}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === 'bookings'
+                    ? 'border-primary text-primary'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                } transition-all duration-200`}
+              >
+                Bookings ({bookings.length})
+              </button>
             </nav>
           </div>
 
           {activeTab === 'packages' ? (
-            // Existing Package List
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <h2 className="text-xl font-semibold text-gray-800">Travel Packages</h2>
+            // Package List
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+              <div className="px-8 py-6 border-b border-gray-100 bg-white">
+                <h2 className="text-2xl font-bold text-gray-900">Travel Packages</h2>
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="w-full divide-y divide-gray-100">
                   <thead className="bg-gray-50">
                     <tr>
                       {tableHeaders.map((header: { align: any; label: string; }, index: React.Key | null | undefined) => (
                         <th
                           key={index}
-                          className={`px-6 py-3 text-${header.align} text-xs font-medium text-gray-500 uppercase tracking-wider`}
+                          className={`px-6 py-4 text-${header.align} text-sm font-semibold text-gray-600 uppercase tracking-wider`}
                         >
                           {header.label}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-gray-100">
                     {packages.map((pkg) => (
-                      <tr key={pkg.id} className="hover:bg-gray-50 transition-all duration-150">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
+                      <tr key={pkg.id} className="hover:bg-gray-50/50 transition-all duration-150">
+                        <td className="px-6 py-5">
+                          <div className="flex items-center space-x-4">
                             <img 
                               src={(pkg as any).package_images?.[0]?.image_url || pkg.image} 
                               alt={pkg.title} 
-                              className="h-12 w-12 rounded-lg object-cover shadow-sm ring-1 ring-gray-200" 
+                              className="h-16 w-16 rounded-xl object-cover shadow-sm ring-1 ring-gray-100" 
                             />
-                            <div className="ml-4">
-                              <div className="text-sm font-medium text-gray-900">{pkg.title}</div>
+                            <div>
+                              <div className="text-base font-semibold text-gray-900">{pkg.title}</div>
                               <div className="text-sm text-gray-500 line-clamp-1">{pkg.description}</div>
                               {pkg.tags && pkg.tags.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mt-1">
+                                <div className="flex flex-wrap gap-1.5 mt-2">
                                   {pkg.tags.map(tag => (
                                     <span
                                       key={tag}
-                                      className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                                      className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-blue-50 text-blue-700 ring-1 ring-blue-100"
                                     >
                                       {tag}
                                     </span>
@@ -530,21 +603,21 @@ export function AdminDashboard() {
                             </div>
                           </div>
                         </td>
-                        <td className="px-2 py-4 text-sm text-gray-500">
+                        <td className="px-6 py-5 text-sm text-gray-600">
                           {(pkg as any).agency?.name || 'No Agency'}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">
+                        <td className="px-6 py-5 text-sm text-gray-600">
                           {pkg.duration} days
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">
+                        <td className="px-6 py-5 text-sm text-gray-600">
                           ₹{pkg.price.toLocaleString()}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-500">
+                        <td className="px-6 py-5 text-sm text-gray-600">
                           {pkg.group_size}
                         </td>
-                        <td className="px-2 py-4 text-sm text-gray-500">
+                        <td className="px-6 py-5 text-sm text-gray-600">
                           {Object.entries(pkg.start_date_2 || {}).map(([date, slots]) => (
-                            <span key={date} className="inline-block mr-2 bg-gray-100 px-2 py-1 rounded-full text-xs ring-1 ring-gray-200">
+                            <span key={date} className="inline-block mr-2 bg-gray-50 px-3 py-1.5 rounded-full text-xs ring-1 ring-gray-100">
                               {new Date(date).toLocaleDateString('en-GB', {
                                 day: '2-digit',
                                 month: 'short',
@@ -553,27 +626,27 @@ export function AdminDashboard() {
                             </span>
                           ))}
                         </td>
-                        <td className="px-6 py-4">
-                          <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                        <td className="px-6 py-5">
+                          <span className={`px-3 py-1.5 inline-flex text-xs leading-5 font-semibold rounded-full ${
                             pkg.status === 'open'
-                              ? 'bg-green-100 text-green-800 ring-1 ring-green-200'
-                              : 'bg-red-100 text-red-800 ring-1 ring-red-200'
+                              ? 'bg-green-50 text-green-700 ring-1 ring-green-100'
+                              : 'bg-red-50 text-red-700 ring-1 ring-red-100'
                           }`}>
                             {pkg.status.charAt(0).toUpperCase() + pkg.status.slice(1)}
                           </span>
                         </td>
-                        <td className="px-6 py-4 text-right text-sm font-medium">
-                          <div className="flex justify-end space-x-2">
+                        <td className="px-6 py-5 text-right text-sm font-medium">
+                          <div className="flex justify-end space-x-3">
                             <button
                               onClick={() => handleEdit(pkg)}
-                              className="text-primary hover:text-primary-700 p-1.5 rounded-lg hover:bg-primary-50 transition-all duration-200"
+                              className="text-primary hover:text-primary-700 p-2 rounded-lg hover:bg-primary-50 transition-all duration-200"
                               title="Edit Package"
                             >
                               <Edit className="h-5 w-5" />
                             </button>
                             <button
                               onClick={() => handleDelete(pkg.id)}
-                              className="text-red-600 hover:text-red-900 p-1.5 rounded-lg hover:bg-red-50 transition-all duration-200"
+                              className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50 transition-all duration-200"
                               title="Delete Package"
                             >
                               <Trash2 className="h-5 w-5" />
@@ -586,44 +659,43 @@ export function AdminDashboard() {
                 </table>
               </div>
             </div>
-          ) : (
+          ) : activeTab === 'agencies' ? (
             // Agencies List
-            <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-              <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                <h2 className="text-xl font-semibold text-gray-800">Travel Agencies</h2>
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+              <div className="px-8 py-6 border-b border-gray-100 bg-white">
+                <h2 className="text-2xl font-bold text-gray-900">Travel Agencies</h2>
               </div>
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
+                <table className="w-full divide-y divide-gray-100">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                         Agency Name
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                         Rating
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider">
                         Total Packages
                       </th>
-                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-6 py-4 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider">
                         Actions
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
+                  <tbody className="bg-white divide-y divide-gray-100">
                     {agencies.map((agency) => (
-                      <tr key={agency.id} className="hover:bg-gray-50 transition-all duration-150">
-                        <td className="px-6 py-4">
-                          <div className="text-sm font-medium text-gray-900">{agency.name}</div>
+                      <tr key={agency.id} className="hover:bg-gray-50/50 transition-all duration-150">
+                        <td className="px-6 py-5">
+                          <div className="text-base font-semibold text-gray-900">{agency.name}</div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center">
-                            <span className="text-sm text-gray-500">{agency.rating.toFixed(1)}</span>
-                            <div className="ml-2 flex text-yellow-400">
+                        <td className="px-6 py-5">
+                          <div className="flex items-center space-x-2">
+                            <div className="flex text-yellow-400">
                               {[...Array(5)].map((_, i) => (
                                 <svg
                                   key={i}
-                                  className={`h-4 w-4 ${
+                                  className={`h-5 w-5 ${
                                     i < Math.floor(agency.rating)
                                       ? 'text-yellow-400'
                                       : i < agency.rating
@@ -637,25 +709,26 @@ export function AdminDashboard() {
                                 </svg>
                               ))}
                             </div>
+                            <span className="text-sm text-gray-600">{agency.rating.toFixed(1)}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-4">
-                          <div className="text-sm text-gray-500">
+                        <td className="px-6 py-5">
+                          <div className="text-sm text-gray-600">
                             {packages.filter(pkg => pkg.agency_id === agency.id).length} packages
                           </div>
                         </td>
-                        <td className="px-6 py-4 text-right text-sm font-medium">
-                          <div className="flex justify-end space-x-2">
+                        <td className="px-6 py-5 text-right text-sm font-medium">
+                          <div className="flex justify-end space-x-3">
                             <button
                               onClick={() => handleEditAgency(agency)}
-                              className="text-primary hover:text-primary-700 p-1.5 rounded-lg hover:bg-primary-50 transition-all duration-200"
+                              className="text-primary hover:text-primary-700 p-2 rounded-lg hover:bg-primary-50 transition-all duration-200"
                               title="Edit Agency"
                             >
                               <Edit className="h-5 w-5" />
                             </button>
                             <button
                               onClick={() => handleDeleteAgency(agency.id)}
-                              className="text-red-600 hover:text-red-900 p-1.5 rounded-lg hover:bg-red-50 transition-all duration-200"
+                              className="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50 transition-all duration-200"
                               title="Delete Agency"
                             >
                               <Trash2 className="h-5 w-5" />
@@ -666,6 +739,130 @@ export function AdminDashboard() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          ) : (
+            // Bookings List
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-100">
+              <div className="px-8 py-6 border-b border-gray-100 bg-white">
+                <h2 className="text-2xl font-bold text-gray-900">Booking Management</h2>
+              </div>
+              <div className="p-4">
+                <div className="overflow-x-auto">
+                  <table className="min-w-[1000px] w-full divide-y divide-gray-100">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[120px]">
+                          Booking ID
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[140px]">
+                          Customer Name
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[120px]">
+                          Phone
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[100px]">
+                          Booking Date
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[100px]">
+                          Package Start Date
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[120px]">
+                          Advance Payment Status
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[140px]">
+                          Remaining Amount Payment Status
+                        </th>
+                        <th className="px-3 py-3 text-left text-sm font-semibold text-gray-600 uppercase tracking-wider w-[100px]">
+                          Confirmation
+                        </th>
+                        <th className="px-3 py-3 text-right text-sm font-semibold text-gray-600 uppercase tracking-wider w-[60px]">
+                          Actions
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-100">
+                      {bookings.map((booking) => (
+                        <tr key={booking.booking_id} className="hover:bg-gray-50/50 transition-all duration-150">
+                          <td className="px-3 py-3 text-sm text-gray-900">
+                            #{booking.booking_id}
+                          </td>
+                          <td className="px-3 py-3 text-sm text-gray-900">
+                            {booking.booking_user_name}
+                          </td>
+                          <td className="px-3 py-3 text-sm text-gray-600">
+                            {booking.booking_user_phone?.replace(/(\+\d{2})(\d{5})(\d{5})/, '$1 $2 $3')}
+                          </td>
+                          <td className="px-3 py-3 text-sm text-gray-600">
+                            <div className="flex flex-col">
+                              <span>{new Date(booking.booking_date).toLocaleDateString('en-GB', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric'
+                              })}</span>
+                              <span className="text-xs text-gray-500">{new Date(booking.booking_date).toLocaleTimeString('en-GB', {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                                hour12: true
+                              })}</span>
+                            </div>
+                          </td>
+                          <td className="px-3 py-3 text-sm text-gray-600">
+                            {new Date(booking.booking_package_start_date).toLocaleDateString('en-GB', {
+                              day: '2-digit',
+                              month: 'short',
+                              year: 'numeric'
+                            })}
+                          </td>
+                          <td className="px-3 py-3">
+                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              booking.booking_adv_status.toLowerCase() === 'paid'
+                                ? 'bg-green-50 text-green-700 ring-1 ring-green-100'
+                                : booking.booking_adv_status.toLowerCase() === 'pending'
+                                ? 'bg-yellow-50 text-yellow-700 ring-1 ring-yellow-100'
+                                : 'bg-red-50 text-red-700 ring-1 ring-red-100'
+                            }`}>
+                              {booking.booking_adv_status.charAt(0).toUpperCase() + booking.booking_adv_status.slice(1)}
+                            </span>
+                          </td>
+                          <td className="px-3 py-3">
+                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              booking.booking_rm_status.toLowerCase() === 'paid'
+                                ? 'bg-green-50 text-green-700 ring-1 ring-green-100'
+                                : booking.booking_rm_status.toLowerCase() === 'pending'
+                                ? 'bg-yellow-50 text-yellow-700 ring-1 ring-yellow-100'
+                                : 'bg-red-50 text-red-700 ring-1 ring-red-100'
+                            }`}>
+                              {booking.booking_rm_status.charAt(0).toUpperCase() + booking.booking_rm_status.slice(1)}
+                            </span>
+                          </td>
+                          <td className="px-3 py-3">
+                            <span className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              booking.booking_confirmation_status?.toLowerCase() === 'confirmed'
+                                ? 'bg-green-50 text-green-700 ring-1 ring-green-100'
+                                : booking.booking_confirmation_status?.toLowerCase() === 'pending'
+                                ? 'bg-yellow-50 text-yellow-700 ring-1 ring-yellow-100'
+                                : 'bg-red-50 text-red-700 ring-1 ring-red-100'
+                            }`}>
+                              {booking.booking_confirmation_status?.charAt(0).toUpperCase() + booking.booking_confirmation_status?.slice(1) || 'Pending'}
+                            </span>
+                          </td>
+                          <td className="px-3 py-3 text-right text-sm font-medium">
+                            <div className="flex justify-end">
+                              <button
+                                onClick={() => handleEditBooking(booking)}
+                                className="text-primary hover:text-primary-700 p-2 rounded-lg hover:bg-primary-50 transition-all duration-200"
+                                title="Edit Booking"
+                              >
+                                <Edit className="h-5 w-5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           )}
@@ -1052,6 +1249,100 @@ export function AdminDashboard() {
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Create Agency
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Booking Form Modal */}
+        {showBookingForm && (
+          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl p-8 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-100">
+              <div className="flex justify-between items-center mb-8">
+                <h3 className="text-2xl font-bold text-gray-900">
+                  Edit Booking
+                </h3>
+                <button
+                  onClick={() => {
+                    setShowBookingForm(false);
+                    setEditingBooking(null);
+                  }}
+                  className="text-gray-500 hover:text-gray-700 transition-all duration-200 p-2 rounded-lg hover:bg-gray-50"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <form onSubmit={handleUpdateBooking} className="space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">Advance Payment Status</label>
+                    <select
+                      value={editingBooking?.booking_adv_status}
+                      onChange={(e) => setEditingBooking(prev => prev ? {
+                        ...prev,
+                        booking_adv_status: e.target.value as 'pending' | 'paid' | 'failed'
+                      } : null)}
+                      className="w-full rounded-xl border-gray-200 shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-gray-700"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="paid">Paid</option>
+                      <option value="failed">Failed</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">Remaining Amount Payment Status</label>
+                    <select
+                      value={editingBooking?.booking_rm_status}
+                      onChange={(e) => setEditingBooking(prev => prev ? {
+                        ...prev,
+                        booking_rm_status: e.target.value as 'pending' | 'paid' | 'failed'
+                      } : null)}
+                      className="w-full rounded-xl border-gray-200 shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-gray-700"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="paid">Paid</option>
+                      <option value="failed">Failed</option>
+                    </select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="block text-sm font-semibold text-gray-700">Confirmation Status</label>
+                    <select
+                      value={editingBooking?.booking_confirmation_status}
+                      onChange={(e) => setEditingBooking(prev => prev ? {
+                        ...prev,
+                        booking_confirmation_status: e.target.value as 'pending' | 'confirmed' | 'cancelled'
+                      } : null)}
+                      className="w-full rounded-xl border-gray-200 shadow-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 text-gray-700"
+                    >
+                      <option value="pending">Pending</option>
+                      <option value="confirmed">Confirmed</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-4 pt-6 border-t border-gray-100">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowBookingForm(false);
+                      setEditingBooking(null);
+                    }}
+                    className="px-6 py-3 bg-white text-gray-700 rounded-xl hover:bg-gray-50 border border-gray-200 transition-all duration-200 shadow-sm hover:shadow-md font-medium"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary-700 transition-all duration-200 shadow-sm hover:shadow-md font-medium flex items-center"
+                  >
+                    <Edit className="h-4 w-4 mr-2" />
+                    Update Booking
                   </button>
                 </div>
               </form>
