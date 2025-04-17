@@ -120,7 +120,7 @@ function Header({ user }: HeaderProps) {
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <Link to="/" className="flex flex-col items-center justify-center leading-none group">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
+            <h1 className="text-3xl sm:text-4xl md:text-4xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
               Tripuva
             </h1>
             <svg
@@ -143,7 +143,7 @@ function Header({ user }: HeaderProps) {
           <nav className="hidden sm:flex items-center space-x-6">
             <Link
               to="/top-places"
-              className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-2 rounded-md text-base font-medium flex items-center"
+              className="font-montserrat bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-4 py-2 rounded-md text-base font-semibold flex items-center"
             >
               <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Trips
@@ -153,7 +153,7 @@ function Header({ user }: HeaderProps) {
               href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-normal flex items-center"
+              className="font-montserrat bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -435,27 +435,113 @@ function MainContent({ setSelectedPackage }: {
             backgroundImage: `url(${backgroundImageUrl})`
           }}
         />
-        <div className="absolute inset-0 bg-black bg-opacity-50" />
+        <div className="absolute inset-0 bg-black bg-opacity-60" />
         <div className="relative w-full z-10 pt-40 sm:pt-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
-              <h2 className="text-4.5xl sm:text-4xl md:text-5xl lg:text-6xl text-white sm:tracking-tight">
-                <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">Travel Together,</span> <span className="font-medium">Create Memories</span>
+              <h2 className="font-montserrat text-4.5xl sm:text-4xl md:text-4xl lg:text-5xl text-gray-200 sm:tracking-tight">
+              Come<span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent"> solo</span> Leave with a <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">crew</span>
               </h2>
             </Link>
-            <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-white">
-              Trips that start <span className="text-yellow-400 font-medium">Solo</span> and end with a <span className="text-yellow-400 font-medium">Squad</span>
-            </p>
+            
+            
 
 
             {/* Search and Filters */}
-            <div className="mt-8 mb-5">
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg p-4 sm:p-5 max-w-3xl mx-auto">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3 text-center">Find Your Perfect Trip</h3>
+            <div className="max-w-6xl mx-auto px-4 pt-20 pb-10">
+            <p className="font-montserrat text-green-200 text-sm whitespace-pre mb-5 "> E X P L O R E   ●    C O N N E C T   ●   E X P E R I E N C E</p>
+  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+    {[
+      { name: "Goa", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80` },
+      { name: "Manali", image: `${import.meta.env.VITE_POPULAR_DESTINATION_MANALI_IMAGE}?auto=format&fit=crop&q=80` },
+      { name: "Jaipur", image: `${import.meta.env.VITE_POPULAR_DESTINATION_JAIPUR_IMAGE}?auto=format&fit=crop&q=80` },
+      { name: "Varanasi", image: `${import.meta.env.VITE_POPULAR_DESTINATION_VARANASI_IMAGE}?auto=format&fit=crop&q=80` }
+    ].map((city) => (
+      <div key={city.name} className="relative group">
+        <button
+          onClick={() => handleFilterChange({ destination: city.name })}
+          className={`relative w-full overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300 aspect-[4/5] bg-gray-100 ${filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+        >
+          <img
+            src={city.image}
+            alt={city.name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <div className="absolute inset-0" />
+         
+        </button>
+      </div>
+    ))}
+  </div>
+</div>
+
+
+
+            
+          </div>
+        </div>
+      </div>
+
+      {/* Popular Destinations */}
+      
+        <div className="flex justify-center items-center mb-4 mt-4">
+
+          {filters.destination && (
+            <button
+              onClick={clearDestination}
+              className="flex items-center text-black"
+            >
+              <X className="h-5 w-5 mr-1" />
+              Clear Selection
+            </button>
+          )}
+        </div>
+
+        
+    
+
+      {/* Tags Filter */}
+      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
+  <div className="font-montserrat bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] rounded-2xl p-4 border border-gray-200 shadow-md">
+    <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
+    <div className="flex flex-wrap gap-3 justify-center">
+      {AVAILABLE_TAGS.map(tag => (
+        <button
+          key={tag}
+          onClick={() => handleTagToggle(tag)}
+          className={`font-montserrat px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02] ${
+            filters.tags.includes(tag)
+              ? 'bg-black text-white shadow-md'
+              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 shadow-sm'
+          }`}
+        >
+          {tag}
+        </button>
+      ))}
+    </div>
+    {filters.tags.length > 0 && (
+      <div className="mt-6 flex justify-center">
+        <button
+          onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
+          className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
+        >
+          <X className="h-4 w-4" />
+          Clear Tags
+        </button>
+      </div>
+    )}
+  </div>
+</div>
+
+
+
+      <div className="max-w-7xl mx-auto mt-5 mb-5 px-4 py-2 sm:px-6 lg:px-8">
+              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-4">
+              
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Destination Field */}
                   <div className="relative group">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                       <MapPin className="h-4 w-4 text-[#1c5d5e]" />
                       Destination
                     </label>
@@ -480,7 +566,7 @@ function MainContent({ setSelectedPackage }: {
 
                   {/* Price Field */}
                   <div className="relative group">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                       <IndianRupee className="h-4 w-4 text-[#1c5d5e]" />
                       Budget
                     </label>
@@ -501,7 +587,7 @@ function MainContent({ setSelectedPackage }: {
 
                   {/* Date Field */}
                   <div className="relative group">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                    <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                       <Calendar className="h-4 w-4 text-[#1c5d5e]" />
                       Travel Date
                     </label>
@@ -542,7 +628,7 @@ function MainContent({ setSelectedPackage }: {
                   <div className="mt-2 flex justify-center">
                     <button
                       onClick={resetFilters}
-                      className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                      className="font-montserrat px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
                     >
                       <X className="h-4 w-4" />
                       Reset All Filters
@@ -551,100 +637,12 @@ function MainContent({ setSelectedPackage }: {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Popular Destinations */}
-      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8">
-        <h2 className="text-2xl font-bold text-gray-900 text-center">Popular Destinations</h2>
-        <div className="flex justify-between items-center mb-4">
-
-          {filters.destination && (
-            <button
-              onClick={clearDestination}
-              className="flex items-center text-primary hover:text-primary-700 transition-colors"
-            >
-              <X className="h-5 w-5 mr-1" />
-              Clear Selection
-            </button>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {[
-            { name: "Goa", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: true },
-            { name: "Manali", image: `${import.meta.env.VITE_POPULAR_DESTINATION_MANALI_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
-            { name: "Jaipur", image: `${import.meta.env.VITE_POPULAR_DESTINATION_JAIPUR_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
-            { name: "Varanasi", image: `${import.meta.env.VITE_POPULAR_DESTINATION_VARANASI_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
-            { name: "Kerala", image: `${import.meta.env.VITE_POPULAR_DESTINATION_KERALA_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false },
-            { name: "Ladakh", image: `${import.meta.env.VITE_POPULAR_DESTINATION_LADAKH_IMAGE}?auto=format&fit=crop&q=80`, hasPackage: false }
-          ].map((city) => (
-            <div key={city.name} className="relative group">
-              <button
-                onClick={() => handleFilterChange({ destination: city.name })}
-                className={`relative group overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300 w-full ${filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''
-                  }`}
-              >
-                <div className="w-full pb-[100%] relative">
-                  <img
-                    src={city.image}
-                    alt={city.name}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                  <div className="absolute bottom-0 left-0 right-0 p-4">
-                    <p className="text-white font-semibold text-lg">{city.name}</p>
-                  </div>
-                  {!city.hasPackage && (
-                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                      <span className="text-white text-lg text-opacity-70 font-normal">Coming Soon</span>
-                    </div>
-                  )}
-                </div>
-              </button>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Tags Filter */}
-      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
-        <div className="bg-gradient-to-r from-[#F5E3C8] via-orange-100 to-yellow-50 rounded-xl p-4 border border-gray-100">
-          <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
-          <div className="flex flex-wrap gap-3 justify-center">
-            {AVAILABLE_TAGS.map(tag => (
-              <button
-                key={tag}
-                onClick={() => handleTagToggle(tag)}
-                className={`px-4 py-2 rounded-lg text-md font-medium transition-all duration-200 ${filters.tags.includes(tag)
-                  ? 'bg-gradient-to-r from-orange-400 to-yellow-500 text-white'
-                  : 'bg-white text-gray-700 hover:text-white hover:from-orange-400 hover:to-yellow-500 hover:bg-gradient-to-r shadow-sm border border-orange-200'
-                  }`}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-          {filters.tags.length > 0 && (
-            <div className="mt-6 flex justify-center">
-              <button
-                onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
-                className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
-              >
-                <X className="h-4 w-4" />
-                Clear Tags
-              </button>
-            </div>
-          )}
-        </div>
-      </div>
 
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
         <div className="relative mb-4 flex items-center justify-center">
           {/* Centered Heading */}
-          <h2 className="text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
+          <h2 className="font-montserrat text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
             All Trips
           </h2>
 
@@ -734,18 +732,18 @@ function MainContent({ setSelectedPackage }: {
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-grow">
-                          <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
+                          <h3 className="font-montserrat text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
 
                           <div className="mt-1">
                             {pkg.agency && (
                               <>
                                 <p className="text-sm text-gray-600">By {pkg.agency.name}</p>
-                                <div className="flex items-center mt-1">
+                                {/*<div className="flex items-center mt-1">
                                   {renderStars(pkg.agency.rating)}
                                   <span className="ml-1 text-sm text-gray-600">
                                     ({pkg.agency.rating.toFixed(1)})
                                   </span>
-                                </div>
+                                </div>*/}
                               </>
                             )}
                           </div>

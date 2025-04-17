@@ -35,6 +35,10 @@ module.exports = {
       fontFamily: {
         'timeburner': ['Timeburner', 'sans-serif'],
         'comfortaa': ['Comfortaa', 'sans-serif'],
+        'montserrat': ['Montserrat', 'sans-serif'],
+        'poppins': ['Poppins', 'sans-serif'],
+        'urbanist': ['Urbanist', 'sans-serif'],
+        'outfit': ['Outfit', 'sans-serif'],
         'yusei': ['Yusei Magic', 'sans-serif'],
       },
       letterSpacing: {

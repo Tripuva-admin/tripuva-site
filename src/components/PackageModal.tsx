@@ -193,7 +193,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
             <div className="w-full md:w-1/2 flex flex-col max-h-[calc(100vh-250px-32px)] md:max-h-[calc(100vh-32px)]">
               <div className="flex-1 overflow-y-auto px-4 py-4 md:p-8">
                 <div className="flex flex-col mb-3 md:mb-4">
-                  <h2 className="text-xl md:text-2xl font-bold text-gray-800">{pkg.title}</h2>
+                  <h2 className="font-montserrat text-xl md:text-2xl font-bold text-gray-800">{pkg.title}</h2>
 
                   {pkg.agency && (
                     <div className="mt-2 flex items-start space-x-2">
