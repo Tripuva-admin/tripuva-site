@@ -153,7 +153,7 @@ function Header({ user }: HeaderProps) {
               href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-montserrat bg-transparent text-white px-4 py-2 rounded-md border border-gray-300 hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
+              className="font-montserrat bg-gray-100/20 text-white px-4 py-2 rounded-md hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-medium flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -185,14 +185,14 @@ function Header({ user }: HeaderProps) {
 
         {/* Mobile menu with smooth transition */}
         <div
-          className={`sm:hidden fixed top-24 left-4 right-4 z-50 rounded-2xl shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
+          className={`sm:hidden fixed top-24 left-4 right-4 z-50 rounded-lg shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
             } overflow-hidden`}
         >
           <nav className="mt-4 pb-4 px-4">
             <div className="flex flex-col space-y-4">
               <Link
                 to="/top-places"
-                className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-xl text-base font-semibold w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700 shadow-sm"
+                className="font-montserrat bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-lg text-base font-semibold w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700 shadow-sm"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <Star className="h-5 w-5 mr-2 text-black" strokeWidth={2} />
@@ -203,7 +203,7 @@ function Header({ user }: HeaderProps) {
                 href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white/10 text-white px-4 py-3 rounded-xl border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-normal w-full text-center flex items-center justify-center backdrop-blur-md"
+                className="font-montserrat bg-white/50 text-black px-4 py-3 rounded-lg border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-semibold w-full text-center flex items-center justify-center backdrop-blur-md"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
@@ -449,7 +449,7 @@ function MainContent({ setSelectedPackage }: {
 
             {/* Search and Filters */}
             <div className="max-w-6xl mx-auto px-4 pt-20 pb-10">
-            <p className="font-montserrat text-green-200 text-sm whitespace-pre mb-5 "> E X P L O R E   ●    C O N N E C T   ●   E X P E R I E N C E</p>
+            <p className="font-montserrat font-semibold text-green-200 text-sm whitespace-pre mb-5 "> E X P L O R E  /  C O N N E C T  /  E X P E R I E N C E</p>
   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
     {[
       { name: "Goa", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80` },
@@ -512,7 +512,7 @@ function MainContent({ setSelectedPackage }: {
           className={`font-montserrat px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02] ${
             filters.tags.includes(tag)
               ? 'bg-black text-white shadow-md'
-              : 'bg-white text-gray-700 hover:bg-gray-100 border border-gray-300 shadow-sm'
+              : 'bg-white text-gray-700 hover:bg-black border hover:text-white border-gray-200 shadow-sm'
           }`}
         >
           {tag}
@@ -651,7 +651,7 @@ function MainContent({ setSelectedPackage }: {
             <div className="relative">
               <button
                 onClick={() => setSortMenuOpen(!sortMenuOpen)}
-                className="text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
+                className="font-montserrat font-medium text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
               >
                 Sort by
                 <ChevronDown className="h-4 w-4 ml-1" />
@@ -779,7 +779,7 @@ function MainContent({ setSelectedPackage }: {
                                   key={index}
                                   className={`${isPastDate
                                     ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                    : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e]'
+                                    : 'bg-[#fffbea] border border-[#fdeeda] text-[#92400e]'
                                     } border text-sm py-1 px-2 rounded`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {
@@ -813,7 +813,7 @@ function MainContent({ setSelectedPackage }: {
                     <div className="mt-5">
                       <button
                         onClick={() => setSelectedPackage(pkg)}
-                        className="w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-[#164445] flex items-center justify-center transition-colors duration-200"
+                        className="font-montserrat font-semibold w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-[#164445] flex items-center justify-center transition-colors duration-200"
                         disabled={pkg.status === 'closed'}
                       >
                         {pkg.status === 'closed' ? 'Booking Closed' : 'View Info'}
@@ -855,6 +855,54 @@ function MainContent({ setSelectedPackage }: {
         )}
       </div>
 
+
+
+{/* Steps */}
+
+<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 px-4 py-2 sm:px-6 lg:px-8 mt-10">
+  {/* Box 1: Search */}
+  <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+    <div className="bg-blue-100 rounded-full p-3 mr-4">
+      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+    </div>
+    <div>
+      <p className="text-gray-800 font-semibold">Search for a trip</p>
+      <p className="text-gray-600 text-sm">Find your perfect group trip and click on <strong>Book Now</strong> to proceed.</p>
+    </div>
+  </div>
+
+  {/* Box 2: WhatsApp Booking */}
+  <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+    <div className="bg-green-100 rounded-full p-3 mr-4">
+      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+        <path d="M20 4H4c-1.1 0-2 .9-2 2v12l4-4h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" />
+      </svg>
+    </div>
+    <div>
+      <p className="text-gray-800 font-semibold">Book via WhatsApp</p>
+      <p className="text-gray-600 text-sm">Clicking <strong>Book Now</strong> takes you to WhatsApp to complete the booking and get a confirmation.</p>
+    </div>
+  </div>
+
+  {/* Box 3: Updates */}
+  <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+    <div className="bg-yellow-100 rounded-full p-3 mr-4">
+    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+</svg>
+
+    </div>
+    <div>
+      <p className="text-gray-800 font-semibold">Get Trip Updates</p>
+      <p className="text-gray-600 text-sm">After confirmation, we’ll keep you posted with updates and reminders.</p>
+    </div>
+  </div>
+</div>
+
+
+
       {/* Partner Carousel Section */}
       <div className="bg-background-light py-2">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -862,9 +910,50 @@ function MainContent({ setSelectedPackage }: {
         </div>
       </div>
 
+      {/*  0000000000000000 */}
+<div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 mt-10">
+      <div
+  className="max-h-[300px] relative rounded-xl overflow-hidden shadow-xl w-full h-80 sm:h-96 md:h-[22rem] bg-cover bg-center"
+  style={{
+    backgroundImage: 'url("https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Screenshot%202025-04-17%20223034.png")'
+  }}
+>
+  {/* Gradient Overlay */}
+  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center justify-start px-4 sm:px-6 md:px-12">
+    <div className="text-white max-w-lg space-y-3">
+      {/* Tagline Header */}
+      <div className="flex items-center gap-2">
+        <svg className="w-5 h-5 text-green-200" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M17.657 16.657L13.414 12l4.243-4.243M6.343 7.343L10.586 12 6.343 16.657" />
+        </svg>
+        <p className="text-green-200 font-medium text-sm sm:text-base tracking-wide">Adventure Escapes</p>
+      </div>
+
+      {/* Main Title */}
+      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
+        Discover Nature’s Magic with Like-Minded Explorers
+      </h2>
+
+      {/* Description */}
+      <p className="text-sm sm:text-base text-white/90">
+        Explore waterfalls, caves, and scenic valleys with a fun travel group.
+      </p>
+
+      {/* CTA Button */}
+      <button className="mt-2 px-4 py-2 bg-green-200 text-black rounded-full text-sm font-semibold">
+        Book Now
+      </button>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+
       {/* Customer Rating Section */}
       <div className="bg-gray-50 py-2">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div>
           <CustomerRating />
         </div>
       </div>

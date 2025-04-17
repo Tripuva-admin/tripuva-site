@@ -200,12 +200,12 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                       <Building2 className="h-5 w-5 text-[#1c5d5e] mt-0.5" />
                       <div>
                         <p className="text-gray-700 font-medium">{pkg.agency.name}</p>
-                        <div className="flex items-center mt-1">
+                        {/*<div className="flex items-center mt-1">
                           {renderStars(pkg.agency.rating)}
                           <span className="ml-2 text-sm text-gray-500">
                             ({pkg.agency.rating.toFixed(1)})
                           </span>
-                        </div>
+                        </div>*/}
                       </div>
                     </div>
                   )}
@@ -249,7 +249,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                                         ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                         : selectedDate === date
                                           ? 'bg-gradient-to-r from-[#FFC74C] to-[#FFD639] text-gray-800 border border-yellow-400'
-                                          : 'bg-[#fffbea] border border-[#F0DDC3] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
+                                          : 'bg-[#fffbea] border border-[#fdeeda] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
                                       }`}
                                   >
                                     {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}
@@ -314,7 +314,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                       <Link
                         to={`/package/${pkg.id}`}
                         onClick={onClose}
-                        className="bg-gradient-to-r from-[#f97316] to-[#fcd34d] text-white font-medium pt-2 pb-2 pl-4 pr-4 rounded-full flex items-center text-sm"
+                        className="bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] text-gray-800 font-medium pt-2 pb-2 pl-4 pr-4 rounded-full flex items-center text-sm"
                       >
                         View full itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
                       </Link>
@@ -348,7 +348,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                   <button
                     onClick={handleBookNow}
                     disabled={!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))}
-                    className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
+                    className={`font-montserrat font-semibold w-full py-3 px-4 rounded-lg font-medium transition-colors ${!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
                         ? 'bg-gray-100 text-gray-900 cursor-not-allowed'
                         : 'bg-[#1c5d5e] hover:bg-[#164445] text-white shadow-sm'
                       }`}

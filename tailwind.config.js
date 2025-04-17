@@ -39,6 +39,7 @@ module.exports = {
         'poppins': ['Poppins', 'sans-serif'],
         'urbanist': ['Urbanist', 'sans-serif'],
         'outfit': ['Outfit', 'sans-serif'],
+        'rubik': ['Rubik', 'sans-serif'],
         'yusei': ['Yusei Magic', 'sans-serif'],
       },
       letterSpacing: {
