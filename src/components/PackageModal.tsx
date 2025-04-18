@@ -249,7 +249,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                                         ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                         : selectedDate === date
                                           ? 'bg-gradient-to-r from-[#FFC74C] to-[#FFD639] text-gray-800 border border-yellow-400'
-                                          : 'bg-[#fffbea] border border-[#fdeeda] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
+                                          : 'bg-[#fff7ea] border border-[#f5ead7] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
                                       }`}
                                   >
                                     {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}

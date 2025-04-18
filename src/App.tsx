@@ -439,8 +439,8 @@ function MainContent({ setSelectedPackage }: {
         <div className="relative w-full z-10 pt-40 sm:pt-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
-              <h2 className="font-montserrat text-4.5xl sm:text-4xl md:text-4xl lg:text-5xl text-gray-200 sm:tracking-tight">
-              Come<span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent"> solo</span> Leave with a <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">crew</span>
+              <h2 className="font-montserrat text-3xl sm:text-2xl md:text-4xl lg:text-5xl text-gray-200 sm:tracking-tight">
+              Come<span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent"> solo</span> <br className="md:hidden"></br> Leave with a <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">crew</span>
               </h2>
             </Link>
             
@@ -449,7 +449,24 @@ function MainContent({ setSelectedPackage }: {
 
             {/* Search and Filters */}
             <div className="max-w-6xl mx-auto px-4 pt-20 pb-10">
-            <p className="font-montserrat font-semibold text-green-200 text-sm whitespace-pre mb-5 "> E X P L O R E  /  C O N N E C T  /  E X P E R I E N C E</p>
+            {/* Mobile View (below sm) */}
+<div className="block sm:hidden text-center mb-5">
+  <p className="font-montserrat font-semibold text-green-200 text-xs whitespace-pre">
+    E X P L O R E   /   E X P E R I E N C E
+  </p>
+    
+</div>
+
+{/* Desktop & Tablet View (sm and up) */}
+<div className="hidden sm:block text-center mb-5">
+  <p className="font-montserrat font-semibold text-green-200 text-sm lg:text-base whitespace-pre">
+    E X P L O R E   /   C O N N E C T   /   E X P E R I E N C E
+  </p>
+</div>
+
+
+
+
   <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
     {[
       { name: "Goa", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80` },
@@ -484,32 +501,21 @@ function MainContent({ setSelectedPackage }: {
 
       {/* Popular Destinations */}
       
-        <div className="flex justify-center items-center mb-4 mt-4">
-
-          {filters.destination && (
-            <button
-              onClick={clearDestination}
-              className="flex items-center text-black"
-            >
-              <X className="h-5 w-5 mr-1" />
-              Clear Selection
-            </button>
-          )}
-        </div>
+        
 
         
     
 
       {/* Tags Filter */}
-      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
-  <div className="font-montserrat bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] rounded-2xl p-4 border border-gray-200 shadow-md">
+      <div className="max-w-7xl mx-auto mt-2 px-4 py-2 sm:px-6 lg:px-8">
+  <div className="font-montserrat bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] rounded-2xl p-2 pb-4 pt-4 border border-gray-200 shadow-md">
     <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
     <div className="flex flex-wrap gap-3 justify-center">
       {AVAILABLE_TAGS.map(tag => (
         <button
           key={tag}
           onClick={() => handleTagToggle(tag)}
-          className={`font-montserrat px-5 py-2 rounded-lg text-sm font-medium transition-all duration-200 hover:scale-[1.02] ${
+          className={`font-montserrat px-5 py-2 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 hover:scale-[1.02] ${
             filters.tags.includes(tag)
               ? 'bg-black text-white shadow-md'
               : 'bg-white text-gray-700 hover:bg-black border hover:text-white border-gray-200 shadow-sm'
@@ -535,7 +541,7 @@ function MainContent({ setSelectedPackage }: {
 
 
 
-      <div className="max-w-7xl mx-auto mt-5 mb-5 px-4 py-2 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto mt-0 mb-5 px-4 py-2 sm:px-6 lg:px-8">
               <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-4">
               
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -637,6 +643,8 @@ function MainContent({ setSelectedPackage }: {
                 )}
               </div>
             </div>
+
+            
 
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
@@ -779,7 +787,7 @@ function MainContent({ setSelectedPackage }: {
                                   key={index}
                                   className={`${isPastDate
                                     ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                    : 'bg-[#fffbea] border border-[#fdeeda] text-[#92400e]'
+                                    : 'bg-[#fff7ea] border border-[#f5ead7] text-[#92400e]'
                                     } border text-sm py-1 px-2 rounded`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {
