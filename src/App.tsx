@@ -515,7 +515,7 @@ function MainContent({ setSelectedPackage }: {
         <button
           key={tag}
           onClick={() => handleTagToggle(tag)}
-          className={`font-montserrat px-5 py-2 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 hover:scale-[1.02] ${
+          className={`font-montserrat px-3 py-2 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 hover:scale-[1.02] ${
             filters.tags.includes(tag)
               ? 'bg-black text-white shadow-md'
               : 'bg-white text-gray-700 hover:bg-black border hover:text-white border-gray-200 shadow-sm'
