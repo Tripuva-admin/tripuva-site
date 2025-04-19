@@ -173,7 +173,7 @@ function Header({ user }: HeaderProps) {
 
         {/* Mobile menu with smooth transition */}
         <div
-          className={`sm:hidden fixed top-24 left-4 right-4 z-50 rounded-lg shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
+          className={`sm:hidden fixed top-23 left-4 right-4 z-50 rounded-lg shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
             } overflow-hidden`}
         >
           <nav className="mt-4 pb-4 px-4">
@@ -775,7 +775,7 @@ function MainContent({ setSelectedPackage }: {
                                   key={index}
                                   className={`${isPastDate
                                     ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                    : 'bg-gradient-to-r from-[#FEF3E7] to-[#FDF1F2] text-[#92400e]'
+                                    : 'bg-gradient-to-r from-[#FBF3DF] to-[#F9EFD4] text-[#92400e]'
                                     } text-sm py-1 px-2 rounded`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {
@@ -911,7 +911,7 @@ function MainContent({ setSelectedPackage }: {
       <div
   className="max-h-[300px] relative rounded-xl overflow-hidden shadow-xl w-full h-80 sm:h-96 md:h-[22rem] bg-cover bg-center"
   style={{
-    backgroundImage: 'url("https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Screenshot%202025-04-17%20223034.png")'
+    backgroundImage: 'url("https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/bga.avif")'
   }}
 >
   {/* Gradient Overlay */}

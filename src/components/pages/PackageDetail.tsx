@@ -229,11 +229,11 @@ const PackageDetail: React.FC = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div className="flex items-center space-x-3 text-gray-700">
                   <Clock className="h-5 w-5 text-[#1c5d5e]" />
-                  <span className="text-sm md:text-base">{pkg.duration} days</span>
+                  <span className="text-md md:text-base">{pkg.duration} days</span>
                 </div>
                 <div className="flex items-center space-x-3 text-gray-700">
                   <Users className="h-5 w-5 text-[#1c5d5e]" />
-                  <span className="text-sm md:text-base">{pkg.group_size} people</span>
+                  <span className="text-md md:text-base">{pkg.group_size} people</span>
                 </div>
               </div>
             </div>
@@ -274,7 +274,7 @@ const PackageDetail: React.FC = () => {
                             {dayGroup.activities.map((activity: string, idx: number) => (
                               <div key={idx} className="flex items-start gap-3">
                                 <div className="w-1.5 h-1.5 rounded-full bg-[#1c5d5e] mt-2 flex-shrink-0" />
-                                <p className="text-gray-600 leading-relaxed">{activity}</p>
+                                <p className="text-gray-800 leading-relaxed text-md">{activity}</p>
                               </div>
                             ))}
                           </div>
@@ -358,8 +358,8 @@ const PackageDetail: React.FC = () => {
                               isPast || isSoldOut
                                         ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                         : selectedDate === date
-                                          ? 'bg-gradient-to-r from-[#E9A892] to-[#F58A95] text-white'
-                                          : 'bg-gradient-to-r from-[#FEF3E7] to-[#FDF1F2] text-[#92400e] hover:from-[#E9A892] hover:to-[#F58A95] hover:text-white'
+                                          ? 'bg-gradient-to-r from-[#1c5d5e] to-[#1c5d5e] text-white'
+                                          : 'bg-gradient-to-r from-[#FBF3DF] to-[#F9EFD4] text-[#92400e] hover:from-[#1c5d5e] hover:to-[#1c5d5e] hover:text-white'
                             }`}
                           >
                             {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}

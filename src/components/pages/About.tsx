@@ -2,7 +2,7 @@ export function About() {
   return (
     <div className="pt-12 pb-12">
       <div className="max-w-4xl mx-auto px-6 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-gray-700 mb-8">About Us</h1>
+        <h1 className="font-montserrat font-bold text-4xl font-bold text-gray-900 mb-8">About Us</h1>
         
         <div className="prose max-w-none">
           <p className="text-lg text-gray-600 mb-6">
