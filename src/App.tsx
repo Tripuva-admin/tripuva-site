@@ -119,26 +119,14 @@ function Header({ user }: HeaderProps) {
       } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-          <Link to="/" className="flex flex-col items-center justify-center leading-none group">
-            <h1 className="text-3xl sm:text-4xl md:text-4xl font-extrabold font-comfortaa text-yellow-400 tracking-wide">
-              Tripuva
-            </h1>
-            <svg
-              className="w-28 sm:w-32 h-5 mt-1 transition-transform duration-300 group-hover:scale-105"
-              viewBox="0 0 100 20"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M5 15 C 25 5, 75 5, 95 15"
-                stroke="#facc15"
-                strokeWidth="4"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-              />
-            </svg>
-          </Link>
+        <Link to="/" className="flex items-center justify-center">
+  <img
+    src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Tripuva_logo.png"
+    alt="Tripuva Logo"
+    className="h-11 sm:h-12 md:h-14 object-contain transition-transform duration-300 hover:scale-105"
+  />
+</Link>
+
 
           <nav className="hidden sm:flex items-center space-x-6">
             <Link
@@ -721,7 +709,7 @@ function MainContent({ setSelectedPackage }: {
             <div ref={packagesRef} id="packages-grid" className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 min-h-[200px]">
               {currentPackages.map((pkg) => (
                 <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden h-full">
-                  <div className="relative h-48">
+                  <div className="relative h-60">
                     <img
                       src={pkg.image}
                       alt={pkg.title}
@@ -736,7 +724,7 @@ function MainContent({ setSelectedPackage }: {
                       </span>
                     </div>
                   </div>
-                  <div className="p-6 flex flex-col justify-between h-[calc(100%-12rem)]">
+                  <div className="p-6 flex flex-col justify-between h-[calc(100%-15rem)]">
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-grow">
@@ -787,8 +775,8 @@ function MainContent({ setSelectedPackage }: {
                                   key={index}
                                   className={`${isPastDate
                                     ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                    : 'bg-[#fff7ea] border border-[#f5ead7] text-[#92400e]'
-                                    } border text-sm py-1 px-2 rounded`}
+                                    : 'bg-gradient-to-r from-[#FEF3E7] to-[#FDF1F2] text-[#92400e]'
+                                    } text-sm py-1 px-2 rounded`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {
                                     day: '2-digit',

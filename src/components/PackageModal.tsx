@@ -248,8 +248,8 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                                     className={`text-sm py-1 px-2.5 rounded-md transition-colors whitespace-nowrap ${isPast || isSoldOut
                                         ? 'bg-gray-50 border-gray-200 text-gray-400 cursor-not-allowed opacity-50'
                                         : selectedDate === date
-                                          ? 'bg-gradient-to-r from-[#FFC74C] to-[#FFD639] text-gray-800 border border-yellow-400'
-                                          : 'bg-[#fff7ea] border border-[#f5ead7] text-[#92400e] hover:bg-gradient-to-r from-[#FFC74C] to-[#FFD639] hover:text-gray-800'
+                                          ? 'bg-gradient-to-r from-[#E9A892] to-[#F58A95] text-white'
+                                          : 'bg-gradient-to-r from-[#FEF3E7] to-[#FDF1F2] text-[#92400e] hover:from-[#E9A892] hover:to-[#F58A95] hover:text-white'
                                       }`}
                                   >
                                     {`${String(dateObj.getDate()).padStart(2, '0')} ${dateObj.toLocaleDateString('en-GB', { month: 'short' })} ${dateObj.getFullYear().toString().slice(-2)}`}
@@ -311,25 +311,19 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                   <div className="mb-6">
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-lg font-semibold">Your Journey</span>
-                      <Link
-                        to={`/package/${pkg.id}`}
-                        onClick={onClose}
-                        className="bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] text-gray-800 font-medium pt-2 pb-2 pl-4 pr-4 rounded-full flex items-center text-sm"
-                      >
-                        View full itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
-                      </Link>
+                      
                     </div>
                     <div className="space-y-3">
                       {pkg.itenary.split('\n').map((item: string, index: number) => {
                         const [day, ...details] = item.split(':');
                         const description = details.join(':').trim();
                         return (
-                          <div key={index} className="flex items-center space-x-3 bg-[#1c5d5e]/5 rounded-lg p-3">
-                            <div className="flex-shrink-0 w-11 h-11 bg-[#1c5d5e] rounded-full flex items-center justify-center text-white font-normal text-xs">
+                          <div key={index} className="flex items-center space-x-3 bg-[#1c5d5e]/5 rounded-lg p-0">
+                            <div className="font-montserrat font-medium flex-shrink-0 w-12 h-12 bg-[#1c5d5e] rounded-md flex items-center justify-center text-white font-normal text-xs">
                               {`Day ${index + 1}`}
                             </div>
                             <div className="flex-1 min-w-0 flex flex-col justify-center">
-                              <span className="text-md font-medium text-[#1c5d5e] block">{day}</span>
+                              <span className="text-md font-normal text-gray-900 block">{day}</span>
                               {description && (
                                 <p className="text-sm text-gray-600 leading-relaxed">{description}</p>
                               )}
@@ -344,32 +338,64 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
 
               {/* Fixed Booking Section */}
               <div className="border-t bg-white">
-                <div className="p-4">
-                  <button
-                    onClick={handleBookNow}
-                    disabled={!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))}
-                    className={`font-montserrat font-semibold w-full py-3 px-4 rounded-lg font-medium transition-colors ${!selectedDate || Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
-                        ? 'bg-gray-100 text-gray-900 cursor-not-allowed'
-                        : 'bg-[#1c5d5e] hover:bg-[#164445] text-white shadow-sm'
-                      }`}
-                  >
-                    {availableDates.length === 0
-                      ? 'Exciting departures being planned - Check back soon!'
-                      : Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0)))
-                        ? 'All dates have passed - Check back for new dates!'
-                        : !selectedDate
-                          ? 'Select a date to book'
-                          : 'Book Now'
-                    }
-                  </button>
+  <div className="p-4">
+    <div className="flex flex-row gap-2 items-stretch">
 
-                  {selectedDate && !Object.keys(pkg.start_date_2).every(date => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))) && (
-                    <p className="text-sm text-[#1c5d5e] mt-2 text-center">
-                      Click 'Book Now' to reserve your spot through WhatsApp • <span className="font-bold">PAY ₹ {pkg.advance?.toLocaleString() || 1} NOW</span>
-                    </p>
-                  )}
-                </div>
-              </div>
+      <Link
+        to={`/package/${pkg.id}`}
+        onClick={onClose}
+        className="font-montserrat font-semibold flex-1 min-w-0 bg-white border border-[#1c5d5e] hover:bg-[#164445] hover:text-white text-gray-800 font-medium py-3 px-4 rounded-lg flex items-center justify-center text-[#1c5d5e] text-sm"
+      >
+        Full Itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
+      </Link>
+
+      <button
+        onClick={handleBookNow}
+        disabled={
+          !selectedDate ||
+          Object.keys(pkg.start_date_2).every(
+            (date) => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
+          )
+        }
+        className={`font-montserrat font-semibold flex-1 min-w-0 py-3 px-4 rounded-lg transition-colors text-sm flex items-center justify-center ${
+          !selectedDate ||
+          Object.keys(pkg.start_date_2).every(
+            (date) => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
+          )
+            ? 'bg-gray-100 text-gray-900 cursor-not-allowed'
+            : 'bg-[#1c5d5e] hover:bg-[#164445] text-white shadow-sm'
+        }`}
+      >
+        {availableDates.length === 0
+          ? 'Exciting departures being planned - Check back soon!'
+          : Object.keys(pkg.start_date_2).every(
+              (date) => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
+            )
+          ? 'All dates have passed - Check back for new dates!'
+          : !selectedDate
+          ? 'Select a date to book'
+          : 'Book Now'}
+      </button>
+    </div>
+
+    {selectedDate &&
+      !Object.keys(pkg.start_date_2).every(
+        (date) => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
+      ) && (
+        <p className="text-sm text-[#1c5d5e] mt-2 text-center">
+          Click 'Book Now' to reserve your spot through WhatsApp •{' '}
+          <span className="font-bold">PAY ₹ {pkg.advance?.toLocaleString() || 1} NOW</span>
+        </p>
+      )}
+  </div>
+</div>
+
+
+
+
+
+
+
             </div>
           </div>
         </div>
