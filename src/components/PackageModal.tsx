@@ -344,7 +344,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
       <Link
         to={`/package/${pkg.id}`}
         onClick={onClose}
-        className="font-montserrat font-semibold flex-1 min-w-0 bg-gray-200 hover:bg-[#164445] hover:text-white text-gray-800 font-medium py-3 px-4 rounded-lg flex items-center justify-center text-[#1c5d5e] text-sm"
+        className="font-montserrat font-semibold flex-1 min-w-0 bg-white border border-[#1c5d5e] hover:bg-[#164445] hover:text-white text-gray-800 font-medium py-3 px-4 rounded-lg flex items-center justify-center text-[#1c5d5e] text-sm"
       >
         Full Itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
       </Link>
