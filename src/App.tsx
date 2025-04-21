@@ -119,13 +119,13 @@ function Header({ user }: HeaderProps) {
       } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
-        <Link to="/" className="flex items-center justify-center">
-  <img
-    src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Tripuva_logo.png"
-    alt="Tripuva Logo"
-    className="h-11 sm:h-12 md:h-14 object-contain transition-transform duration-300 hover:scale-105"
-  />
-</Link>
+          <Link to="/" className="flex items-center justify-center">
+            <img
+              src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Tripuva_logo.png"
+              alt="Tripuva Logo"
+              className="h-11 sm:h-12 md:h-14 object-contain transition-transform duration-300 hover:scale-105"
+            />
+          </Link>
 
 
           <nav className="hidden sm:flex items-center space-x-6">
@@ -428,211 +428,194 @@ function MainContent({ setSelectedPackage }: {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
               <h2 className="font-montserrat text-3xl sm:text-2xl md:text-4xl lg:text-5xl text-gray-200 sm:tracking-tight">
-              Come<span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent"> solo</span> <br className="md:hidden"></br> Leave with a <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">crew</span>
+                Come<span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent"> solo</span> <br className="md:hidden"></br> Leave with a <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">crew</span>
               </h2>
             </Link>
-            
-            
-
 
             {/* Search and Filters */}
             <div className="max-w-6xl mx-auto px-4 pt-20 pb-10">
-            {/* Mobile View (below sm) */}
-<div className="block sm:hidden text-center mb-5">
-  <p className="font-montserrat font-semibold text-green-200 text-xs whitespace-pre">
-    E X P L O R E   /   E X P E R I E N C E
-  </p>
-    
-</div>
+              {/* Mobile View (below sm) */}
+              <div className="block sm:hidden text-center mb-5">
+                <p className="font-montserrat font-semibold text-green-200 text-xs whitespace-pre">
+                  E X P L O R E   /   E X P E R I E N C E
+                </p>
 
-{/* Desktop & Tablet View (sm and up) */}
-<div className="hidden sm:block text-center mb-5">
-  <p className="font-montserrat font-semibold text-green-200 text-sm lg:text-base whitespace-pre">
-    E X P L O R E   /   C O N N E C T   /   E X P E R I E N C E
-  </p>
-</div>
+              </div>
 
+              {/* Desktop & Tablet View (sm and up) */}
+              <div className="hidden sm:block text-center mb-5">
+                <p className="font-montserrat font-semibold text-green-200 text-sm lg:text-base whitespace-pre">
+                  E X P L O R E   /   C O N N E C T   /   E X P E R I E N C E
+                </p>
+              </div>
 
+              {/* Popular Destinations */}
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                {[
+                  { name: "Manali", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80` },
+                  { name: "Shillong", image: `${import.meta.env.VITE_POPULAR_DESTINATION_MANALI_IMAGE}?auto=format&fit=crop&q=80` },
+                  { name: "Jibhi", image: `${import.meta.env.VITE_POPULAR_DESTINATION_JAIPUR_IMAGE}?auto=format&fit=crop&q=80` },
+                  { name: "Chopta", image: `${import.meta.env.VITE_POPULAR_DESTINATION_VARANASI_IMAGE}?auto=format&fit=crop&q=80` }
+                ].map((city) => (
+                  <div key={city.name} className="relative group">
+                    <button
+                      onClick={() => handleFilterChange({ destination: city.name })}
+                      className={`relative w-full overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300 aspect-[4/5] bg-gray-100 ${filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+                    >
+                      <img
+                        src={city.image}
+                        alt={city.name}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                      <div className="absolute inset-0" />
 
-
-  <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-    {[
-      { name: "Goa", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80` },
-      { name: "Manali", image: `${import.meta.env.VITE_POPULAR_DESTINATION_MANALI_IMAGE}?auto=format&fit=crop&q=80` },
-      { name: "Jaipur", image: `${import.meta.env.VITE_POPULAR_DESTINATION_JAIPUR_IMAGE}?auto=format&fit=crop&q=80` },
-      { name: "Varanasi", image: `${import.meta.env.VITE_POPULAR_DESTINATION_VARANASI_IMAGE}?auto=format&fit=crop&q=80` }
-    ].map((city) => (
-      <div key={city.name} className="relative group">
-        <button
-          onClick={() => handleFilterChange({ destination: city.name })}
-          className={`relative w-full overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300 aspect-[4/5] bg-gray-100 ${filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''}`}
-        >
-          <img
-            src={city.image}
-            alt={city.name}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-          />
-          <div className="absolute inset-0" />
-         
-        </button>
-      </div>
-    ))}
-  </div>
-</div>
-
-
-
-            
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Popular Destinations */}
-      
-        
-
-        
-    
-
       {/* Tags Filter */}
       <div className="max-w-7xl mx-auto mt-2 px-4 py-2 sm:px-6 lg:px-8">
-  <div className="font-montserrat bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] rounded-2xl p-2 pb-4 pt-4 border border-gray-200 shadow-md">
-    <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
-    <div className="flex flex-wrap gap-3 justify-center">
-      {AVAILABLE_TAGS.map(tag => (
-        <button
-          key={tag}
-          onClick={() => handleTagToggle(tag)}
-          className={`font-montserrat px-3 py-2 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 hover:scale-[1.02] ${
-            filters.tags.includes(tag)
-              ? 'bg-black text-white shadow-md'
-              : 'bg-white text-gray-700 hover:bg-black border hover:text-white border-gray-200 shadow-sm'
-          }`}
-        >
-          {tag}
-        </button>
-      ))}
-    </div>
-    {filters.tags.length > 0 && (
-      <div className="mt-6 flex justify-center">
-        <button
-          onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
-          className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
-        >
-          <X className="h-4 w-4" />
-          Clear Tags
-        </button>
+        <div className="font-montserrat bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] rounded-2xl p-2 pb-4 pt-4 border border-gray-200 shadow-md">
+          <h3 className="text-xl font-semibold text-gray-800 mb-6 text-center">Filter by Experience</h3>
+          <div className="flex flex-wrap gap-3 justify-center">
+            {AVAILABLE_TAGS.map(tag => (
+              <button
+                key={tag}
+                onClick={() => handleTagToggle(tag)}
+                className={`font-montserrat px-3 py-2 rounded-lg text-xs lg:text-sm font-semibold transition-all duration-200 hover:scale-[1.02] ${filters.tags.includes(tag)
+                    ? 'bg-black text-white shadow-md'
+                    : 'bg-white text-gray-700 hover:bg-black border hover:text-white border-gray-200 shadow-sm'
+                  }`}
+              >
+                {tag}
+              </button>
+            ))}
+          </div>
+          {filters.tags.length > 0 && (
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
+                className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
+              >
+                <X className="h-4 w-4" />
+                Clear Tags
+              </button>
+            </div>
+          )}
+        </div>
       </div>
-    )}
-  </div>
-</div>
 
 
 
       <div className="max-w-7xl mx-auto mt-0 mb-5 px-4 py-2 sm:px-6 lg:px-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-4">
-              
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {/* Destination Field */}
-                  <div className="relative group">
-                    <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      <MapPin className="h-4 w-4 text-[#1c5d5e]" />
-                      Destination
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="text"
-                        placeholder="Where do you want to go?"
-                        className="w-full pl-4 pr-3 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
-                        value={filters.destination}
-                        onChange={(e) => handleFilterChange({ destination: e.target.value })}
-                      />
-                      {filters.destination && (
-                        <button
-                          onClick={clearDestination}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
-                        >
-                          <X className="h-4 w-4" />
-                        </button>
-                      )}
-                    </div>
-                  </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-4">
 
-                  {/* Price Field */}
-                  <div className="relative group">
-                    <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      <IndianRupee className="h-4 w-4 text-[#1c5d5e]" />
-                      Budget
-                    </label>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        placeholder="Max budget"
-                        min="0"
-                        className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
-                        value={filters.maxPrice}
-                        onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
-                      />
-                      <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
-                        <span className="text-sm font-medium">₹</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Date Field */}
-                  <div className="relative group">
-                    <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-[#1c5d5e]" />
-                      Travel Date
-                    </label>
-                    <div className="relative datepicker-wrapper">
-                      <DatePicker
-                        selected={filters.startDate ? new Date(filters.startDate) : null}
-                        onChange={(date: Date | null) => {
-                          handleFilterChange({
-                            startDate: date ? date.toISOString().split('T')[0] : ''
-                          });
-                        }}
-                        minDate={new Date()}
-                        placeholderText="Select travel date"
-                        dateFormat="dd MMM yyyy"
-                        showPopperArrow={false}
-                        isClearable
-                        customInput={
-                          <input
-                            type="text"
-                            className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 text-gray-600 cursor-pointer"
-                            readOnly
-                          />
-                        }
-                        className="w-full"
-                        calendarClassName="shadow-lg rounded-lg border border-gray-100 bg-white"
-                        popperClassName="z-[1000]"
-                        popperPlacement="bottom-start"
-                      />
-                      <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
-                        <Calendar className="h-4 w-4" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Reset Button */}
-                {(filters.destination || filters.maxPrice || filters.startDate) && (
-                  <div className="mt-2 flex justify-center">
-                    <button
-                      onClick={resetFilters}
-                      className="font-montserrat px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
-                    >
-                      <X className="h-4 w-4" />
-                      Reset All Filters
-                    </button>
-                  </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Destination Field */}
+            <div className="relative group">
+              <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <MapPin className="h-4 w-4 text-[#1c5d5e]" />
+                Destination
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Where do you want to go?"
+                  className="w-full pl-4 pr-3 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
+                  value={filters.destination}
+                  onChange={(e) => handleFilterChange({ destination: e.target.value })}
+                />
+                {filters.destination && (
+                  <button
+                    onClick={clearDestination}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 hover:bg-gray-100 rounded-full"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 )}
               </div>
             </div>
 
-            
+            {/* Price Field */}
+            <div className="relative group">
+              <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <IndianRupee className="h-4 w-4 text-[#1c5d5e]" />
+                Budget
+              </label>
+              <div className="relative">
+                <input
+                  type="number"
+                  placeholder="Max budget"
+                  min="0"
+                  className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 placeholder:text-gray-400"
+                  value={filters.maxPrice}
+                  onChange={(e) => handleFilterChange({ maxPrice: e.target.value })}
+                />
+                <div className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none">
+                  <span className="text-sm font-medium">₹</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Date Field */}
+            <div className="relative group">
+              <label className="font-montserrat block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+                <Calendar className="h-4 w-4 text-[#1c5d5e]" />
+                Travel Date
+              </label>
+              <div className="relative datepicker-wrapper">
+                <DatePicker
+                  selected={filters.startDate ? new Date(filters.startDate) : null}
+                  onChange={(date: Date | null) => {
+                    handleFilterChange({
+                      startDate: date ? date.toISOString().split('T')[0] : ''
+                    });
+                  }}
+                  minDate={new Date()}
+                  placeholderText="Select travel date"
+                  dateFormat="dd MMM yyyy"
+                  showPopperArrow={false}
+                  isClearable
+                  customInput={
+                    <input
+                      type="text"
+                      className="w-full pl-4 pr-10 py-3 rounded-lg border-2 border-gray-200 bg-white/80 shadow-sm focus:border-[#1c5d5e] focus:ring focus:ring-[#1c5d5e]/10 outline-none transition-all duration-200 text-gray-600 cursor-pointer"
+                      readOnly
+                    />
+                  }
+                  className="w-full"
+                  calendarClassName="shadow-lg rounded-lg border border-gray-100 bg-white"
+                  popperClassName="z-[1000]"
+                  popperPlacement="bottom-start"
+                />
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
+                  <Calendar className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Reset Button */}
+          {(filters.destination || filters.maxPrice || filters.startDate) && (
+            <div className="mt-2 flex justify-center">
+              <button
+                onClick={resetFilters}
+                className="font-montserrat px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
+              >
+                <X className="h-4 w-4" />
+                Reset All Filters
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+
 
       {/* All Trips */}
       <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
@@ -853,49 +836,49 @@ function MainContent({ setSelectedPackage }: {
 
 
 
-{/* Steps */}
+      {/* Steps */}
 
-<div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 px-4 py-2 sm:px-6 lg:px-8 mt-10">
-  {/* Box 1: Search */}
-  <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
-    <div className="bg-blue-100 rounded-full p-3 mr-4">
-      <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-      </svg>
-    </div>
-    <div>
-      <p className="text-gray-800 font-semibold">Search for a trip</p>
-      <p className="text-gray-600 text-sm">Find your perfect group trip and click on <strong>Book Now</strong> to proceed.</p>
-    </div>
-  </div>
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 px-4 py-2 sm:px-6 lg:px-8 mt-10">
+        {/* Box 1: Search */}
+        <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+          <div className="bg-blue-100 rounded-full p-3 mr-4">
+            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-gray-800 font-semibold">Search for a trip</p>
+            <p className="text-gray-600 text-sm">Find your perfect group trip and click on <strong>Book Now</strong> to proceed.</p>
+          </div>
+        </div>
 
-  {/* Box 2: WhatsApp Booking */}
-  <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
-    <div className="bg-green-100 rounded-full p-3 mr-4">
-      <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-        <path d="M20 4H4c-1.1 0-2 .9-2 2v12l4-4h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" />
-      </svg>
-    </div>
-    <div>
-      <p className="text-gray-800 font-semibold">Book via WhatsApp</p>
-      <p className="text-gray-600 text-sm">Clicking <strong>Book Now</strong> takes you to WhatsApp to complete the booking and get a confirmation.</p>
-    </div>
-  </div>
+        {/* Box 2: WhatsApp Booking */}
+        <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+          <div className="bg-green-100 rounded-full p-3 mr-4">
+            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M20 4H4c-1.1 0-2 .9-2 2v12l4-4h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" />
+            </svg>
+          </div>
+          <div>
+            <p className="text-gray-800 font-semibold">Book via WhatsApp</p>
+            <p className="text-gray-600 text-sm">Clicking <strong>Book Now</strong> takes you to WhatsApp to complete the booking and get a confirmation.</p>
+          </div>
+        </div>
 
-  {/* Box 3: Updates */}
-  <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
-    <div className="bg-yellow-100 rounded-full p-3 mr-4">
-    <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-  <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-</svg>
+        {/* Box 3: Updates */}
+        <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+          <div className="bg-yellow-100 rounded-full p-3 mr-4">
+            <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
 
-    </div>
-    <div>
-      <p className="text-gray-800 font-semibold">Get Trip Updates</p>
-      <p className="text-gray-600 text-sm">After confirmation, we’ll keep you posted with updates and reminders.</p>
-    </div>
-  </div>
-</div>
+          </div>
+          <div>
+            <p className="text-gray-800 font-semibold">Get Trip Updates</p>
+            <p className="text-gray-600 text-sm">After confirmation, we’ll keep you posted with updates and reminders.</p>
+          </div>
+        </div>
+      </div>
 
 
 
@@ -907,42 +890,42 @@ function MainContent({ setSelectedPackage }: {
       </div>
 
       {/*  0000000000000000 */}
-<div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 mt-10">
-      <div
-  className="max-h-[300px] relative rounded-xl overflow-hidden shadow-xl w-full h-80 sm:h-96 md:h-[22rem] bg-cover bg-center"
-  style={{
-    backgroundImage: 'url("https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/bga.avif")'
-  }}
->
-  {/* Gradient Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center justify-start px-4 sm:px-6 md:px-12">
-    <div className="text-white max-w-lg space-y-3">
-      {/* Tagline Header */}
-      <div className="flex items-center gap-2">
-        <svg className="w-5 h-5 text-green-200" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <path d="M17.657 16.657L13.414 12l4.243-4.243M6.343 7.343L10.586 12 6.343 16.657" />
-        </svg>
-        <p className="text-green-200 font-medium text-sm sm:text-base tracking-wide">Adventure Escapes</p>
+      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 mt-10">
+        <div
+          className="max-h-[300px] relative rounded-xl overflow-hidden shadow-xl w-full h-80 sm:h-96 md:h-[22rem] bg-cover bg-center"
+          style={{
+            backgroundImage: 'url("https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/bga.avif")'
+          }}
+        >
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center justify-start px-4 sm:px-6 md:px-12">
+            <div className="text-white max-w-lg space-y-3">
+              {/* Tagline Header */}
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-green-200" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M17.657 16.657L13.414 12l4.243-4.243M6.343 7.343L10.586 12 6.343 16.657" />
+                </svg>
+                <p className="text-green-200 font-medium text-sm sm:text-base tracking-wide">Adventure Escapes</p>
+              </div>
+
+              {/* Main Title */}
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
+                Discover Nature’s Magic with Like-Minded Explorers
+              </h2>
+
+              {/* Description */}
+              <p className="text-sm sm:text-base text-white/90">
+                Explore waterfalls, caves, and scenic valleys with a fun travel group.
+              </p>
+
+              {/* CTA Button */}
+              <button className="mt-2 px-4 py-2 bg-green-200 text-black rounded-full text-sm font-semibold">
+                Book Now
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Main Title */}
-      <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
-        Discover Nature’s Magic with Like-Minded Explorers
-      </h2>
-
-      {/* Description */}
-      <p className="text-sm sm:text-base text-white/90">
-        Explore waterfalls, caves, and scenic valleys with a fun travel group.
-      </p>
-
-      {/* CTA Button */}
-      <button className="mt-2 px-4 py-2 bg-green-200 text-black rounded-full text-sm font-semibold">
-        Book Now
-      </button>
-    </div>
-  </div>
-</div>
-</div>
 
 
 
