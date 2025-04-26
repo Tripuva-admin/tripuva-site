@@ -35,6 +35,12 @@ if [ ! -s .env ]; then
     exit 1
 fi
 
+# Debug: Print environment variables
+echo "📋 Environment Variables:"
+echo "------------------------"
+cat .env
+echo "------------------------"
+
 # Check for required environment variables
 REQUIRED_VARS=(
     "VITE_SUPABASE_ANON_KEY"
