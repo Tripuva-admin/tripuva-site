@@ -4,8 +4,8 @@ export function About() {
       <div className="max-w-4xl mx-auto px-6 sm:px-6 lg:px-8">
         <h1 className="font-montserrat font-bold text-4xl font-bold text-gray-900 mb-8">About Us</h1>
         
-        <div className="prose max-w-none">
-          <p className="text-lg text-gray-600 mb-6">
+        <div className="max-w-none">
+          <p className="text-gray-600 mb-6">
             Welcome to Tripuva, your premier destination for unforgettable group travel experiences across India. Founded in 2024, we've made it our mission to connect like-minded travelers and create memories that last a lifetime.
           </p>
 

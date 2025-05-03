@@ -131,7 +131,7 @@ function Header({ user }: HeaderProps) {
           <nav className="hidden sm:flex items-center space-x-6">
             <Link
               to="/top-places"
-              className="font-montserrat bg-gradient-to-r from-yellow-400 to-yellow-500 text-black px-4 py-2 rounded-md text-base font-semibold flex items-center"
+              className="font-montserrat bg-gradient-to-r from-yellow-500 to-yellow-500 text-black px-4 py-2 rounded-md text-base font-semibold flex items-center"
             >
               <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
               Top Trips
@@ -424,7 +424,7 @@ function MainContent({ setSelectedPackage }: {
           }}
         />
         <div className="absolute inset-0 bg-black bg-opacity-60" />
-        <div className="relative w-full z-10 pt-40 sm:pt-40">
+        <div className="relative w-full pt-40 sm:pt-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
               <h2 className="font-montserrat text-3xl sm:text-2xl md:text-4xl lg:text-5xl text-gray-200 sm:tracking-tight">
@@ -588,9 +588,9 @@ function MainContent({ setSelectedPackage }: {
                       readOnly
                     />
                   }
-                  className="w-full"
+                  className="w-full relative"
                   calendarClassName="shadow-lg rounded-lg border border-gray-100 bg-white"
-                  popperClassName="z-[1000]"
+                  popperClassName="z-20"
                   popperPlacement="bottom-start"
                 />
                 <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-500">
@@ -618,17 +618,23 @@ function MainContent({ setSelectedPackage }: {
 
 
       {/* All Trips */}
-      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
-        <div className="relative mb-4 flex items-center justify-center">
-          {/* Centered Heading */}
-          <h2 className="font-montserrat text-2xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
-            All Trips
-          </h2>
 
-          {/* Sort by Dropdown on Right */}
-          <div className="ml-auto">
-            <div className="relative">
-              <button
+      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
+      <div className="mb-4 grid grid-cols-3 items-center">
+  {/* Empty first column */}
+  <div className="col-span-1"></div>
+  
+  {/* Centered heading */}
+  <div className="col-span-1 flex justify-center">
+    <h2 className="font-montserrat text-2xl font-bold text-gray-900">
+      All Trips
+    </h2>
+  </div>
+  
+  {/* Sort dropdown aligned right */}
+  <div className="col-span-1 flex justify-end">
+    <div className="inline-block">
+    <button
                 onClick={() => setSortMenuOpen(!sortMenuOpen)}
                 className="font-montserrat font-medium text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
               >
@@ -636,7 +642,7 @@ function MainContent({ setSelectedPackage }: {
                 <ChevronDown className="h-4 w-4 ml-1" />
               </button>
               {sortMenuOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg z-10">
+                <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
                   <button
                     onClick={() => handleSort('price')}
                     className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
@@ -657,9 +663,9 @@ function MainContent({ setSelectedPackage }: {
                   </button>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
+    </div>
+  </div>
+</div>
 
 
         {loading ? (
@@ -692,20 +698,13 @@ function MainContent({ setSelectedPackage }: {
             <div ref={packagesRef} id="packages-grid" className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 min-h-[200px]">
               {currentPackages.map((pkg) => (
                 <div key={pkg.id} className="bg-white rounded-lg shadow-md overflow-hidden h-full">
-                  <div className="relative h-60">
+                  <div className="h-60">
                     <img
                       src={pkg.image}
                       alt={pkg.title}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-4 right-4">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${pkg.status === 'open'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                        }`}>
-                        {pkg.status.charAt(0).toUpperCase() + pkg.status.slice(1)}
-                      </span>
-                    </div>
+                    
                   </div>
                   <div className="p-6 flex flex-col justify-between h-[calc(100%-15rem)]">
                     <div className="flex-1">
@@ -777,6 +776,7 @@ function MainContent({ setSelectedPackage }: {
                         </div>
 
                         <div className="flex gap-6">
+                        
                           <div className="flex items-center text-gray-700">
                             <Users className="h-5 w-5 mr-2" />
                             <span>{pkg.group_size} spots</span>
@@ -785,6 +785,14 @@ function MainContent({ setSelectedPackage }: {
                             <Clock className="h-5 w-5 mr-2" />
                             <span>{pkg.duration} days</span>
                           </div>
+                          <div className="top-4 right-4">
+                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${pkg.status === 'open'
+                        ? 'bg-green-100 text-green-800'
+                        : 'bg-red-100 text-red-800'
+                        }`}>
+                        {pkg.status.charAt(0).toUpperCase() + pkg.status.slice(1)}
+                      </span>
+                    </div>
                         </div>
                       </div>
                     </div>
