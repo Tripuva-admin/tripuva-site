@@ -201,11 +201,11 @@ const PackageDetail: React.FC = () => {
         {/* Title Overlay */}
         <div className="absolute bottom-0 left-0 right-0 px-4 pb-10 pt-20 text-white z-10">
           <div className="max-w-7xl mx-auto">
-            <h1 className="font-montserrat text-3xl md:text-4xl lg:text-5xl font-bold mb-3">{pkg.title}</h1>
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-3">{pkg.title}</h1>
             {pkg.agency && (
               <div className="flex items-center space-x-4">
                 <Building2 className="h-5 w-5" />
-                <span className="font-montserrat font-medium">{pkg.agency.name}</span>
+                <span className="font-medium">{pkg.agency.name}</span>
                 {/*<div className="flex items-center">
                   {renderStars(pkg.agency.rating)}
                   <span className="ml-2">({pkg.agency.rating.toFixed(1)})</span>
@@ -223,7 +223,7 @@ const PackageDetail: React.FC = () => {
           <div className="lg:col-span-2 space-y-6 lg:space-y-8">
             {/* Introduction Card */}
             <div className="bg-white rounded-2xl p-5 md:p-6 shadow-xl">
-              <h2 className="font-montserrat text-xl md:text-2xl font-semibold mb-4">Experience Overview</h2>
+              <h2 className="text-xl md:text-2xl font-semibold mb-4">Experience Overview</h2>
               <p className="text-gray-700 leading-relaxed mb-6">{pkg.description}</p>
               
               <div className="grid grid-cols-2 gap-4">
@@ -241,7 +241,7 @@ const PackageDetail: React.FC = () => {
             {/* Itinerary Timeline */}
             {pkg.detailed_itenary && (
               <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
-                <h2 className="font-montserrat text-xl md:text-2xl font-semibold mb-8">Day-by-Day Adventure</h2>
+                <h2 className="text-xl md:text-2xl font-semibold mb-8">Day-by-Day Adventure</h2>
                 <div className="relative">
                   {/* Vertical Timeline Line */}
                   <div className="absolute left-[18px] top-0 bottom-0 w-[2px] bg-[#1c5d5e]/20" />
@@ -288,7 +288,7 @@ const PackageDetail: React.FC = () => {
             {/* Itinerary Inclusion */}
             {pkg.inclusion && (
             <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
-              <h2 className="font-montserrat text-xl md:text-2xl font-semibold mb-4">What's Included</h2>
+              <h2 className="text-xl md:text-2xl font-semibold mb-4">What's Included</h2>
 
               <div className="space-y-2">
                 {pkg.inclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
@@ -305,7 +305,7 @@ const PackageDetail: React.FC = () => {
             {/* Itinerary Exclusion */}
             {pkg.exclusion && (
               <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl">
-                <h2 className="font-montserrat text-xl md:text-2xl font-semibold mb-4">What's not Included</h2>
+                <h2 className="text-xl md:text-2xl font-semibold mb-4">What's not Included</h2>
 
                 <div className="space-y-2">
                   {pkg.exclusion.split('\n').filter(Boolean).map((item: string, idx: number) => (
@@ -327,7 +327,7 @@ const PackageDetail: React.FC = () => {
             <div className="lg:sticky lg:top-24">
               <div className="bg-white rounded-2xl p-6 shadow-xl">
                 <div className="mb-6">
-                  <h3 className="font-montserrat text-lg font-semibold mb-4">Price Details</h3>
+                  <h3 className="text-lg font-semibold mb-4">Price Details</h3>
                   <div className="space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600">Booking Advance</span>
@@ -341,7 +341,7 @@ const PackageDetail: React.FC = () => {
                 </div>
 
                 <div className="mb-6">
-                  <h3 className="font-montserrat text-lg font-semibold mb-4">Available Dates</h3>
+                  <h3 className="text-lg font-semibold mb-4">Available Dates</h3>
                   <div className="grid grid-cols-3 gap-2">
                     {pkg.start_date_2 && Object.entries(pkg.start_date_2).map(([date, slots]: [string, number]) => {
                       const isPast = new Date(date) < new Date(new Date().setHours(0, 0, 0));
@@ -378,7 +378,7 @@ const PackageDetail: React.FC = () => {
                 <button
                   onClick={handleBooking}
                   disabled={!selectedDate}
-                  className={`font-montserrat w-full py-3 px-4 rounded-lg text-white font-medium transition-colors ${
+                  className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-colors ${
                     !selectedDate
                       ? 'bg-gray-100 text-gray-500 cursor-not-allowed'
                       : 'bg-[#1c5d5e] hover:bg-[#164445] shadow-sm'

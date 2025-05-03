@@ -40,6 +40,9 @@ module.exports = {
         'urbanist': ['Urbanist', 'sans-serif'],
         'outfit': ['Outfit', 'sans-serif'],
         'rubik': ['Rubik', 'sans-serif'],
+        'fjallaone': ['Fjalla One','sans-serif'],
+        'lexend': ['Lexend','sans-serif'],
+        'vietnam':['Be Vietnam Pro','sans-serif'],
         'yusei': ['Yusei Magic', 'sans-serif'],
       },
       letterSpacing: {

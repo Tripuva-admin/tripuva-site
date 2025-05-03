@@ -193,7 +193,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
             <div className="w-full md:w-1/2 flex flex-col max-h-[calc(100vh-250px-32px)] md:max-h-[calc(100vh-32px)]">
               <div className="flex-1 overflow-y-auto px-4 py-4 md:p-8">
                 <div className="flex flex-col mb-3 md:mb-4">
-                  <h2 className="font-montserrat text-xl md:text-2xl font-bold text-gray-800">{pkg.title}</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-gray-800">{pkg.title}</h2>
 
                   {pkg.agency && (
                     <div className="mt-2 flex items-start space-x-2">
@@ -319,7 +319,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
                         const description = details.join(':').trim();
                         return (
                           <div key={index} className="flex items-center space-x-3 bg-[#1c5d5e]/5 rounded-lg p-0">
-                            <div className="font-montserrat font-semibold semibold flex-shrink-0 w-12 h-14 bg-[#1c5d5e] rounded-md flex items-center justify-center text-white text-md ml-1">
+                            <div className="font-semibold semibold flex-shrink-0 w-12 h-14 bg-[#1c5d5e] rounded-md flex items-center justify-center text-white text-md ml-1">
                               {`D${index + 1}`}
                             </div>
                             <div className="flex-1 min-w-0 flex flex-col justify-center">
@@ -344,7 +344,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
       <Link
         to={`/package/${pkg.id}`}
         onClick={onClose}
-        className="font-montserrat font-semibold flex-1 min-w-0 bg-white border border-[#1c5d5e] hover:bg-[#164445] hover:text-white text-gray-800 font-medium py-3 px-4 rounded-lg flex items-center justify-center text-[#1c5d5e] text-sm"
+        className="font-semibold flex-1 min-w-0 bg-white border border-[#1c5d5e] hover:bg-[#164445] hover:text-white text-gray-800 font-medium py-3 px-4 rounded-lg flex items-center justify-center text-[#1c5d5e] text-sm"
       >
         Full Itinerary <ExternalLink className="h-3.5 w-3.5 ml-1" />
       </Link>
@@ -357,7 +357,7 @@ export function PackageModal({ package: pkg, onClose }: PackageModalProps) {
             (date) => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
           )
         }
-        className={`font-montserrat font-semibold flex-1 min-w-0 py-3 px-4 rounded-lg transition-colors text-sm flex items-center justify-center ${
+        className={`font-semibold flex-1 min-w-0 py-3 px-4 rounded-lg transition-colors text-sm flex items-center justify-center ${
           !selectedDate ||
           Object.keys(pkg.start_date_2).every(
             (date) => new Date(date) < new Date(new Date().setHours(0, 0, 0, 0))
