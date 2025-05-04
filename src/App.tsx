@@ -34,42 +34,37 @@ import TallyForm from "./components/pages/TallyForm";
 
 const backgroundImageUrl = import.meta.env.VITE_HOMEPAGE_BACKGROUND_IMAGE;
 
-var AVAILABLE_TAGS: any[]
-var parsedConfig: any
+var AVAILABLE_TAGS: any[] = [];
+var parsedConfig: any;
 
+// Fetch config data
 const config_response = await supabase
   .from('config')
-  .select('*')
+  .select('*');
 
 if (config_response.error) {
   console.error("Error fetching config data:", config_response.error);
 } else {
-  var parsedConfig = Object.fromEntries(
+  parsedConfig = Object.fromEntries(
     config_response.data.map(item => {
       try {
-        // First, check if the value is already a valid JSON string
         if (typeof item.config_value === 'string') {
           try {
-            // Try parsing as is first
             return [item.config_key, JSON.parse(item.config_value)];
           } catch (e) {
-            // If that fails, try fixing common JSON formatting issues
             const formattedValue = item.config_value
-              .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":') // Fix unquoted keys, avoid URLs
-              .replace(/'([^']*)'/g, '"$1"') // Convert single quotes to double quotes
-              .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3'); // Add quotes around unquoted keys
+              .replace(/(\w+):(?![^"]*https?:\/\/)/g, '"$1":')
+              .replace(/'([^']*)'/g, '"$1"')
+              .replace(/([{,]\s*)(\w+)(\s*:)/g, '$1"$2"$3');
 
             try {
               return [item.config_key, JSON.parse(formattedValue)];
             } catch (parseError) {
               console.error(`Error parsing JSON for ${item.config_key}:`, parseError);
-              console.error('Original value:', item.config_value);
-              console.error('Formatted value:', formattedValue);
               return [item.config_key, null];
             }
           }
         } else {
-          // If it's not a string, return as is
           return [item.config_key, item.config_value];
         }
       } catch (err) {
@@ -80,30 +75,89 @@ if (config_response.error) {
   );
 }
 
-console.log('Parsed config:', parsedConfig);
-
+// Fetch tags data
 const tags_response = await supabase
   .from('tags')
   .select('*');
 
 if (tags_response.error) {
-  console.error("Error fetching data:", tags_response.error);
+  console.error("Error fetching tags data:", tags_response.error);
 } else if (Array.isArray(tags_response.data)) {
   AVAILABLE_TAGS = tags_response.data.map(item => item.tag_name);
-} else {
-  console.warn("Unexpected response format:", tags_response);
 }
 
 interface HeaderProps {
   user: Profile | null;
+  onDestinationSelect: (destination: string) => void;
+  onClearDestination: () => void;
+  currentDestination: string;
+  availableCities: string[]; // Add this prop
 }
 
-function Header({ user }: HeaderProps) {
+function Header({ 
+  user, 
+  onDestinationSelect, 
+  onClearDestination, 
+  currentDestination,
+  availableCities 
+}: HeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
   const isHomePage = location.pathname === '/';
   const isTopPlaces = location.pathname === '/top-places';
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const timeoutRef = useRef<NodeJS.Timeout>();
+
+  // Handle hover enter
+  // Clear any existing timeout
+  const clearExistingTimeout = () => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+    }
+  };
+
+  // Handle mouse entering dropdown area
+  const handleMouseEnter = () => {
+    clearExistingTimeout();
+    setIsDropdownOpen(true);
+  };
+
+  // Handle mouse leaving dropdown area
+  const handleMouseLeave = () => {
+    clearExistingTimeout();
+    timeoutRef.current = setTimeout(() => {
+      setIsDropdownOpen(false);
+    }, 1500); // 1.5 second delay before closing
+  };
+
+  // Handle click toggle
+  const handleClickToggle = () => {
+    clearExistingTimeout();
+    setIsDropdownOpen(prev => !prev);
+  };
+
+  // Handle city selection
+  const handleCitySelect = (city: string) => {
+    onDestinationSelect(city);
+    setIsDropdownOpen(false);
+    clearExistingTimeout();
+  };
+
+  // Clean up on unmount
+  useEffect(() => {
+    return () => {
+      clearExistingTimeout();
+    };
+  }, []);
+
+  const destinations = [
+    { name: "Manali", image: import.meta.env.VITE_POPULAR_DESTINATION_MANALI_IMAGE },
+    { name: "Shillong", image: import.meta.env.VITE_POPULAR_DESTINATION_SHILLONG_IMAGE },
+    { name: "Jibhi", image: import.meta.env.VITE_POPULAR_DESTINATION_JIBHI_IMAGE },
+    { name: "Chopta", image: import.meta.env.VITE_POPULAR_DESTINATION_CHOPTA_IMAGE },
+  ];
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -118,7 +172,7 @@ function Header({ user }: HeaderProps) {
         : 'bg-[#081314]'
       } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center bg-black px-5 py-3 rounded-full">
           <Link to="/" className="flex items-center justify-center">
             <img
               src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Tripuva_logo.png"
@@ -127,21 +181,59 @@ function Header({ user }: HeaderProps) {
             />
           </Link>
 
-
           <nav className="hidden sm:flex items-center space-x-6">
+            <div className="relative group" ref={dropdownRef}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}>
+              <button className="text-gray-900 bg-yellow-500 px-4 py-2 rounded-full text-base font-medium flex items-center" onClick={handleClickToggle}>
+                Destinations
+                <ChevronDown className="ml-2 w-4 h-4" />
+              </button>
+              <div 
+            className={`absolute top-full left-0 mt-5 bg-gray-100 text-gray-900 rounded-md shadow-md w-48 ${
+              isDropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-1 pointer-events-none'
+            } transition-all duration-200`}
+            onMouseEnter={clearExistingTimeout}
+            onMouseLeave={handleMouseLeave}
+          >
+              <ul className="py-2 max-h-60 overflow-y-auto">
+    {availableCities.map((city) => (
+      <li 
+        key={city} 
+        className={`
+          px-4 py-2 
+          cursor-pointer 
+          transition-colors duration-200
+          ${currentDestination === city 
+            ? 'hover:text-yellow-500 font-medium' 
+            : 'hover:text-yellow-500'
+          }
+        `}
+        onClick={() => handleCitySelect(city)}
+      >
+        {city}
+      </li>
+    ))}
+  </ul>
+              </div>
+            </div>
+{/*}
+
             <Link
               to="/top-places"
               className="bg-gradient-to-r from-yellow-500 to-yellow-500 text-black px-4 py-2 rounded-md text-base font-semibold flex items-center"
             >
-              <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110 strokeWidth={2}" />
+              <Star className="h-5 w-5 mr-2 text-black fill-current drop-shadow-md transition-transform hover:scale-110" />
               Top Trips
             </Link>
+
+*/}
 
             <a
               href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-100/20 text-white px-4 py-2 rounded-md hover:bg-green-500 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-normal flex items-center"
+              className="bg-gray-100/10 border border-gray-700 text-white px-4 py-2 rounded-full hover:bg-green-600 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-normal flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -171,13 +263,36 @@ function Header({ user }: HeaderProps) {
           </button>
         </div>
 
-        {/* Mobile menu with smooth transition */}
+        {/* Mobile menu */}
         <div
           className={`sm:hidden fixed top-23 left-4 right-4 z-50 rounded-lg shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
             } overflow-hidden`}
         >
           <nav className="mt-4 pb-4 px-4">
             <div className="flex flex-col space-y-4">
+              <div className="relative">
+                <button className="w-full text-left font-normal bg-white/10 text-gray-200 px-4 py-3 rounded-full border border-white/20 flex items-center justify-between">
+                  Destinations
+                  <ChevronDown className="h-5 w-5" />
+                </button>
+                <div className="mt-2 rounded-lg overflow-hidden">
+                  {availableCities.map((city) => (
+                    <button
+                      key={city}
+                      onClick={() => {
+                        onDestinationSelect(city);
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-3 text-white hover:bg-white/20 transition-colors ${currentDestination === city ? 'font-semibold text-yellow-400' : ''}`}
+                    >
+                      {city}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/*}
+
               <Link
                 to="/top-places"
                 className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-3 rounded-lg text-base font-semibold w-full text-center flex items-center justify-center transition-all duration-200 hover:from-yellow-500 hover:to-yellow-700 shadow-sm"
@@ -187,11 +302,13 @@ function Header({ user }: HeaderProps) {
                 Top Trips
               </Link>
 
+              */}
+
               <a
                 href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white/50 text-black px-4 py-3 rounded-lg border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-semibold w-full text-center flex items-center justify-center backdrop-blur-md"
+                className="bg-white/50 text-black px-4 py-3 rounded-full border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-semibold w-full text-center flex items-center justify-center backdrop-blur-md"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
@@ -213,42 +330,51 @@ function Header({ user }: HeaderProps) {
             </div>
           </nav>
         </div>
-
       </div>
     </header>
-
   );
 }
 
-function MainContent({ setSelectedPackage }: {
+interface MainContentProps {
   selectedPackage: Package | null;
   setSelectedPackage: (pkg: Package | null) => void;
-}) {
-  const [searchQuery, setSearchQuery] = useState('');
+  destinationFilter: string;
+  onClearDestination: () => void;
+  onDestinationSelect: (destination: string) => void;
+}
+
+function MainContent({ 
+  selectedPackage, 
+  setSelectedPackage,
+  destinationFilter,
+  onClearDestination,
+  onDestinationSelect
+}: MainContentProps) {
   const [packages, setPackages] = useState<(Package & { agency: { name: string; rating: number } | null })[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [hasUserInteracted, setHasUserInteracted] = useState(false);
   const [filters, setFilters] = useState({
-    destination: '',
+    destination: destinationFilter,
     maxPrice: '',
     startDate: '',
     tags: [] as string[]
   });
-
-  // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const packagesPerPage = 12;
-
-  // Sorting state
   const [sortMenuOpen, setSortMenuOpen] = useState(false);
-
   const packagesRef = useRef<HTMLDivElement>(null);
 
-  // Add effect to handle scrolling when page changes
+  useEffect(() => {
+    setFilters(prev => ({ ...prev, destination: destinationFilter }));
+    if (destinationFilter) {
+      setHasUserInteracted(true);
+    }
+  }, [destinationFilter]);
+
   useEffect(() => {
     if (packagesRef.current) {
-      const yOffset = -100; // Offset to account for any fixed headers
+      const yOffset = -100;
       const element = packagesRef.current;
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
@@ -284,19 +410,14 @@ function MainContent({ setSelectedPackage }: {
 
       if (error) throw error;
 
-      if (!data || data.length === 0) {
-        setPackages([]);
-        return;
-      }
-
-      const transformedData = data.map(pkg => {
+      const transformedData = data?.map(pkg => {
         const primaryImage = pkg.package_images?.find((img: { is_primary: any; }) => img.is_primary)?.image_url;
         return {
           ...pkg,
           image: primaryImage || pkg.image,
           package_images: pkg.package_images || []
         };
-      });
+      }) || [];
 
       setPackages(transformedData);
     } catch (error) {
@@ -339,13 +460,14 @@ function MainContent({ setSelectedPackage }: {
       startDate: '',
       tags: []
     });
-    setSearchQuery('');
+    onClearDestination();
     setHasUserInteracted(false);
     setCurrentPage(1);
   };
 
   const clearDestination = () => {
     setFilters(prev => ({ ...prev, destination: '' }));
+    onClearDestination();
     setHasUserInteracted(true);
     setCurrentPage(1);
   };
@@ -395,7 +517,6 @@ function MainContent({ setSelectedPackage }: {
     })
     : packages;
 
-  // Calculate pagination
   const indexOfLastPackage = currentPage * packagesPerPage;
   const indexOfFirstPackage = indexOfLastPackage - packagesPerPage;
   const currentPackages = filteredPackages.slice(indexOfFirstPackage, indexOfLastPackage);
@@ -419,9 +540,7 @@ function MainContent({ setSelectedPackage }: {
       <div className="relative min-h-[600px] flex items-center">
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${backgroundImageUrl})`
-          }}
+          style={{ backgroundImage: `url(${backgroundImageUrl})` }}
         />
         <div className="absolute inset-0 bg-black bg-opacity-60" />
         <div className="relative w-full pt-40 sm:pt-40">
@@ -432,24 +551,19 @@ function MainContent({ setSelectedPackage }: {
               </h2>
             </Link>
 
-            {/* Search and Filters */}
             <div className="max-w-6xl mx-auto px-4 pt-20 pb-10">
-              {/* Mobile View (below sm) */}
               <div className="block sm:hidden text-center mb-5">
                 <p className="font-semibold text-green-200 text-xs whitespace-pre">
                   E X P L O R E   /   E X P E R I E N C E
                 </p>
-
               </div>
 
-              {/* Desktop & Tablet View (sm and up) */}
               <div className="hidden sm:block text-center mb-5">
                 <p className="font-semibold text-green-200 text-sm lg:text-base whitespace-pre">
                   E X P L O R E   /   C O N N E C T   /   E X P E R I E N C E
                 </p>
               </div>
 
-              {/* Popular Destinations */}
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
                 {[
                   { name: "Manali", image: `${import.meta.env.VITE_POPULAR_DESTINATION_GOA_IMAGE}?auto=format&fit=crop&q=80` },
@@ -459,7 +573,7 @@ function MainContent({ setSelectedPackage }: {
                 ].map((city) => (
                   <div key={city.name} className="relative group">
                     <button
-                      onClick={() => handleFilterChange({ destination: city.name })}
+                      onClick={() => onDestinationSelect(city.name)}
                       className={`relative w-full overflow-hidden rounded-lg shadow-md hover:shadow-lg transition-all duration-300 aspect-[4/5] bg-gray-100 ${filters.destination === city.name ? 'ring-2 ring-primary ring-offset-2' : ''}`}
                     >
                       <img
@@ -468,7 +582,6 @@ function MainContent({ setSelectedPackage }: {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       />
                       <div className="absolute inset-0" />
-
                     </button>
                   </div>
                 ))}
@@ -478,7 +591,22 @@ function MainContent({ setSelectedPackage }: {
         </div>
       </div>
 
-      {/* Tags Filter */}
+      {filters.destination && (
+        <div className="max-w-7xl mx-auto px-4 py-2">
+          <div className="bg-blue-50 rounded-lg p-3 flex items-center justify-between">
+            <span className="font-medium">
+              Filtering by destination: <span className="font-bold">{filters.destination}</span>
+            </span>
+            <button 
+              onClick={clearDestination}
+              className="text-blue-600 hover:text-blue-800 flex items-center gap-1"
+            >
+              <X className="h-4 w-4" /> Clear
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-7xl mx-auto mt-2 px-4 py-2 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] rounded-2xl p-2 pb-4 pt-4 border border-gray-200 shadow-md">
           <h3 className="font-fjallaone text-2xl font-semibold text-gray-900 tracking-widest mb-6 text-center">EXPERIENCE</h3>
@@ -510,13 +638,9 @@ function MainContent({ setSelectedPackage }: {
         </div>
       </div>
 
-
-
       <div className="max-w-7xl mx-auto mt-0 mb-5 px-4 py-2 sm:px-6 lg:px-8">
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-4">
-
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {/* Destination Field */}
             <div className="relative group">
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-[#1c5d5e]" />
@@ -541,7 +665,6 @@ function MainContent({ setSelectedPackage }: {
               </div>
             </div>
 
-            {/* Price Field */}
             <div className="relative group">
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <IndianRupee className="h-4 w-4 text-[#1c5d5e]" />
@@ -562,7 +685,6 @@ function MainContent({ setSelectedPackage }: {
               </div>
             </div>
 
-            {/* Date Field */}
             <div className="relative group">
               <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-[#1c5d5e]" />
@@ -600,7 +722,6 @@ function MainContent({ setSelectedPackage }: {
             </div>
           </div>
 
-          {/* Reset Button */}
           {(filters.destination || filters.maxPrice || filters.startDate) && (
             <div className="mt-2 flex justify-center">
               <button
@@ -615,26 +736,17 @@ function MainContent({ setSelectedPackage }: {
         </div>
       </div>
 
-
-
-      {/* All Trips */}
-
       <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8">
-      <div className="mb-4 grid grid-cols-3 items-center">
-  {/* Empty first column */}
-  <div className="col-span-1"></div>
-  
-  {/* Centered heading */}
-  <div className="col-span-1 flex justify-center">
-  <h2 className="font-fjallaone text-2xl font-semibold text-gray-900 tracking-widest">
-  ALL TRIPS
-</h2>
-  </div>
-  
-  {/* Sort dropdown aligned right */}
-  <div className="col-span-1 flex justify-end">
-    <div className="inline-block">
-    <button
+        <div className="mb-4 grid grid-cols-3 items-center">
+          <div className="col-span-1"></div>
+          <div className="col-span-1 flex justify-center">
+            <h2 className="font-fjallaone text-2xl font-semibold text-gray-900 tracking-widest">
+              ALL TRIPS
+            </h2>
+          </div>
+          <div className="col-span-1 flex justify-end">
+            <div className="inline-block">
+              <button
                 onClick={() => setSortMenuOpen(!sortMenuOpen)}
                 className="font-medium text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
               >
@@ -663,10 +775,9 @@ function MainContent({ setSelectedPackage }: {
                   </button>
                 </div>
               )}
-    </div>
-  </div>
-</div>
-
+            </div>
+          </div>
+        </div>
 
         {loading ? (
           <div className="text-center py-12">
@@ -704,25 +815,15 @@ function MainContent({ setSelectedPackage }: {
                       alt={pkg.title}
                       className="w-full h-full object-cover"
                     />
-                    
                   </div>
                   <div className="p-6 flex flex-col justify-between h-[calc(100%-15rem)]">
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-grow">
                           <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
-
                           <div className="mt-1">
                             {pkg.agency && (
-                              <>
-                                <p className="text-sm text-gray-600">By {pkg.agency.name}</p>
-                                {/*<div className="flex items-center mt-1">
-                                  {renderStars(pkg.agency.rating)}
-                                  <span className="ml-1 text-sm text-gray-600">
-                                    ({pkg.agency.rating.toFixed(1)})
-                                  </span>
-                                </div>*/}
-                              </>
+                              <p className="text-sm text-gray-600">By {pkg.agency.name}</p>
                             )}
                           </div>
                         </div>
@@ -776,338 +877,352 @@ function MainContent({ setSelectedPackage }: {
                         </div>
 
                         <div className="flex gap-6">
-                        
                           <div className="flex items-center text-gray-700">
                             <Users className="h-5 w-5 mr-2" />
                             <span>{pkg.group_size} spots</span>
                           </div>
                           <div className="flex items-center text-gray-700">
-                            <Clock className="h-5 w-5 mr-2" />
-                            <span>{pkg.duration} days</span>
-                          </div>
-                          <div className="top-4 right-4">
-                      <span className={`px-2 py-1 text-xs font-semibold rounded-full ${pkg.status === 'open'
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-red-100 text-red-800'
-                        }`}>
-                        {pkg.status.charAt(0).toUpperCase() + pkg.status.slice(1)}
-                      </span>
-                    </div>
-                        </div>
+                        <Clock className="h-5 w-5 mr-2" />
+                        <span>{pkg.duration} days</span>
                       </div>
-                    </div>
-
-                    <div className="mt-5">
-                      <button
-                        onClick={() => setSelectedPackage(pkg)}
-                        className="font-semibold w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-[#164445] flex items-center justify-center transition-colors duration-200"
-                        disabled={pkg.status === 'closed'}
-                      >
-                        {pkg.status === 'closed' ? 'Booking Closed' : 'View Info'}
-                        {pkg.status === 'open' && <ArrowRight className="ml-2 h-4 w-4" />}
-                      </button>
+                      <div className="top-4 right-4">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${pkg.status === 'open'
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-red-800'
+                          }`}>
+                          {pkg.status.charAt(0).toUpperCase() + pkg.status.slice(1)}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ))}
-            </div>
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="mt-8 mb-2 flex justify-center items-center space-x-4">
-                <button
-                  onClick={() => {
-                    setCurrentPage(prev => Math.max(prev - 1, 1));
-                  }}
-                  disabled={currentPage === 1}
-                  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronLeft className="h-6 w-6" />
-                </button>
-                <span className="text-gray-600">
-                  Page {currentPage} of {totalPages}
-                </span>
-                <button
-                  onClick={() => {
-                    setCurrentPage(prev => Math.min(prev + 1, totalPages));
-                  }}
-                  disabled={currentPage === totalPages}
-                  className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <ChevronRight className="h-6 w-6" />
-                </button>
+                <div className="mt-5">
+                  <button
+                    onClick={() => setSelectedPackage(pkg)}
+                    className="font-semibold w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-[#164445] flex items-center justify-center transition-colors duration-200"
+                    disabled={pkg.status === 'closed'}
+                  >
+                    {pkg.status === 'closed' ? 'Booking Closed' : 'View Info'}
+                    {pkg.status === 'open' && <ArrowRight className="ml-2 h-4 w-4" />}
+                  </button>
+                </div>
               </div>
-            )}
-          </>
+            </div>
+          ))}
+        </div>
+
+        {totalPages > 1 && (
+          <div className="mt-8 mb-2 flex justify-center items-center space-x-4">
+            <button
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+              className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </button>
+            <span className="text-gray-600">
+              Page {currentPage} of {totalPages}
+            </span>
+            <button
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </button>
+          </div>
         )}
+      </>
+    )}
+  </div>
+
+  <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 px-4 py-2 sm:px-6 lg:px-8 mt-10">
+    <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+      <div className="bg-blue-100 rounded-full p-3 mr-4">
+        <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
       </div>
+      <div>
+        <p className="text-gray-800 font-semibold">Search for a trip</p>
+        <p className="text-gray-600 text-sm">Find your perfect group trip and click on <strong>Book Now</strong> to proceed.</p>
+      </div>
+    </div>
 
+    <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+      <div className="bg-green-100 rounded-full p-3 mr-4">
+        <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M20 4H4c-1.1 0-2 .9-2 2v12l4-4h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" />
+        </svg>
+      </div>
+      <div>
+        <p className="text-gray-800 font-semibold">Book via WhatsApp</p>
+        <p className="text-gray-600 text-sm">Clicking <strong>Book Now</strong> takes you to WhatsApp to complete the booking and get a confirmation.</p>
+      </div>
+    </div>
 
+    <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
+      <div className="bg-yellow-100 rounded-full p-3 mr-4">
+        <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+        </svg>
+      </div>
+      <div>
+        <p className="text-gray-800 font-semibold">Get Trip Updates</p>
+        <p className="text-gray-600 text-sm">After confirmation, we'll keep you posted with updates and reminders.</p>
+      </div>
+    </div>
+  </div>
 
-      {/* Steps */}
+  <div className="bg-background-light py-2">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <PartnerCarousel />
+    </div>
+  </div>
 
-      <div className="max-w-7xl mx-auto flex flex-col md:flex-row gap-4 px-4 py-2 sm:px-6 lg:px-8 mt-10">
-        {/* Box 1: Search */}
-        <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
-          <div className="bg-blue-100 rounded-full p-3 mr-4">
-            <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+  <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 mt-10">
+    <div
+      className="max-h-[300px] relative rounded-xl overflow-hidden shadow-xl w-full h-80 sm:h-96 md:h-[22rem] bg-cover bg-center"
+      style={{
+        backgroundImage: 'url("https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/bga.avif")'
+      }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center justify-start px-4 sm:px-6 md:px-12">
+        <div className="text-white max-w-lg space-y-3">
+          <div className="flex items-center gap-2">
+            <svg className="w-5 h-5 text-green-200" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+              <path d="M17.657 16.657L13.414 12l4.243-4.243M6.343 7.343L10.586 12 6.343 16.657" />
             </svg>
+            <p className="text-green-200 font-medium text-sm sm:text-base tracking-wide">Adventure Escapes</p>
           </div>
-          <div>
-            <p className="text-gray-800 font-semibold">Search for a trip</p>
-            <p className="text-gray-600 text-sm">Find your perfect group trip and click on <strong>Book Now</strong> to proceed.</p>
-          </div>
-        </div>
 
-        {/* Box 2: WhatsApp Booking */}
-        <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
-          <div className="bg-green-100 rounded-full p-3 mr-4">
-            <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path d="M20 4H4c-1.1 0-2 .9-2 2v12l4-4h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2z" />
-            </svg>
-          </div>
-          <div>
-            <p className="text-gray-800 font-semibold">Book via WhatsApp</p>
-            <p className="text-gray-600 text-sm">Clicking <strong>Book Now</strong> takes you to WhatsApp to complete the booking and get a confirmation.</p>
-          </div>
-        </div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
+            Discover Nature's Magic with Like-Minded Explorers
+          </h2>
 
-        {/* Box 3: Updates */}
-        <div className="flex items-start bg-white shadow-md rounded-lg p-4 w-full md:w-1/3">
-          <div className="bg-yellow-100 rounded-full p-3 mr-4">
-            <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
+          <p className="text-sm sm:text-base text-white/90">
+            Explore waterfalls, caves, and scenic valleys with a fun travel group.
+          </p>
 
-          </div>
-          <div>
-            <p className="text-gray-800 font-semibold">Get Trip Updates</p>
-            <p className="text-gray-600 text-sm">After confirmation, we’ll keep you posted with updates and reminders.</p>
-          </div>
-        </div>
-      </div>
-
-
-
-      {/* Partner Carousel Section */}
-      <div className="bg-background-light py-2">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <PartnerCarousel />
-        </div>
-      </div>
-
-      {/*  0000000000000000 */}
-      <div className="max-w-7xl mx-auto px-4 py-2 sm:px-6 lg:px-8 mt-10">
-        <div
-          className="max-h-[300px] relative rounded-xl overflow-hidden shadow-xl w-full h-80 sm:h-96 md:h-[22rem] bg-cover bg-center"
-          style={{
-            backgroundImage: 'url("https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/bga.avif")'
-          }}
-        >
-          {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent flex items-center justify-start px-4 sm:px-6 md:px-12">
-            <div className="text-white max-w-lg space-y-3">
-              {/* Tagline Header */}
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-200" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                  <path d="M17.657 16.657L13.414 12l4.243-4.243M6.343 7.343L10.586 12 6.343 16.657" />
-                </svg>
-                <p className="text-green-200 font-medium text-sm sm:text-base tracking-wide">Adventure Escapes</p>
-              </div>
-
-              {/* Main Title */}
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
-                Discover Nature’s Magic with Like-Minded Explorers
-              </h2>
-
-              {/* Description */}
-              <p className="text-sm sm:text-base text-white/90">
-                Explore waterfalls, caves, and scenic valleys with a fun travel group.
-              </p>
-
-              {/* CTA Button */}
-              <button className="mt-2 px-4 py-2 bg-green-200 text-black rounded-full text-sm font-semibold">
-                Book Now
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-
-
-
-      {/* Customer Rating Section */}
-      <div className="bg-gray-50 py-2">
-        <div>
-          <CustomerRating />
+          <button className="mt-2 px-4 py-2 bg-green-200 text-black rounded-full text-sm font-semibold">
+            Book Now
+          </button>
         </div>
       </div>
     </div>
-  );
+  </div>
+
+  <div className="bg-gray-50 py-2">
+    <div>
+      <CustomerRating />
+    </div>
+  </div>
+</div>
+);
 }
 
 function App() {
-  const [user, setUser] = useState<Profile | null>(null);
-  const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+const [user, setUser] = useState<Profile | null>(null);
+const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
+const [destinationFilter, setDestinationFilter] = useState('');
+const [availableCities, setAvailableCities] = useState<string[]>([]);
 
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setUser(null);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const fetchProfile = async (userId: string) => {
+useEffect(() => {
+  // Fetch unique cities when component mounts
+  const fetchCities = async () => {
     const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .single();
+      .from('packages')
+      .select('city')
+      .not('city', 'is', null)
+      .order('city', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching profile:', error);
-      return;
+    if (!error && data) {
+      // Get unique cities
+      const uniqueCities = [...new Set(data.map(item => item.city))] as string[];
+      setAvailableCities(uniqueCities);
     }
-
-    setUser(data);
   };
 
-  return (
-    <AuthProvider>
-      <NotificationProvider>
-        <Router>
-          <ScrollToTop />
-          <div className="min-h-screen bg-background-light">
-            <Header user={user} />
-            <main className="flex-1">
-              <Routes>
-                <Route path="/" element={<MainContent selectedPackage={selectedPackage} setSelectedPackage={setSelectedPackage} />} />
-                <Route path="/package/:id" element={<PackageDetail />} />
-                <Route path="/top-places" element={<TopPlaces />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/faq" element={<FAQ />} />
-                <Route path="/legal/terms" element={<Terms />} />
-                <Route path="/legal/privacy" element={<Privacy />} />
-                <Route path="/legal/refund" element={<Refund />} />
-                <Route path="/form" element={<TallyForm />} />
-                <Route path="/legal/disclaimer" element={<Disclaimer />} />
-                <Route path="/admin">
-                  <Route index element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="login" element={<AdminLogin />} />
-                  <Route path="dashboard" element={
-                    <ProtectedRoute>
-                      <AdminDashboard />
-                    </ProtectedRoute>
-                  } />
-                </Route>
-                <Route path="/404" element={<NotFound />} />
-                <Route path="/500" element={<ServerError />} />
-                <Route path="/401" element={<Unauthorized />} />
-                <Route path="/403" element={<Forbidden />} />
-                <Route path="/400" element={<BadRequest />} />
-                <Route path="*" element={<Navigate to="/404" replace />} />
-              </Routes>
-            </main>
-            <footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                  <div>
-                    <h3 className="text-lg text-yellow-400 font-semibold mb-4 font-comfortaa">About tripuva</h3>
-                    <p className="text-gray-300 text-base">
-                      Connecting travelers across India for unforgettable group adventures and cultural experiences.
-                    </p>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
-                    <ul className="space-y-2">
-                      <li>
-                        <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
-                          About Us
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-base">
-                          Contact Us
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-base">
-                          FAQ
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
-                    <ul className="space-y-2">
-                      <li>
-                        <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
-                          Terms & Conditions
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-base">
-                          Privacy Policy
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-base">
-                          Refund Policy
-                        </Link>
-                      </li>
-                      <li>
-                        <Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-base">
-                          Disclaimer
-                        </Link>
-                      </li>
-                    </ul>
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
-                    <address className="text-gray-300 not-italic space-y-2 text-base">
-                      <p className="flex items-center">
-                        <span className="block">Email: tripuva@gmail.com</span>
-                      </p>
-                      <p className="flex items-center">
-                        <span className="block">Phone: +91 9395929602</span>
-                      </p>
-                      <p className="flex items-center">
-                        <span className="block">Address: Guwahati, Assam, India</span>
-                      </p>
-                    </address>
+  fetchCities();
+  // ... existing auth state change listener
+}, []);
 
-                  </div>
-                </div>
-                <div className="mt-8 pt-8 border-t border-gray-700">
-                  <p className="text-gray-300 text-center font-comfortaa text-base">
-                    &copy; {new Date().getFullYear()} tripuva. All rights reserved.
-                  </p>
-                </div>
-              </div>
-            </footer>
-            {selectedPackage && (
-              <PackageModal
-                package={selectedPackage}
-                onClose={() => setSelectedPackage(null)}
-              />
-            )}
-          </div>
-        </Router>
-      </NotificationProvider>
-    </AuthProvider>
-  );
+useEffect(() => {
+const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+if (session?.user) {
+fetchProfile(session.user.id);
+} else {
+setUser(null);
+}
+});
+
+return () => subscription.unsubscribe();
+}, []);
+
+const fetchProfile = async (userId: string) => {
+const { data, error } = await supabase
+.from('profiles')
+.select('*')
+.eq('id', userId)
+.single();
+
+if (error) {
+  console.error('Error fetching profile:', error);
+  return;
+}
+
+setUser(data);
+};
+
+const handleDestinationSelect = (destination: string) => {
+setDestinationFilter(destination);
+};
+
+const handleClearDestination = () => {
+setDestinationFilter('');
+};
+
+return (
+<AuthProvider>
+<NotificationProvider>
+<Router>
+<ScrollToTop />
+<div className="min-h-screen bg-background-light">
+<Header
+              user={user}
+              onDestinationSelect={setDestinationFilter}
+              onClearDestination={() => setDestinationFilter('')}
+              currentDestination={destinationFilter}
+              availableCities={availableCities} // Pass cities to Header
+            />
+<main className="flex-1">
+<Routes>
+<Route
+path="/"
+element={
+<MainContent selectedPackage={selectedPackage} setSelectedPackage={setSelectedPackage} destinationFilter={destinationFilter} onClearDestination={handleClearDestination} onDestinationSelect={handleDestinationSelect} />
+}
+/>
+<Route path="/package/:id" element={<PackageDetail />} />
+<Route path="/top-places" element={<TopPlaces />} />
+<Route path="/about" element={<About />} />
+<Route path="/contact" element={<Contact />} />
+<Route path="/faq" element={<FAQ />} />
+<Route path="/legal/terms" element={<Terms />} />
+<Route path="/legal/privacy" element={<Privacy />} />
+<Route path="/legal/refund" element={<Refund />} />
+<Route path="/form" element={<TallyForm />} />
+<Route path="/legal/disclaimer" element={<Disclaimer />} />
+<Route path="/admin">
+<Route index element={
+<ProtectedRoute>
+<AdminDashboard />
+</ProtectedRoute>
+} />
+<Route path="login" element={<AdminLogin />} />
+<Route path="dashboard" element={
+<ProtectedRoute>
+<AdminDashboard />
+</ProtectedRoute>
+} />
+</Route>
+<Route path="/404" element={<NotFound />} />
+<Route path="/500" element={<ServerError />} />
+<Route path="/401" element={<Unauthorized />} />
+<Route path="/403" element={<Forbidden />} />
+<Route path="/400" element={<BadRequest />} />
+<Route path="*" element={<Navigate to="/404" replace />} />
+</Routes>
+</main>
+<footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
+<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div>
+<h3 className="text-lg text-yellow-400 font-semibold mb-4 font-comfortaa">About tripuva</h3>
+<p className="text-gray-300 text-base">
+Connecting travelers across India for unforgettable group adventures and cultural experiences.
+</p>
+</div>
+<div>
+<h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
+<ul className="space-y-2">
+<li>
+<Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
+About Us
+</Link>
+</li>
+<li>
+<Link to="/contact" className="text-gray-300 hover:text-white transition-colors text-base">
+Contact Us
+</Link>
+</li>
+<li>
+<Link to="/faq" className="text-gray-300 hover:text-white transition-colors text-base">
+FAQ
+</Link>
+</li>
+</ul>
+</div>
+<div>
+<h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
+<ul className="space-y-2">
+<li>
+<Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
+Terms & Conditions
+</Link>
+</li>
+<li>
+<Link to="/legal/privacy" className="text-gray-300 hover:text-white transition-colors text-base">
+Privacy Policy
+</Link>
+</li>
+<li>
+<Link to="/legal/refund" className="text-gray-300 hover:text-white transition-colors text-base">
+Refund Policy
+</Link>
+</li>
+<li>
+<Link to="/legal/disclaimer" className="text-gray-300 hover:text-white transition-colors text-base">
+Disclaimer
+</Link>
+</li>
+</ul>
+</div>
+<div>
+<h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
+<address className="text-gray-300 not-italic space-y-2 text-base">
+<p className="flex items-center">
+<span className="block">Email: tripuva@gmail.com</span>
+</p>
+<p className="flex items-center">
+<span className="block">Phone: +91 9395929602</span>
+</p>
+<p className="flex items-center">
+<span className="block">Address: Guwahati, Assam, India</span>
+</p>
+</address>
+</div>
+</div>
+<div className="mt-8 pt-8 border-t border-gray-700">
+<p className="text-gray-300 text-center font-comfortaa text-base">
+© {new Date().getFullYear()} tripuva. All rights reserved.
+</p>
+</div>
+</div>
+</footer>
+{selectedPackage && (
+<PackageModal
+package={selectedPackage}
+onClose={() => setSelectedPackage(null)}
+/>
+)}
+</div>
+</Router>
+</NotificationProvider>
+</AuthProvider>
+);
 }
 
 export default App;
+
