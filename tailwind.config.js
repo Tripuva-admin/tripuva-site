@@ -43,6 +43,10 @@ module.exports = {
         'fjallaone': ['Fjalla One','sans-serif'],
         'lexend': ['Lexend','sans-serif'],
         'vietnam':['Be Vietnam Pro','sans-serif'],
+        'archivo':['Archivo Narrow','sans-serif'],
+        'roboto': ['Roboto Condensed','sans-serif'],
+        'onest':['Onest','sans-serif'],
+        'instrumentsans':['Instrument Sans','sans-serif'],
         'yusei': ['Yusei Magic', 'sans-serif'],
       },
       letterSpacing: {

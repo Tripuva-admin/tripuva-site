@@ -69,3 +69,8 @@ export interface tags {
   tag_name: string;
   created_at?: string;
 }
+
+export interface destinations {
+  id: string;
+  dest_names: string;
+}

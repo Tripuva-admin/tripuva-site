@@ -1,8 +1,8 @@
 export function Privacy() {
   return (
-    <div className="min-h-screen bg-background-light pt-12 pb-10">
+    <div className="font-instrumentsans min-h-screen bg-background-light pt-12 pb-10">
       <div className="max-w-4xl mx-auto px-6 sm:px-6 lg:px-8">
-        <h1 className="font-fjallaone tracking-widest font-bold text-4xl font-bold text-gray-900 mb-8">PRIVACY POLICY</h1>
+        <h1 className="font-bold text-4xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
         
         <div className="space-y-8">
           <div className="prose max-w-none">

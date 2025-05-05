@@ -20,7 +20,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { ScrollToTop } from './components/ScrollToTop';
 import { supabase } from './lib/supabase';
-import { Package, Profile } from './types/database.types';
+import { Package, Profile, destinations } from './types/database.types';
 import TopPlaces from "./components/TopPlaces";
 import CustomerRating from "./components/CustomerRating";
 import PartnerCarousel from "./components/PartnerCarousel";
@@ -33,6 +33,9 @@ import PackageDetail from './components/pages/PackageDetail';
 import TallyForm from "./components/pages/TallyForm";
 
 const backgroundImageUrl = import.meta.env.VITE_HOMEPAGE_BACKGROUND_IMAGE;
+
+
+
 
 var AVAILABLE_TAGS: any[] = [];
 var parsedConfig: any;
@@ -91,7 +94,8 @@ interface HeaderProps {
   onDestinationSelect: (destination: string) => void;
   onClearDestination: () => void;
   currentDestination: string;
-  availableCities: string[]; // Add this prop
+  availableDestinations: string[];
+  //availableCities: string[]; // Add this prop
 }
 
 function Header({ 
@@ -99,7 +103,8 @@ function Header({
   onDestinationSelect, 
   onClearDestination, 
   currentDestination,
-  availableCities 
+  availableDestinations
+ // availableCities 
 }: HeaderProps) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -109,6 +114,7 @@ function Header({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const timeoutRef = useRef<NodeJS.Timeout>();
+  
 
   // Handle hover enter
   // Clear any existing timeout
@@ -152,12 +158,6 @@ function Header({
     };
   }, []);
 
-  const destinations = [
-    { name: "Manali", image: import.meta.env.VITE_POPULAR_DESTINATION_MANALI_IMAGE },
-    { name: "Shillong", image: import.meta.env.VITE_POPULAR_DESTINATION_SHILLONG_IMAGE },
-    { name: "Jibhi", image: import.meta.env.VITE_POPULAR_DESTINATION_JIBHI_IMAGE },
-    { name: "Chopta", image: import.meta.env.VITE_POPULAR_DESTINATION_CHOPTA_IMAGE },
-  ];
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -172,7 +172,7 @@ function Header({
         : 'bg-[#081314]'
       } ${isTopPlaces ? 'border-b-0' : ''}`}>
       <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center bg-black px-5 py-3 rounded-full">
+        <div className="flex justify-between items-center bg-[#081314] px-5 py-3 rounded-full">
           <Link to="/" className="flex items-center justify-center">
             <img
               src="https://oahorqgkqbcslflkqhiv.supabase.co/storage/v1/object/public/package-assets/static%20assets/Tripuva_logo.png"
@@ -185,37 +185,38 @@ function Header({
             <div className="relative group" ref={dropdownRef}
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}>
-              <button className="text-gray-900 bg-yellow-500 px-4 py-2 rounded-full text-base font-medium flex items-center" onClick={handleClickToggle}>
+              <button className="font-instrumentsans text-gray-900 bg-yellow-500 px-4 py-2 rounded-full text-base font-medium flex items-center" onClick={handleClickToggle}>
                 Destinations
                 <ChevronDown className="ml-2 w-4 h-4" />
               </button>
               <div 
-            className={`absolute top-full left-0 mt-5 bg-gray-100 text-gray-900 rounded-md shadow-md w-48 ${
-              isDropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-1 pointer-events-none'
-            } transition-all duration-200`}
-            onMouseEnter={clearExistingTimeout}
-            onMouseLeave={handleMouseLeave}
-          >
-              <ul className="py-2 max-h-60 overflow-y-auto">
-    {availableCities.map((city) => (
+  className={`font-instrumentsans absolute top-full left-0 mt-5 bg-gray-100 text-gray-900 rounded-md shadow-md w-40 ${
+    isDropdownOpen ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-1 pointer-events-none'
+  } transition-all duration-200`}
+  onMouseEnter={clearExistingTimeout}
+  onMouseLeave={handleMouseLeave}
+>
+  <ul className="py-2">
+    {availableDestinations.map((destination) => (
       <li 
-        key={city} 
+        key={destination} 
         className={`
           px-4 py-2 
           cursor-pointer 
           transition-colors duration-200
-          ${currentDestination === city 
-            ? 'hover:text-yellow-500 font-medium' 
-            : 'hover:text-yellow-500'
+          ${currentDestination === destination 
+            ? 'font-montserrat font-medium bg-gray-200' 
+            : 'hover:bg-gray-50'
           }
+          break-words whitespace-normal
         `}
-        onClick={() => handleCitySelect(city)}
+        onClick={() => handleCitySelect(destination)}
       >
-        {city}
+        {destination}
       </li>
     ))}
   </ul>
-              </div>
+</div>
             </div>
 {/*}
 
@@ -233,7 +234,7 @@ function Header({
               href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-gray-100/10 border border-gray-700 text-white px-4 py-2 rounded-full hover:bg-green-600 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-normal flex items-center"
+              className="font-instrumentsans bg-gray-100/10 border border-gray-700 text-white px-4 py-2 rounded-full hover:bg-green-600 hover:text-white hover:border-green-500 transition-all duration-200 text-base font-normal flex items-center"
             >
               <ArrowRight className="h-4 w-4 mr-2" />
               Contact us on Whatsapp
@@ -252,7 +253,7 @@ function Header({
 
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-white/20"
+            className="sm:hidden text-white w-12 h-12 flex items-center justify-center hover:bg-white/10 rounded-lg transition-colors duration-200 focus:outline-none"
             aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           >
             {isMobileMenuOpen ? (
@@ -265,27 +266,27 @@ function Header({
 
         {/* Mobile menu */}
         <div
-          className={`sm:hidden fixed top-23 left-4 right-4 z-50 rounded-lg shadow-lg backdrop-blur-lg bg-white/10 ring-1 ring-white/20 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
+          className={`sm:hidden fixed top-23 left-4 right-4 z-50 rounded-lg shadow-lg backdrop-blur-lg bg-white/10 transition-all duration-500 ease-in-out transform ${isMobileMenuOpen ? 'max-h-[500px] opacity-100 scale-100' : 'max-h-0 opacity-0 scale-95 pointer-events-none'
             } overflow-hidden`}
         >
           <nav className="mt-4 pb-4 px-4">
             <div className="flex flex-col space-y-4">
               <div className="relative">
-                <button className="w-full text-left font-normal bg-white/10 text-gray-200 px-4 py-3 rounded-full border border-white/20 flex items-center justify-between">
+                <button className="font-instrumentsans w-full text-left font-normal bg-white/10 text-gray-200 px-4 py-3 rounded-full border border-white/20 flex items-center justify-between">
                   Destinations
                   <ChevronDown className="h-5 w-5" />
                 </button>
                 <div className="mt-2 rounded-lg overflow-hidden">
-                  {availableCities.map((city) => (
+                  {availableDestinations.map((destination) => (
                     <button
-                      key={city}
+                      key={destination}
                       onClick={() => {
-                        onDestinationSelect(city);
+                        onDestinationSelect(destination);
                         setIsMobileMenuOpen(false);
                       }}
-                      className={`w-full text-left px-4 py-3 text-white hover:bg-white/20 transition-colors ${currentDestination === city ? 'font-semibold text-yellow-400' : ''}`}
+                      className={`font-instrumentsans w-full text-left px-4 py-3 text-white hover:bg-white/20 transition-colors ${currentDestination === destination ? 'font-semibold text-yellow-400' : ''}`}
                     >
-                      {city}
+                      {destination}
                     </button>
                   ))}
                 </div>
@@ -308,7 +309,7 @@ function Header({
                 href={`${import.meta.env.VITE_WHATSAPP_LINK}/${import.meta.env.VITE_WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-white/50 text-black px-4 py-3 rounded-full border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-semibold w-full text-center flex items-center justify-center backdrop-blur-md"
+                className="font-instrumentsans bg-white/50 text-black px-4 py-3 rounded-full border border-white/30 hover:bg-green-500 hover:text-white hover:border-green-600 transition-all duration-200 text-base font-semibold w-full text-center flex items-center justify-center backdrop-blur-md"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <ArrowRight className="h-5 w-5 mr-2" strokeWidth={2} />
@@ -546,8 +547,8 @@ function MainContent({
         <div className="relative w-full pt-40 sm:pt-40">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <Link to="/" className="inline-block">
-              <h2 className="text-3xl sm:text-2xl md:text-4xl lg:text-5xl text-gray-200 sm:tracking-tight">
-                Come<span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent"> solo</span> <br className="md:hidden"></br> Leave with a <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">crew</span>
+              <h2 className="font-lexend text-3xl sm:text-2xl md:text-4xl lg:text-5xl text-gray-200 sm:tracking-tight">
+                Come<span className="font-instrumentsans font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent"> solo</span> <br className="md:hidden"></br> Leave with a <span className="font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">crew</span>
               </h2>
             </Link>
 
@@ -609,8 +610,8 @@ function MainContent({
 
       <div className="max-w-7xl mx-auto mt-2 px-4 py-2 sm:px-6 lg:px-8">
         <div className="bg-gradient-to-r from-[#A0F0E0] via-[#FDEEDC] to-[#FDCFCF] rounded-2xl p-2 pb-4 pt-4 border border-gray-200 shadow-md">
-          <h3 className="font-fjallaone text-2xl font-semibold text-gray-900 tracking-widest mb-6 text-center">EXPERIENCE</h3>
-          <div className="flex flex-wrap gap-3 justify-center">
+          <h3 className="font-fjallaone text-2xl font-semibold text-gray-900 mb-6 text-center font-lexend">Experience</h3>
+          <div className="font-instrumentsans flex flex-wrap gap-3 justify-center">
             {AVAILABLE_TAGS.map(tag => (
               <button
                 key={tag}
@@ -628,7 +629,7 @@ function MainContent({
             <div className="mt-6 flex justify-center">
               <button
                 onClick={() => setFilters(prev => ({ ...prev, tags: [] }))}
-                className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
+                className="font-instrumentsans px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:text-[#133f40] transition-colors duration-200 flex items-center gap-2"
               >
                 <X className="h-4 w-4" />
                 Clear Tags
@@ -642,7 +643,7 @@ function MainContent({
         <div className="bg-white/80 backdrop-blur-sm rounded-xl shadow-lg max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <div className="relative group">
-              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <label className="font-instrumentsans block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <MapPin className="h-4 w-4 text-[#1c5d5e]" />
                 Destination
               </label>
@@ -666,7 +667,7 @@ function MainContent({
             </div>
 
             <div className="relative group">
-              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <label className="font-instrumentsans block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <IndianRupee className="h-4 w-4 text-[#1c5d5e]" />
                 Budget
               </label>
@@ -686,7 +687,7 @@ function MainContent({
             </div>
 
             <div className="relative group">
-              <label className="block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
+              <label className="font-instrumentsans block text-sm font-semibold text-gray-700 mb-2 flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-[#1c5d5e]" />
                 Travel Date
               </label>
@@ -726,7 +727,7 @@ function MainContent({
             <div className="mt-2 flex justify-center">
               <button
                 onClick={resetFilters}
-                className="px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
+                className="font-instrumentsans px-4 py-2 text-sm font-medium text-[#1c5d5e] hover:bg-[#1c5d5e]/5 rounded-lg transition-colors duration-200 flex items-center gap-2"
               >
                 <X className="h-4 w-4" />
                 Reset All Filters
@@ -740,15 +741,15 @@ function MainContent({
         <div className="mb-4 grid grid-cols-3 items-center">
           <div className="col-span-1"></div>
           <div className="col-span-1 flex justify-center">
-            <h2 className="font-fjallaone text-2xl font-semibold text-gray-900 tracking-widest">
-              ALL TRIPS
+            <h2 className="font-lexend text-2xl font-semibold text-gray-900">
+              All Trips
             </h2>
           </div>
           <div className="col-span-1 flex justify-end">
             <div className="inline-block">
               <button
                 onClick={() => setSortMenuOpen(!sortMenuOpen)}
-                className="font-medium text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
+                className="font-instrumentsans font-medium text-sm text-[#1c5d5e] hover:text-[#133f40] flex items-center bg-white px-4 py-2 rounded-md border border-gray-200"
               >
                 Sort by
                 <ChevronDown className="h-4 w-4 ml-1" />
@@ -757,19 +758,19 @@ function MainContent({
                 <div className="absolute right-0 mt-2 w-40 bg-white border rounded-lg shadow-lg">
                   <button
                     onClick={() => handleSort('price')}
-                    className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+                    className="font-instrumentsans block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
                   >
                     Price (Low to High)
                   </button>
                   <button
                     onClick={() => handleSort('-price')}
-                    className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+                    className="font-instrumentsans block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
                   >
                     Price (High to Low)
                   </button>
                   <button
                     onClick={() => handleSort('date')}
-                    className="block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
+                    className="font-instrumentsans block w-full text-left text-sm px-4 py-2 hover:bg-gray-100"
                   >
                     Date (Newest)
                   </button>
@@ -782,24 +783,24 @@ function MainContent({
         {loading ? (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading amazing trips for you...</p>
+            <p className="font-instrumentsans mt-4 text-gray-600">Loading amazing trips for you...</p>
           </div>
         ) : error ? (
           <div className="text-center py-12">
             <p className="text-red-600">{error}</p>
             <button
               onClick={fetchPackages}
-              className="mt-4 text-primary hover:text-primary-700 font-medium"
+              className="font-instrumentsans mt-4 text-primary hover:text-primary-700 font-medium"
             >
               Try Again
             </button>
           </div>
         ) : filteredPackages.length === 0 && hasUserInteracted ? (
           <div className="text-center py-12">
-            <p className="text-gray-600">No packages found. Try adjusting your filters.</p>
+            <p className="font-instrumentsans text-gray-600">No packages found. Try adjusting your filters.</p>
             <button
               onClick={resetFilters}
-              className="mt-4 text-primary hover:text-primary-700 font-medium"
+              className="font-instrumentsans mt-4 text-primary hover:text-primary-700 font-medium"
             >
               Reset Filters
             </button>
@@ -820,8 +821,8 @@ function MainContent({
                     <div className="flex-1">
                       <div className="flex justify-between items-start mb-4">
                         <div className="flex-grow">
-                          <h3 className="text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
-                          <div className="mt-1">
+                          <h3 className="font-instrumentsans text-xl font-semibold text-gray-900 line-clamp-2">{pkg.title}</h3>
+                          <div className="font-instrumentsans mt-1">
                             {pkg.agency && (
                               <p className="text-sm text-gray-600">By {pkg.agency.name}</p>
                             )}
@@ -831,7 +832,7 @@ function MainContent({
                       </div>
 
                       {pkg.tags && pkg.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-4">
+                        <div className="font-instrumentsans flex flex-wrap gap-1 mb-4">
                           {pkg.tags.map(tag => (
                             <span
                               key={tag}
@@ -844,12 +845,12 @@ function MainContent({
                       )}
 
                       <div className="space-y-3">
-                        <div className="flex items-center text-gray-700">
+                        <div className="font-instrumentsans flex items-center text-gray-700">
                           <Calendar className="h-5 w-5 mr-2" />
                           <p>Available Dates:</p>
                         </div>
 
-                        <div className="flex flex-wrap gap-2 max-h-[4.5rem] overflow-hidden">
+                        <div className="font-instrumentsans flex flex-wrap gap-2 max-h-[4.5rem] overflow-hidden">
                           {pkg.start_date_2 && Object.keys(pkg.start_date_2).length > 0 ? (
                             Object.keys(pkg.start_date_2).map((date, index) => {
                               const isPastDate = new Date(date) < new Date(new Date().setHours(0, 0, 0));
@@ -858,8 +859,8 @@ function MainContent({
                                   key={index}
                                   className={`${isPastDate
                                     ? 'bg-gray-100 border-gray-200 text-gray-400'
-                                    : 'bg-gradient-to-r from-[#FBF3DF] to-[#F9EFD4] text-[#92400e]'
-                                    } text-sm py-1 px-2 rounded`}
+                                    : 'bg-[#e9f5f2] text-[#1c5d5e] font-semibold'
+                                    } text-sm py-1 px-2 rounded-full`}
                                 >
                                   {new Date(date).toLocaleDateString('en-GB', {
                                     day: '2-digit',
@@ -870,23 +871,23 @@ function MainContent({
                               );
                             })
                           ) : (
-                            <span className="text-yellow-600 text-sm">
+                            <span className="font-instrumentsans text-yellow-600 text-sm">
                               Exciting departures being planned - Check back soon!
                             </span>
                           )}
                         </div>
 
                         <div className="flex gap-6">
-                          <div className="flex items-center text-gray-700">
+                          <div className="font-instrumentsans flex items-center text-gray-700">
                             <Users className="h-5 w-5 mr-2" />
                             <span>{pkg.group_size} spots</span>
                           </div>
-                          <div className="flex items-center text-gray-700">
+                          <div className="font-instrumentsans flex items-center text-gray-700">
                         <Clock className="h-5 w-5 mr-2" />
                         <span>{pkg.duration} days</span>
                       </div>
                       <div className="top-4 right-4">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded-full ${pkg.status === 'open'
+                        <span className={`font-instrumentsans px-2 py-1 text-xs font-semibold rounded-full ${pkg.status === 'open'
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                           }`}>
@@ -900,7 +901,7 @@ function MainContent({
                 <div className="mt-5">
                   <button
                     onClick={() => setSelectedPackage(pkg)}
-                    className="font-semibold w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-[#164445] flex items-center justify-center transition-colors duration-200"
+                    className="font-instrumentsans font-semibold w-full bg-[#1c5d5e] text-white py-2 px-4 rounded-md hover:bg-[#164445] flex items-center justify-center transition-colors duration-200"
                     disabled={pkg.status === 'closed'}
                   >
                     {pkg.status === 'closed' ? 'Booking Closed' : 'View Info'}
@@ -945,8 +946,8 @@ function MainContent({
         </svg>
       </div>
       <div>
-        <p className="text-gray-800 font-semibold">Search for a trip</p>
-        <p className="text-gray-600 text-sm">Find your perfect group trip and click on <strong>Book Now</strong> to proceed.</p>
+        <p className="font-instrumentsans text-gray-800 font-semibold">Search for a trip</p>
+        <p className="font-instrumentsans text-gray-600 text-sm">Find your perfect group trip and click on <strong>Book Now</strong> to proceed.</p>
       </div>
     </div>
 
@@ -957,8 +958,8 @@ function MainContent({
         </svg>
       </div>
       <div>
-        <p className="text-gray-800 font-semibold">Book via WhatsApp</p>
-        <p className="text-gray-600 text-sm">Clicking <strong>Book Now</strong> takes you to WhatsApp to complete the booking and get a confirmation.</p>
+        <p className="font-instrumentsans text-gray-800 font-semibold">Book via WhatsApp</p>
+        <p className="font-instrumentsans text-gray-600 text-sm">Clicking <strong>Book Now</strong> takes you to WhatsApp to complete the booking and get a confirmation.</p>
       </div>
     </div>
 
@@ -969,8 +970,8 @@ function MainContent({
         </svg>
       </div>
       <div>
-        <p className="text-gray-800 font-semibold">Get Trip Updates</p>
-        <p className="text-gray-600 text-sm">After confirmation, we'll keep you posted with updates and reminders.</p>
+        <p className="font-instrumentsans text-gray-800 font-semibold">Get Trip Updates</p>
+        <p className="font-instrumentsans text-gray-600 text-sm">After confirmation, we'll keep you posted with updates and reminders.</p>
       </div>
     </div>
   </div>
@@ -997,15 +998,15 @@ function MainContent({
             <p className="text-green-200 font-medium text-sm sm:text-base tracking-wide">Adventure Escapes</p>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
+          <h2 className="font-instrumentsans text-2xl sm:text-3xl md:text-4xl font-bold leading-snug">
             Discover Nature's Magic with Like-Minded Explorers
           </h2>
 
-          <p className="text-sm sm:text-base text-white/90">
+          <p className="font-instrumentsans text-sm sm:text-base text-white/90">
             Explore waterfalls, caves, and scenic valleys with a fun travel group.
           </p>
 
-          <button className="mt-2 px-4 py-2 bg-green-200 text-black rounded-full text-sm font-semibold">
+          <button className="font-instrumentsans mt-2 px-4 py-2 bg-green-200 text-black rounded-full text-sm font-semibold">
             Book Now
           </button>
         </div>
@@ -1026,7 +1027,10 @@ function App() {
 const [user, setUser] = useState<Profile | null>(null);
 const [selectedPackage, setSelectedPackage] = useState<Package | null>(null);
 const [destinationFilter, setDestinationFilter] = useState('');
-const [availableCities, setAvailableCities] = useState<string[]>([]);
+const [availableDestinations, setAvailableDestinations] = useState<string[]>([]);
+//const [availableCities, setAvailableCities] = useState<string[]>([]);
+
+{/*}
 
 useEffect(() => {
   // Fetch unique cities when component mounts
@@ -1046,6 +1050,33 @@ useEffect(() => {
 
   fetchCities();
   // ... existing auth state change listener
+}, []);
+
+*/}
+
+useEffect(() => {
+  // Fetch destinations from the new table
+  const fetchDestinations = async () => {
+    const { data, error } = await supabase
+      .from('destinations')
+      .select('dest_names')
+      .order('dest_names', { ascending: true });
+
+      if (error) {
+        console.error("[ERROR] Fetching destinations:", error);
+        return;
+      }
+      
+
+    if (!error && data) {
+      const destinationNames = data.map(item => item.dest_names);
+      console.log("[DEBUG] Raw destinations data:", data);
+      console.log("[DEBUG] Processed destination names:", destinationNames);
+      setAvailableDestinations(destinationNames);
+    }
+  };
+
+  fetchDestinations();
 }, []);
 
 useEffect(() => {
@@ -1094,7 +1125,8 @@ return (
               onDestinationSelect={setDestinationFilter}
               onClearDestination={() => setDestinationFilter('')}
               currentDestination={destinationFilter}
-              availableCities={availableCities} // Pass cities to Header
+              //availableCities={availableCities}
+              availableDestinations={availableDestinations} // Pass cities to Header
             />
 <main className="flex-1">
 <Routes>
@@ -1135,17 +1167,17 @@ element={
 <Route path="*" element={<Navigate to="/404" replace />} />
 </Routes>
 </main>
-<footer className="bg-gray-800 text-white py-12 border-t border-gray-700">
+<footer className="font-instrumentsans bg-gray-800 text-white py-12 border-t border-gray-700">
 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
 <div>
-<h3 className="text-lg text-yellow-400 font-semibold mb-4 font-comfortaa">About tripuva</h3>
+<h3 className="text-lg text-yellow-400 font-semibold mb-4">About tripuva</h3>
 <p className="text-gray-300 text-base">
 Connecting travelers across India for unforgettable group adventures and cultural experiences.
 </p>
 </div>
 <div>
-<h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Quick Links</h3>
+<h3 className="text-lg font-semibold mb-4 text-white">Quick Links</h3>
 <ul className="space-y-2">
 <li>
 <Link to="/about" className="text-gray-300 hover:text-white transition-colors text-base">
@@ -1165,7 +1197,7 @@ FAQ
 </ul>
 </div>
 <div>
-<h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Legal</h3>
+<h3 className="text-lg font-semibold mb-4 text-white">Legal</h3>
 <ul className="space-y-2">
 <li>
 <Link to="/legal/terms" className="text-gray-300 hover:text-white transition-colors text-base">
@@ -1190,7 +1222,7 @@ Disclaimer
 </ul>
 </div>
 <div>
-<h3 className="text-lg font-semibold mb-4 font-comfortaa text-white">Contact Information</h3>
+<h3 className="text-lg font-semibold mb-4 text-white">Contact Information</h3>
 <address className="text-gray-300 not-italic space-y-2 text-base">
 <p className="flex items-center">
 <span className="block">Email: tripuva@gmail.com</span>

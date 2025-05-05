@@ -20,7 +20,7 @@ console.log("PARTNERS_LOGO: ", PARTNERS_LOGO);
 const PartnerCarousel: React.FC = () => {
   return (
     <div className="w-full bg-transparent py-1 overflow-hidden mt-5">
-      <h3 className="font-fjallaone text-2xl font-semibold text-gray-800 tracking-widest mb-6 text-center">OUR TRAVEL PARTNERS</h3>
+      <h3 className="font-instrumentsans text-2xl font-bold text-gray-800 mb-6 text-center">Our Travel Partners</h3>
 
       <div className="relative w-full">
         <div className="flex w-max animate-scroll gap-8 px-4">

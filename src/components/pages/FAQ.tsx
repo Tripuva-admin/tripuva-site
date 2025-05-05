@@ -43,9 +43,9 @@ export function FAQ() {
   ];
 
   return (
-    <div className="pt-12 pb-12">
+    <div className="font-instrumentsans pt-12 pb-12">
       <div className="max-w-4xl mx-auto px-6 sm:px-6 lg:px-8">
-        <h1 className="font-fjallaone tracking-widest font-bold text-4xl font-bold text-gray-900 mb-8">FREQUENTLY ASKED QUESTIONS</h1>
+        <h1 className="font-bold text-4xl font-bold text-gray-900 mb-8">Frequently Asked Questions</h1>
         
         <div className="space-y-6">
           {faqs.map((faq, index) => (
